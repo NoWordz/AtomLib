@@ -229,3 +229,11 @@ V7 的计数只证明本样本 Yoga config 被回收，不等于全部 native �
 限域实测：新 overlay 的 interactive 为 `newConfirm`，但 `focused()`／`tab()` 返回 `oldConfirm`，`allows(focused())=false`。此前已在会话中告知；这是一个具体 P2 待办，**未修复、未算入本批原始七条关闭，按用户要求不继续扩大审查或改实现**。
 
 后续若单独处理，回归应在关闭旧 modal 的 cancelCapture 中只重入一次 open(newModal)，检查可见 overlay、focus 与 allows 一致；可在调用宿主 callback 前完成对应旧 focus 层的移除，或明确拒绝／排队这类结构性重入。不能用当前异常回归通过来宣称该重入变体也已通过。
+
+### V6 回调重入变体的关闭（2026-10-30 追加）
+
+上面「未修复」的措辞作为当时的记录保留，以本节为准。`cb612db` 的 `OverlayHost.closeTop` 已按建议顺序执行：先 `overlays.remove`，再在宿主 callback 之前 `focus.popModal()`，最后才 `cancelCapture.run()`；callback 里同步 `open(newModal)` 因此 push 在已经弹出的旧层之上。
+
+回归 `FocusAndModalTest.closingAModalMaySynchronouslyOpenItsReplacement` 断言：关闭旧 modal 时同步打开新 modal 后，`focused()` 与 `tab()` 都落在 `newConfirm`，`allows(focused())` 为真，可见 overlay 只有 1 个。本轮实际执行 `gradlew :ui:test --tests com.atom.lib.input.FocusAndModalTest`：4 tests，0 failures/errors/skips（2026-10-30T15:37:50Z，日志 `build/modal-reentry-1.log`）。
+
+该关闭只覆盖这一重入顺序；不扩大为 V1–V7 之外的新结论，也不替代 MC/GL、真实弹窗动画与 AC 侧 `AcModalAdapter` 的实机验证。
