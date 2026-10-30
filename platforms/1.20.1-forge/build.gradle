@@ -1,0 +1,9 @@
+plugins { id 'java-library'; id 'maven-publish'; id 'net.minecraftforge.gradle' version '6.0.54' }
+minecraft { mappings channel: 'official', version: '1.20.1' }
+jarJar.enable()
+dependencies { minecraft 'net.minecraftforge:forge:1.20.1-47.4.10' }
+
+ext.atomlibTargetKey = '1.20.1-forge'
+apply from: '../../gradle/atomlib-dependencies.gradle'
+apply from: '../../gradle/module-layout.gradle'
+apply from: '../../gradle/render-adapter.gradle'

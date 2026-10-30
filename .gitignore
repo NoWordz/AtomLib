@@ -1,0 +1,8 @@
+.gradle/
+**/build/
+probes/yoga/deps/
+*.log
+.idea/
+*.iml
+__pycache__/
+*.pyc

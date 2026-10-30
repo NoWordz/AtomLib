@@ -1,0 +1,49 @@
+AtomLib
+Copyright 2026 E33EPUS and contributors
+
+New AtomLib-authored material is licensed under the Apache License, Version 2.0.
+Third-party material and permitted AtomChat adaptations retain their own licenses.
+This NOTICE does not relicense AtomChat, Tuui, third-party libraries, or assets.
+
+AtomChat source attribution (only the explicit allowlist in docs/provenance.md):
+Copyright (c) 2026 E33EPUS
+MIT License; full text: licenses/AtomChat-MIT.txt.
+Adaptations must retain source identity and describe changes.
+
+Skija: Java bindings for Skia
+
+Copyright 2020-2021 JetBrains s.r.o., 2021 Nikita Prokopov and contributors
+This product includes software developed at JetBrains (http://www.jetbrains.com).
+Upstream notice: licenses/Skija-0.143.18-NOTICE.txt.
+License: licenses/Skija-0.143.18-LICENSE.txt.
+
+HumbleUI types 0.2.0: Apache License 2.0.
+Full text: licenses/HumbleUI-types-0.2.0-LICENSE.txt.
+Preserve applicable upstream source-file copyright notices.
+
+Included icon provenance for the four-icon allowlist (`IconPaths.java`):
+Lucide Icons and Contributors (ISC); Feather / Cole Bemis (MIT).
+Full upstream notices and licenses: licenses/Lucide-LICENSE.txt and
+licenses/Feather-4.29.2-MIT.txt. These are adapted third-party icons.
+
+Included optional feedback sounds under `assets/atomlib/sounds/`:
+Pop (made by DuffyBro), by DuffyBro
+https://freesound.org/people/DuffyBro/sounds/319107/
+CC0 1.0 Universal; full text: licenses/CC0-1.0.txt.
+AtomChat's processing crops, filters, pitch-shifts, fades and encodes three cues.
+This attribution is retained for provenance; it does not add conditions to CC0.
+notification.ogg is excluded and is not covered by this attribution.
+
+Yoga is the LWJGL binding selected by the locked dependency matrix. Its Java and
+Windows native artifacts retain the LWJGL BSD-3-Clause license; Yoga itself is
+MIT. Full texts are in `licenses/LWJGL-3.3.1-BSD-3-Clause.txt`,
+`licenses/LWJGL-3.3.3-BSD-3-Clause.txt`, and `licenses/Yoga-upstream-MIT.txt`.
+The per-target dependency manifest and nested JAR identities are generated from
+the actual build rather than inferred from candidate records.
+
+No font file, AC branding image, notification sound, Tuui implementation or
+AtomChat business payload is included. See docs/provenance.md,
+assets/provenance.json and platforms/shared/src/main/resources/assets/MANIFEST.sha256.
+Retain every applicable upstream notice when redistributing a built JAR.
+
+Tuui is excluded; no ARR implementation or asset is licensed by this NOTICE.

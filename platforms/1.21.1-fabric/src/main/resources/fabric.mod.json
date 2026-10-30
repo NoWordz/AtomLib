@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "atomlib",
+  "version": "${version}",
+  "name": "AtomLib",
+  "license": "Apache-2.0",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "com.atom.lib.platform.fabric.AtomLibClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.9",
+    "minecraft": "~1.21.1",
+    "java": ">=21"
+  }
+}

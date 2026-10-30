@@ -1,0 +1,34 @@
+dependencies {
+    testImplementation "org.appliedenergistics.yoga:yoga:${rootProject.dependencyVersions.yoga_java_candidate}"
+    testImplementation 'org.lwjgl:lwjgl:3.3.1'
+    testImplementation 'org.lwjgl:lwjgl-yoga:3.3.1'
+}
+// The published Java port is Java 21 bytecode. Compile the comparison adapter
+// with 21 while emitting Java 17 test classes for the native candidate runs.
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+configurations.testCompileClasspath.attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 21)
+configurations.testRuntimeClasspath.attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 21)
+configurations { native331; native333 }
+dependencies {
+    ['3.3.1','3.3.3'].each { v ->
+        def c = v == '3.3.1' ? 'native331' : 'native333'
+        add(c, "org.lwjgl:lwjgl:${v}")
+        add(c, "org.lwjgl:lwjgl:${v}:natives-windows")
+        add(c, "org.lwjgl:lwjgl-yoga:${v}")
+        add(c, "org.lwjgl:lwjgl-yoga:${v}:natives-windows")
+    }
+}
+tasks.named('test') { systemProperty 'probe.backend', 'java' }
+['331', '333'].each { variant ->
+    tasks.register("native${variant}Test", Test) {
+        testClassesDirs = sourceSets.test.output.classesDirs
+        classpath = sourceSets.test.runtimeClasspath.filter { !it.name.startsWith('lwjgl') } + configurations.getByName("native${variant}")
+        systemProperty 'probe.backend', "native-${variant}"
+        reports.junitXml.outputLocation = layout.buildDirectory.dir("test-results/native${variant}Test-java${findProperty('probeJava') ?: '17'}")
+        javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of((findProperty('probeJava') ?: '17') as int) }
+    }
+}
+tasks.named('test') {
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+    dependsOn 'native331Test', 'native333Test'
+}

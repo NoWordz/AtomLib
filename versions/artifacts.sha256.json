@@ -1,0 +1,12 @@
+{
+  "io.github.humbleui:skija-shared:0.143.18:skija-shared-0.143.18.jar": "972bca0f05f44d008c2eaa7b49e7275e23480e650da1394b7b1c319ebe8db4b4",
+  "io.github.humbleui:types:0.2.0:types-0.2.0.jar": "38d94d00770c4f261ffb50ee68d5da853c416c8fe7c57842f0e28049fc26cca8",
+  "io.github.humbleui:skija-windows-x64:0.143.18:skija-windows-x64-0.143.18.jar": "837f53c07fb50ff09198326e86ff3ccc0a4b070f0c28d99694c3b4e8a39fc01e",
+  "io.github.humbleui:skija-windows-arm64:0.143.18:skija-windows-arm64-0.143.18.jar": "002fd46e071c499f7d72d76f17492177a6395e1ffd0e8f87da98c79b0c916b00",
+  "org.lwjgl:lwjgl-yoga:3.3.1:lwjgl-yoga-3.3.1-natives-windows-arm64.jar": "9e7f7ed1e73124c662b81d17950a7b2ca71ecdfaa74fa614f500a0526d16b2f9",
+  "org.lwjgl:lwjgl-yoga:3.3.1:lwjgl-yoga-3.3.1-natives-windows.jar": "a6b21f2328f7be8e1b8a8e48afb243e8930e811e87e00725eeb37891308b1cf5",
+  "org.lwjgl:lwjgl-yoga:3.3.1:lwjgl-yoga-3.3.1.jar": "a85cbcd7277932e2d0b9a263a38034a1de110f897066302c9cdff5593a455887",
+  "org.lwjgl:lwjgl-yoga:3.3.3:lwjgl-yoga-3.3.3.jar": "3f5be23f6a1f8ee6007ff0950632851333552a9ecd4c9aa94f8cfabc75d8033d",
+  "org.lwjgl:lwjgl-yoga:3.3.3:lwjgl-yoga-3.3.3-natives-windows-arm64.jar": "f79a43a94072a19cf5994c74d4f92a1191261e7749e98dfe27d8e77755bdda60",
+  "org.lwjgl:lwjgl-yoga:3.3.3:lwjgl-yoga-3.3.3-natives-windows.jar": "a9c68861b0957b473034019b1c536f5950a9f6778b602cc3f2f19b33659f9a51"
+}

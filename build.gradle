@@ -1,0 +1,41 @@
+plugins { id 'base' }
+def versions = new Properties()
+file('versions/dependencies.properties').withInputStream { versions.load(it) }
+ext.dependencyVersions = versions
+allprojects {
+    group = 'com.atom.lib'
+    version = rootProject.findProperty('atomlib_version')
+    repositories { mavenCentral() }
+}
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    java {
+        toolchain.languageVersion = JavaLanguageVersion.of(17)
+        withSourcesJar()
+        withJavadocJar()
+    }
+    tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 17 }
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+        testLogging { events 'failed', 'skipped'; exceptionFormat = 'full' }
+        reports.junitXml.required = true
+        if (rootProject.hasProperty('atomlibTestFont')) systemProperty 'atomlib.testFont', rootProject.property('atomlibTestFont')
+    }
+    dependencies {
+        testImplementation platform("org.junit:junit-bom:${versions.junit}")
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
+    layout.buildDirectory = rootProject.layout.buildDirectory.dir("standalone/${project.path.replace(':','_')}")
+    if (!project.path.startsWith(':probes')) {
+        publishing {
+            publications { mavenJava(MavenPublication) { from components.java; artifactId = "atomlib-${project.name}" } }
+            repositories { maven { name = 'Test'; url = rootProject.layout.buildDirectory.dir('test-maven') } }
+        }
+    }
+}
+apply from: 'gradle/module-layout.gradle'
+tasks.register('publishToTestRepository') {
+    dependsOn subprojects.findAll { !it.path.startsWith(':probes') }.collect { "${it.path}:publishMavenJavaPublicationToTestRepository" }
+}

@@ -1,0 +1,6 @@
+pluginManagement { repositories { maven { url = 'https://maven.minecraftforge.net/' }; gradlePluginPortal(); mavenCentral() } }
+rootProject.name = 'atomlib-1.20.1-forge'
+['core', 'runtime', 'ui'].each { name ->
+    include name
+    project(":${name}").projectDir = file("../../${name}")
+}

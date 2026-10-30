@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "1.20.1-forge": {"loader": "forge", "minecraft": "1.20.1", "java": 17, "gradle": "8.8", "forge": "47.4.10", "forgeGradle": "6.0.54", "yoga": "3.3.1"},
+    "1.21.1-fabric": {"loader": "fabric", "minecraft": "1.21.1", "java": 21, "gradle": "8.8", "loom": "1.7.4", "fabricLoader": "0.16.9", "yarn": "1.21.1+build.3", "yoga": "3.3.3"},
+    "1.21.1-neoforge": {"loader": "neoforge", "minecraft": "1.21.1", "java": 21, "gradle": "9.2.1", "neoForge": "21.1.235", "modDevGradle": "2.0.141", "yoga": "3.3.3"}
+  }
+}

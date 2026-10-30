@@ -1,0 +1,13 @@
+dependencies {
+    implementation project(':ui')
+    runtimeOnly 'org.lwjgl:lwjgl:3.3.1'
+    runtimeOnly 'org.lwjgl:lwjgl-yoga:3.3.1'
+    runtimeOnly 'org.lwjgl:lwjgl:3.3.1:natives-windows'
+    runtimeOnly 'org.lwjgl:lwjgl-yoga:3.3.1:natives-windows'
+    runtimeOnly "io.github.humbleui:skija-windows-x64:${rootProject.dependencyVersions.skija}"
+}
+tasks.register('preview',JavaExec) {
+    classpath=sourceSets.main.runtimeClasspath
+    mainClass='com.atom.lib.devtools.preview.PreviewRunner'
+    if(rootProject.hasProperty('atomlibTestFont'))args rootProject.property('atomlibTestFont'),layout.buildDirectory.file('preview/component-gallery.png').get().asFile.absolutePath
+}

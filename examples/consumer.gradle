@@ -1,0 +1,66 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
+def repoRoot = file('../../..').canonicalFile
+def target = new JsonSlurper().parse(new File(repoRoot, 'versions/targets.json')).targets[atomlibTargetKey]
+def identity = new Properties()
+new File(repoRoot, 'gradle.properties').withInputStream { identity.load(it) }
+group = 'com.atom.example'
+version = '1.0.0-local'
+base.archivesName = "${atomlibExampleId}-${atomlibTargetKey}"
+java.toolchain.languageVersion = JavaLanguageVersion.of(target.java as int)
+sourceSets.main.java.srcDir('../src/main/java')
+repositories {
+    // Exclusive repository prevents a remote or mavenLocal copy masking errors.
+    exclusiveContent {
+        forRepository { maven { name = 'AtomLibTest'; url = new File(repoRoot, 'build/test-maven').toURI(); metadataSources { gradleMetadata(); mavenPom() } } }
+        filter { includeGroup 'com.atom.lib' }
+    }
+    mavenCentral()
+    exclusiveContent {
+        forRepository { maven { name = 'AtomLibUpstream'; url = 'https://repo.maven.apache.org/maven2/' } }
+        filter { includeGroup 'org.lwjgl'; includeGroup 'io.github.humbleui' }
+    }
+}
+dependencies {
+    if (target.loader == 'fabric') {
+        modImplementation "com.atom.lib:atomlib-${atomlibTargetKey}:${identity.atomlib_version}"
+    } else {
+        implementation "com.atom.lib:atomlib-${atomlibTargetKey}:${identity.atomlib_version}"
+    }
+}
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = target.java as int }
+tasks.withType(AbstractArchiveTask).configureEach { preserveFileTimestamps = false; reproducibleFileOrder = true }
+tasks.named('processResources') {
+    inputs.property('version', project.version)
+    filesMatching(['fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml']) { expand version: project.version }
+}
+if (target.loader == 'forge') {
+    tasks.named('jar') { finalizedBy 'reobfJar' }
+}
+tasks.register('writeDependencyEvidence') {
+    def report = layout.buildDirectory.file('reports/maven-consumer.json')
+    outputs.file report
+    outputs.upToDateWhen { false }
+    doLast {
+        def configs = ['compileClasspath', 'runtimeClasspath'].collectEntries { name ->
+            [(name): configurations.getByName(name).resolvedConfiguration.resolvedArtifacts.collect { a ->
+                [group:a.moduleVersion.id.group, name:a.moduleVersion.id.name, version:a.moduleVersion.id.version,
+                 classifier:a.classifier, file:a.file.absolutePath]
+            }]
+        }
+        def declarationConfigurations = ['api','implementation','compileOnly','runtimeOnly','modApi','modImplementation','modCompileOnly','modRuntimeOnly','include','jarJar']
+        def declared = configurations.findAll { it.name in declarationConfigurations }.collectMany { c -> c.dependencies.findAll { it.group == 'com.atom.lib' || it.group == 'io.github.humbleui' || it.group == 'org.lwjgl' }.collect { d ->
+            [configuration:c.name, group:d.group, name:d.name, version:d.version]
+        } }
+        def f=report.get().asFile; f.parentFile.mkdirs()
+        f.setText(JsonOutput.prettyPrint(JsonOutput.toJson([declared:declared, configurations:configs]))+'\n','UTF-8')
+    }
+}
+tasks.register('verifyConsumer', Exec) {
+    dependsOn 'build', 'writeDependencyEvidence'
+    workingDir repoRoot
+    commandLine((findProperty('pythonExecutable') ?: 'python').toString(), 'tools/verify_consumers.py',
+        '--project', projectDir.absolutePath, '--target', atomlibTargetKey,
+        '--jar', tasks.named(target.loader == 'fabric' ? 'remapJar' : 'jar').get().archiveFile.get().asFile.absolutePath)
+}

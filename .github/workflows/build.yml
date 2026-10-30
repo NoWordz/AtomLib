@@ -1,0 +1,99 @@
+name: AtomLib build
+
+on:
+  push:
+    branches: ["codex/atomlib-extraction", "main"]
+    paths-ignore: ["docs/**", "**.md"]
+  pull_request:
+    paths-ignore: ["docs/**", "**.md"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Install an explicit host test font
+        run: sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
+      - name: CPU and source tests
+        run: |
+          chmod +x gradlew
+          ./gradlew :core:test :runtime:test :ui:test :devtools:test \
+            -PatomlibTestFont=/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc --no-daemon --console=plain
+      - name: Verifier self-tests
+        run: |
+          python3 tools/test_verify_artifacts.py
+          python3 tools/test_verify_consumers.py
+          python3 tools/verify_ui_examples.py
+
+  hidden-gl:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [1.20.1-forge, 1.21.1-fabric, 1.21.1-neoforge]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.target == '1.20.1-forge' && '17' || '21' }}
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Real hidden GLFW/OpenGL round trips
+        working-directory: platforms/${{ matrix.target }}
+        shell: pwsh
+        run: .\gradlew.bat hiddenGlTest --no-daemon --console=plain
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: hidden-gl-${{ matrix.target }}
+          path: platforms/${{ matrix.target }}/build/test-results/hiddenGlTest
+          if-no-files-found: error
+
+  package:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - id: java17
+        uses: actions/setup-java@v6
+        with: { distribution: temurin, java-version: "17" }
+      - id: java21
+        uses: actions/setup-java@v6
+        with: { distribution: temurin, java-version: "21" }
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Build, publish locally and verify six isolated consumers
+        shell: pwsh
+        run: |
+          $env:JAVA17_HOME='${{ steps.java17.outputs.java-home }}'
+          $env:JAVA21_HOME='${{ steps.java21.outputs.java-home }}'
+          $testFont='C:\Windows\Fonts\msyh.ttc'
+          if (-not (Test-Path $testFont)) { $testFont='C:\Windows\Fonts\arial.ttf' }
+          $env:ATOMLIB_TEST_FONT=$testFont
+          python tools/run_packaging.py all --jobs 1
+          python tools/test_verify_artifacts.py
+          python tools/test_verify_consumers.py
+          python tools/verify_ui_examples.py
+      - name: Archive pinned Maven input
+        shell: pwsh
+        run: python tools/package_maven_input.py
+      - uses: actions/upload-artifact@v7
+        with:
+          name: atomlib-local-maven
+          path: |
+            build/atomlib-input-*.zip
+            build/atomlib-input-*.zip.sha256
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: atomlib-platform-jars
+          path: platforms/*/build/libs/*.jar
+          if-no-files-found: error

@@ -1,0 +1,10 @@
+plugins { id 'java-library'; id 'maven-publish'; id 'net.neoforged.moddev' version '2.0.141' }
+neoForge {
+    version = '21.1.235'
+    mods { atomlib { sourceSet sourceSets.main } }
+}
+
+ext.atomlibTargetKey = '1.21.1-neoforge'
+apply from: '../../gradle/atomlib-dependencies.gradle'
+apply from: '../../gradle/module-layout.gradle'
+apply from: '../../gradle/render-adapter.gradle'

@@ -1,0 +1,55 @@
+// SPDX-License-Identifier: Apache-2.0
+// Apply after module-layout.gradle, once per independent platform build.
+if (extensions.extraProperties.has('atomlibRenderAdapterApplied')) return
+ext.atomlibRenderAdapterApplied = true
+def renderVersions = new groovy.json.JsonSlurper().parse(file('../../versions/targets.json')).targets[project.name.replace('atomlib-', '')]
+if (renderVersions == null) throw new GradleException('render-adapter requires an AtomLib platform root')
+def renderLwjgl = renderVersions.yoga
+def renderOs = System.getProperty('os.name').toLowerCase(Locale.ROOT)
+def renderArch = System.getProperty('os.arch').toLowerCase(Locale.ROOT)
+def renderClassifier = renderOs.startsWith('windows') ? 'natives-windows' : renderOs.contains('mac') ? 'natives-macos' : 'natives-linux'
+if (renderArch in ['aarch64', 'arm64']) renderClassifier += '-arm64'
+sourceSets {
+    main {
+        java.srcDir '../shared/src/main/java'
+        resources.srcDir '../shared/src/main/resources'
+    }
+    hiddenGlTest {
+        java.srcDir '../shared/src/test/java'
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+configurations {
+    hiddenGlTestImplementation.extendsFrom implementation
+    hiddenGlTestRuntimeOnly.extendsFrom runtimeOnly
+}
+repositories {
+    exclusiveContent {
+        forRepository { maven { name = 'AtomLibRenderTestCentral'; url = 'https://repo.maven.apache.org/maven2/' } }
+        filter {
+            includeGroup 'org.junit'; includeGroup 'org.junit.jupiter'; includeGroup 'org.junit.platform'
+            includeGroup 'org.opentest4j'; includeGroup 'org.apiguardian'
+        }
+    }
+}
+dependencies {
+    ['lwjgl', 'lwjgl-opengl', 'lwjgl-glfw'].each { module ->
+        compileOnly "org.lwjgl:${module}:${renderLwjgl}"
+        hiddenGlTestImplementation "org.lwjgl:${module}:${renderLwjgl}"
+        hiddenGlTestRuntimeOnly "org.lwjgl:${module}:${renderLwjgl}:${renderClassifier}"
+    }
+    hiddenGlTestImplementation platform("org.junit:junit-bom:${rootProject.dependencyVersions.junit}")
+    hiddenGlTestImplementation 'org.junit.jupiter:junit-jupiter'
+    hiddenGlTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+tasks.register('hiddenGlTest', Test) {
+    group = 'verification'
+    description = 'Real Skija/OpenGL round trips in a hidden GLFW window; never starts Minecraft.'
+    testClassesDirs = sourceSets.hiddenGlTest.output.classesDirs
+    classpath = sourceSets.hiddenGlTest.runtimeClasspath
+    useJUnitPlatform()
+    maxParallelForks = 1
+    systemProperty 'junit.jupiter.execution.parallel.enabled', 'false'
+    testLogging { events 'passed', 'failed', 'skipped'; exceptionFormat 'full' }
+}

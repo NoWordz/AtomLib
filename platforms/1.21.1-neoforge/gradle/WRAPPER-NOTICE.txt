@@ -1,0 +1,4 @@
+Gradle wrapper scripts/JAR copied from the corresponding AtomChat platform.
+Upstream: https://github.com/gradle/gradle (Apache-2.0).
+Script copyright/license headers are retained. Distribution version is pinned in wrapper properties.
+This copy does not import any AtomChat UI source or asset.

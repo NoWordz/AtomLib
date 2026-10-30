@@ -1,0 +1,93 @@
+{
+  "native331Test": {
+    "counts": {
+      "name": "com.atom.lib.probe.LayoutContractTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-29T14:20:59",
+      "hostname": "E33EPUS",
+      "time": "0.104"
+    },
+    "benchmark": "BENCH backend=native-331 java=21.0.11 nodes=12 stableNs/op=610 dirtyNs/op=792 allocatedBytes=0\nBENCH backend=native-331 java=21.0.11 nodes=100 stableNs/op=154 dirtyNs/op=29179 allocatedBytes=0\nBENCH backend=native-331 java=21.0.11 nodes=1000 stableNs/op=51 dirtyNs/op=273284 allocatedBytes=0\n"
+  },
+  "native331Test-java17": {
+    "counts": {
+      "name": "com.atom.lib.probe.LayoutContractTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-29T14:21:59",
+      "hostname": "E33EPUS",
+      "time": "0.105"
+    },
+    "benchmark": "BENCH backend=native-331 java=17.0.18 nodes=12 stableNs/op=372 dirtyNs/op=737 allocatedBytes=0\nBENCH backend=native-331 java=17.0.18 nodes=100 stableNs/op=140 dirtyNs/op=30383 allocatedBytes=0\nBENCH backend=native-331 java=17.0.18 nodes=1000 stableNs/op=53 dirtyNs/op=270905 allocatedBytes=0\n"
+  },
+  "native331Test-java21": {
+    "counts": {
+      "name": "com.atom.lib.probe.LayoutContractTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-29T14:25:13",
+      "hostname": "E33EPUS",
+      "time": "0.112"
+    },
+    "benchmark": "BENCH backend=native-331 java=21.0.11 nodes=12 stableNs/op=413 dirtyNs/op=787 allocatedBytes=0\nBENCH backend=native-331 java=21.0.11 nodes=100 stableNs/op=146 dirtyNs/op=30943 allocatedBytes=0\nBENCH backend=native-331 java=21.0.11 nodes=1000 stableNs/op=54 dirtyNs/op=279229 allocatedBytes=0\n"
+  },
+  "native333Test": {
+    "counts": {
+      "name": "com.atom.lib.probe.LayoutContractTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-29T14:20:59",
+      "hostname": "E33EPUS",
+      "time": "0.113"
+    },
+    "benchmark": "BENCH backend=native-333 java=21.0.11 nodes=12 stableNs/op=414 dirtyNs/op=730 allocatedBytes=0\nBENCH backend=native-333 java=21.0.11 nodes=100 stableNs/op=139 dirtyNs/op=28009 allocatedBytes=0\nBENCH backend=native-333 java=21.0.11 nodes=1000 stableNs/op=53 dirtyNs/op=269564 allocatedBytes=0\n"
+  },
+  "native333Test-java17": {
+    "counts": {
+      "name": "com.atom.lib.probe.LayoutContractTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-29T14:22:00",
+      "hostname": "E33EPUS",
+      "time": "0.111"
+    },
+    "benchmark": "BENCH backend=native-333 java=17.0.18 nodes=12 stableNs/op=461 dirtyNs/op=730 allocatedBytes=0\nBENCH backend=native-333 java=17.0.18 nodes=100 stableNs/op=148 dirtyNs/op=28128 allocatedBytes=0\nBENCH backend=native-333 java=17.0.18 nodes=1000 stableNs/op=50 dirtyNs/op=264760 allocatedBytes=0\n"
+  },
+  "native333Test-java21": {
+    "counts": {
+      "name": "com.atom.lib.probe.LayoutContractTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-29T14:25:14",
+      "hostname": "E33EPUS",
+      "time": "0.131"
+    },
+    "benchmark": "BENCH backend=native-333 java=21.0.11 nodes=12 stableNs/op=479 dirtyNs/op=815 allocatedBytes=0\nBENCH backend=native-333 java=21.0.11 nodes=100 stableNs/op=153 dirtyNs/op=33148 allocatedBytes=0\nBENCH backend=native-333 java=21.0.11 nodes=1000 stableNs/op=59 dirtyNs/op=304801 allocatedBytes=0\n"
+  },
+  "test": {
+    "counts": {
+      "name": "com.atom.lib.probe.LayoutContractTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-29T14:14:58",
+      "hostname": "E33EPUS",
+      "time": "0.194"
+    },
+    "benchmark": "BENCH backend=java java=21.0.11 nodes=12 stableNs/op=4881 dirtyNs/op=23757 allocatedBytes=101400\nBENCH backend=java java=21.0.11 nodes=100 stableNs/op=4895 dirtyNs/op=372876 allocatedBytes=2209432\nBENCH backend=java java=21.0.11 nodes=1000 stableNs/op=6272 dirtyNs/op=876089 allocatedBytes=10165480\n"
+  }
+}

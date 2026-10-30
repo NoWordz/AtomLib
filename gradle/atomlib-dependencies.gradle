@@ -1,0 +1,55 @@
+import groovy.json.JsonSlurper
+
+// Applied by each independent loader build; the root project owns the lock file.
+ext.atomlibRepoRoot = file('../..').canonicalFile
+def identity = new Properties()
+new File(atomlibRepoRoot, 'gradle.properties').withInputStream { identity.load(it) }
+def locked = new Properties()
+new File(atomlibRepoRoot, 'versions/dependencies.properties').withInputStream { locked.load(it) }
+ext.dependencyVersions = locked
+ext.atomlibTarget = new JsonSlurper().parse(new File(atomlibRepoRoot, 'versions/targets.json')).targets[atomlibTargetKey]
+if (atomlibTarget == null) throw new GradleException("Unknown target ${atomlibTargetKey}")
+allprojects {
+    group = 'com.atom.lib'
+    version = identity.getProperty('atomlib_version')
+    repositories {
+        mavenCentral()
+        // MDG adds loader repositories. Do not query them for Maven Central
+        // libraries (a stalled HEAD otherwise hides an available Yoga release).
+        exclusiveContent {
+            forRepository { maven { name = 'AtomLibCentral'; url = 'https://repo.maven.apache.org/maven2/' } }
+            filter { includeGroup 'org.lwjgl'; includeGroup 'io.github.humbleui' }
+        }
+    }
+}
+
+ext.atomlibEmbedded = [
+    [group: 'io.github.humbleui', name: 'skija-shared', version: locked.skija, api: true],
+    [group: 'io.github.humbleui', name: 'types', version: locked.types, api: true],
+    [group: 'io.github.humbleui', name: 'skija-windows-x64', version: locked.skija],
+    [group: 'io.github.humbleui', name: 'skija-windows-arm64', version: locked.skija],
+    [group: 'org.lwjgl', name: 'lwjgl-yoga', version: atomlibTarget.yoga, api: true],
+    [group: 'org.lwjgl', name: 'lwjgl-yoga', version: atomlibTarget.yoga, classifier: 'natives-windows'],
+    [group: 'org.lwjgl', name: 'lwjgl-yoga', version: atomlibTarget.yoga, classifier: 'natives-windows-arm64']
+]
+ext.atomlibCoordinate = { d, boolean range = false ->
+    "${d.group}:${d.name}:${range ? '[' + d.version + ']' : d.version}${d.classifier ? ':' + d.classifier : ''}"
+}
+
+// Java API versions and production native versions are the same locked tuple.
+// MC supplies lwjgl-core. Never pull it into either the mod jar or the POM.
+atomlibEmbedded.each { d ->
+    def dep = dependencies.add(d.api ? 'api' : 'runtimeOnly', atomlibCoordinate(d)) {
+        transitive = false
+    }
+    if (atomlibTarget.loader == 'fabric') {
+        dependencies.add('include', atomlibCoordinate(d)) { transitive = false }
+    } else {
+        dependencies.add('jarJar', atomlibCoordinate(d, true)) { transitive = false }
+    }
+}
+
+// Isolated Java 17 modules are merged into the distributable, not nested mods.
+dependencies {
+    api project(':ui')
+}

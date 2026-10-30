@@ -1,0 +1,224 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import org.gradle.api.publish.tasks.GenerateModuleMetadata
+
+if (!project.hasProperty('atomlibTargetKey')) {
+    // Optional root integration: apply from: 'gradle/module-layout.gradle'.
+    tasks.register('verifyConsumers', Exec) {
+        group = 'verification'
+        description = 'Build/publish all loader jars locally and verify six standalone Maven consumers.'
+        workingDir rootProject.projectDir
+        commandLine((findProperty('pythonExecutable') ?: 'python').toString(), 'tools/run_packaging.py', 'all')
+    }
+    tasks.register('verifyArtifacts', Exec) {
+        group = 'verification'
+        workingDir rootProject.projectDir
+        commandLine((findProperty('pythonExecutable') ?: 'python').toString(), 'tools/run_packaging.py', 'verify')
+    }
+} else {
+    subprojects {
+        apply plugin: 'java-library'
+        java {
+            toolchain.languageVersion = JavaLanguageVersion.of(17)
+        }
+        layout.buildDirectory = rootProject.layout.buildDirectory.dir("modules/${project.name}")
+        tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 17 }
+        tasks.withType(Test).configureEach {
+            useJUnitPlatform()
+            if (rootProject.hasProperty('atomlibTestFont')) systemProperty 'atomlib.testFont', rootProject.property('atomlibTestFont')
+        }
+        dependencies {
+            testImplementation platform("org.junit:junit-bom:${rootProject.dependencyVersions.junit}")
+            testImplementation 'org.junit.jupiter:junit-jupiter'
+            testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+        }
+    }
+    java {
+        toolchain.languageVersion = JavaLanguageVersion.of(atomlibTarget.java as int)
+        withSourcesJar()
+        withJavadocJar()
+    }
+    base.archivesName = "atomlib-${atomlibTargetKey}"
+    tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = atomlibTarget.java as int }
+    tasks.withType(AbstractArchiveTask).configureEach {
+        preserveFileTimestamps = false
+        reproducibleFileOrder = true
+    }
+    tasks.named('processResources') {
+        from(atomlibRepoRoot) { include 'LICENSE','NOTICE'; into 'META-INF' }
+        from(new File(atomlibRepoRoot,'licenses')) { into 'META-INF/licenses' }
+        inputs.property('version', project.version)
+        filesMatching(['fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml']) {
+            expand version: project.version
+        }
+    }
+    // Deferred until all module scripts have configured their source sets.
+    gradle.projectsEvaluated {
+        ['core', 'runtime', 'ui'].each { name ->
+            def module = project(":${name}")
+            // The Java plugin does not infer a task dependency from a file
+            // collection passed through `from`. Without this, a clean build
+            // can archive the platform jar before module classes exist and
+            // publish a mod jar that contains only the thin adapter.
+            tasks.named('jar') {
+                dependsOn module.tasks.named('classes')
+                from(module.sourceSets.main.output)
+            }
+            if (atomlibTarget.loader == 'forge') {
+                // Forge's JarJar task reads the platform source set directly;
+                // it does not inherit the merged root jar's `from` rules.
+                tasks.named('jarJar') {
+                    dependsOn module.tasks.named('classes')
+                    from(module.sourceSets.main.output)
+                }
+            }
+            tasks.named('sourcesJar') { from(module.sourceSets.main.allSource) }
+            tasks.named('javadoc') {
+                source(module.sourceSets.main.allJava)
+                classpath += module.sourceSets.main.compileClasspath + module.sourceSets.main.output
+            }
+        }
+        tasks.named('sourcesJar') {
+            from(atomlibRepoRoot) { include 'LICENSE','NOTICE' }
+            from(new File(atomlibRepoRoot,'licenses')) { into 'licenses' }
+        }
+    }
+    tasks.named('javadoc') { options.encoding = 'UTF-8'; options.addBooleanOption('notimestamp', true) }
+
+    def production = tasks.named(atomlibTarget.loader == 'fabric' ? 'remapJar' : atomlibTarget.loader == 'forge' ? 'jarJar' : 'jar')
+    production.configure { destinationDirectory = layout.buildDirectory.dir('intermediates') }
+    if (atomlibTarget.loader == 'forge') {
+        tasks.named('jar') { archiveClassifier = 'slim'; destinationDirectory = layout.buildDirectory.dir('intermediates') }
+        tasks.named('jarJar') {
+            dependsOn 'jar'
+            archiveClassifier = ''
+        }
+        reobf { jarJar {} }
+    }
+
+    // Forge's upstream JarJar metadata cannot distinguish classifier artifacts
+    // (ContainedJarIdentifier is group+artifact only). Generate one selection
+    // identity per classifier. Yoga native descriptors also share one JPMS
+    // module name, so wrap resource jars with distinct automatic module names.
+    def metadataTask = tasks.register('distributionMetadata') {
+        def output = layout.buildDirectory.file('generated/distribution/META-INF/jarjar/metadata.json')
+        inputs.property('embedded', JsonOutput.toJson(atomlibEmbedded))
+        outputs.file(output)
+        doLast {
+            def records = atomlibEmbedded.collect { d ->
+                def filename = "${d.name}-${d.version}${d.classifier ? '-' + d.classifier : ''}.jar"
+                [identifier: [group: d.group, artifact: d.name + (d.classifier ? '-' + d.classifier : '')],
+                 version: [range: "[${d.version}]", artifactVersion: d.version],
+                 path: "META-INF/jarjar/${filename}", isObfuscated: false]
+            }
+            def f = output.get().asFile
+            f.parentFile.mkdirs()
+            f.setText(JsonOutput.prettyPrint(JsonOutput.toJson([jars: records])) + '\n', 'UTF-8')
+        }
+    }
+    def nativeJars = atomlibTarget.loader == 'fabric' ? [] : atomlibEmbedded.findAll { it.classifier }.collect { d ->
+        def cfg = configurations.detachedConfiguration(dependencies.create(atomlibCoordinate(d)))
+        cfg.transitive = false
+        tasks.register(d.classifier == 'natives-windows' ? 'yogaWindowsX64Resources' : 'yogaWindowsArm64Resources', Jar) {
+            from({ zipTree(cfg.singleFile) }) {
+                exclude '**/module-info.class', 'module-info.class', 'META-INF/MANIFEST.MF'
+            }
+            archiveFileName = "${d.name}-${d.version}-${d.classifier}.jar"
+            destinationDirectory = layout.buildDirectory.dir('native-resources')
+            manifest {
+                attributes('Automatic-Module-Name': "org.lwjgl.yoga.natives.windows.${d.classifier.endsWith('arm64') ? 'arm64' : 'x64'}",
+                    'Specification-Version': d.version, 'LWJGL-Platform': "windows/${d.classifier.endsWith('arm64') ? 'arm64' : 'x64'}", 'FMLModType': 'LIBRARY')
+            }
+        }
+    }
+    def dist = tasks.register('distributionJar', Jar) {
+        dependsOn production
+        if (atomlibTarget.loader == 'forge') dependsOn 'reobfJarJar'
+        archiveBaseName = "atomlib-${atomlibTargetKey}"
+        archiveClassifier = ''
+        from({ zipTree(production.get().archiveFile.get().asFile) }) {
+            exclude 'META-INF/MANIFEST.MF'
+            if (atomlibTarget.loader != 'fabric') {
+                exclude 'META-INF/jarjar/metadata.json', 'META-INF/jarjar/lwjgl-yoga-*-natives-*.jar'
+            }
+        }
+        manifest { attributes('Implementation-Version': project.version, 'Automatic-Module-Name': 'com.atom.lib') }
+        if (atomlibTarget.loader != 'fabric') {
+            dependsOn metadataTask
+            from(layout.buildDirectory.dir('generated/distribution'))
+            nativeJars.each { nativeJar -> from(nativeJar) { into 'META-INF/jarjar' } }
+        }
+        duplicatesStrategy = DuplicatesStrategy.FAIL
+    }
+    tasks.named('assemble') { dependsOn dist }
+    // Publish the same canonical jar through both Maven and Gradle variants.
+    // Replacing only MavenPublication.artifacts leaves components.java pointing
+    // at the slim/intermediate jar, which Gradle correctly refuses to publish.
+    afterEvaluate {
+        ['apiElements', 'runtimeElements'].each { name ->
+            configurations.named(name) {
+                outgoing.artifacts.clear()
+                outgoing.artifact(dist)
+            }
+        }
+        configurations.named('sourcesElements') {
+            outgoing.artifacts.clear()
+            outgoing.artifact(tasks.named('sourcesJar'))
+        }
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifactId = "atomlib-${atomlibTargetKey}"
+                from components.java
+                pom {
+                    name = "AtomLib ${atomlibTargetKey}"
+                    description = 'UI building blocks and raw Skija/Yoga API for Minecraft mod creators.'
+                    licenses { license { name = 'Apache License, Version 2.0'; url = 'https://www.apache.org/licenses/LICENSE-2.0.txt' } }
+                    withXml {
+                        def root = asNode()
+                        root.children().findAll { it instanceof Node && (it.name().toString() == 'dependencies' || it.name().toString().endsWith('}dependencies')) }.each { root.remove(it) }
+                        def deps = root.appendNode('dependencies')
+                        atomlibEmbedded.each { d ->
+                            def node = deps.appendNode('dependency')
+                            node.appendNode('groupId', d.group)
+                            node.appendNode('artifactId', d.name)
+                            node.appendNode('version', d.version)
+                            if (d.classifier) node.appendNode('classifier', d.classifier)
+                            node.appendNode('scope', d.api ? 'compile' : 'runtime')
+                            def excludes = node.appendNode('exclusions')
+                            def exclusion = excludes.appendNode('exclusion')
+                            exclusion.appendNode('groupId', '*'); exclusion.appendNode('artifactId', '*')
+                        }
+                    }
+                }
+            }
+        }
+        repositories { maven { name = 'Test'; url = new File(atomlibRepoRoot, 'build/test-maven').toURI() } }
+    }
+    // Preserve Gradle's classifier selectors and api/runtime variants, remove
+    // only merged project dependencies, and point the primary file at dist.
+    tasks.withType(GenerateModuleMetadata).configureEach {
+        dependsOn dist
+        doLast {
+            def f = outputFile.get().asFile
+            def data = new JsonSlurper().parse(f)
+            data.variants.each { variant ->
+                variant.dependencies?.removeAll { it.group == 'com.atom.lib' || !(it.group in ['io.github.humbleui', 'org.lwjgl']) }
+            }
+            f.setText(JsonOutput.prettyPrint(JsonOutput.toJson(data)) + '\n', 'UTF-8')
+        }
+    }
+    tasks.register('publishToTestRepository') { dependsOn 'publishMavenJavaPublicationToTestRepository' }
+    tasks.register('verifyArtifact', Exec) {
+        dependsOn dist, 'generatePomFileForMavenJavaPublication'
+        workingDir atomlibRepoRoot
+        commandLine((findProperty('pythonExecutable') ?: 'python').toString(), 'tools/verify_artifacts.py',
+            dist.get().archiveFile.get().asFile.absolutePath, '--loader', atomlibTarget.loader,
+            '--version', project.version.toString(), '--skija', dependencyVersions.skija,
+            '--types', dependencyVersions.types, '--yoga', atomlibTarget.yoga,
+            '--pom', layout.buildDirectory.file('publications/mavenJava/pom-default.xml').get().asFile.absolutePath)
+    }
+    tasks.named('check') { dependsOn 'verifyArtifact' }
+}

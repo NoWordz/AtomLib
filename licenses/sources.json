@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-29",
+  "records": [
+    {
+      "path": "LICENSE",
+      "source": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+      "retrieved_on": "2026-10-29",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358,
+      "scope": "license evidence; actual inclusion subject to docs/provenance.md"
+    },
+    {
+      "path": "licenses/Skija-0.143.18-LICENSE.txt",
+      "source": "https://raw.githubusercontent.com/HumbleUI/Skija/0.143.18/LICENSE",
+      "retrieved_on": "2026-10-29",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "bytes": 11357,
+      "scope": "license evidence; actual inclusion subject to docs/provenance.md"
+    },
+    {
+      "path": "licenses/Skija-0.143.18-NOTICE.txt",
+      "source": "https://raw.githubusercontent.com/HumbleUI/Skija/0.143.18/NOTICE",
+      "retrieved_on": "2026-10-29",
+      "sha256": "59d571117cd00794e13e8fad883dede9b688d92bd4db971f115d1bca057caba9",
+      "bytes": 189,
+      "scope": "license evidence; actual inclusion subject to docs/provenance.md"
+    },
+    {
+      "path": "licenses/HumbleUI-types-0.2.0-LICENSE.txt",
+      "source": "https://raw.githubusercontent.com/HumbleUI/Types/0.2.0/LICENSE",
+      "retrieved_on": "2026-10-29",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "bytes": 11357,
+      "scope": "license evidence; actual inclusion subject to docs/provenance.md"
+    },
+    {
+      "path": "licenses/Skia-da51f0d60e-BSD-3-Clause.txt",
+      "source": "https://raw.githubusercontent.com/google/skia/da51f0d60e/LICENSE",
+      "retrieved_on": "2026-10-29",
+      "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd",
+      "bytes": 1507,
+      "scope": "license evidence; actual inclusion subject to docs/provenance.md"
+    },
+    {
+      "path": "licenses/Lucide-LICENSE.txt",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/5aae256c6479aef74c609b536d10675c97c714e3/LICENSE",
+      "retrieved_on": "2026-10-29",
+      "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+      "bytes": 3208,
+      "scope": "license evidence; actual inclusion subject to docs/provenance.md"
+    },
+    {
+      "path": "licenses/Feather-4.29.2-MIT.txt",
+      "source": "https://raw.githubusercontent.com/feathericons/feather/v4.29.2/LICENSE",
+      "retrieved_on": "2026-10-29",
+      "sha256": "308028e93fcf84972523cdf6e616f73168546b4953895f516d01287f16fe7bee",
+      "bytes": 1082,
+      "scope": "license evidence; actual inclusion subject to docs/provenance.md"
+    },
+    {
+      "path": "licenses/CC0-1.0.txt",
+      "source": "https://raw.githubusercontent.com/creativecommons/creativecommons.org/main/docroot/legalcode/zero_1.0.txt",
+      "retrieved_on": "2026-10-29",
+      "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499",
+      "bytes": 7048,
+      "scope": "license evidence; actual inclusion subject to docs/provenance.md"
+    },
+    {
+      "path": "licenses/Yoga-AppliedEnergistics-MIT.txt",
+      "source": "https://raw.githubusercontent.com/AppliedEnergistics/yoga/6e419a3e407469e02fadbda6eb1ccce88b626318/LICENSE",
+      "retrieved_on": "2026-10-29",
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85",
+      "bytes": 1086,
+      "scope": "license evidence; actual inclusion subject to docs/provenance.md"
+    },
+    {
+      "path": "licenses/Yoga-upstream-MIT.txt",
+      "source": "https://raw.githubusercontent.com/facebook/yoga/6455a848a76f433bdb48b2640b7f4644774c76fd/LICENSE",
+      "retrieved_on": "2026-10-29",
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85",
+      "bytes": 1086,
+      "scope": "license evidence; actual inclusion subject to docs/provenance.md"
+    },
+    {
+      "path": "licenses/LWJGL-3.3.1-BSD-3-Clause.txt",
+      "source": "https://raw.githubusercontent.com/LWJGL/lwjgl3/3.3.1/LICENSE.md",
+      "retrieved_on": "2026-10-29",
+      "sha256": "4c2f770897d0cfda4d9a65bb4d6d6983dccfd57d4c7eb74ea5ded0762cbc0e75",
+      "bytes": 1518,
+      "scope": "license evidence; actual inclusion subject to docs/provenance.md"
+    },
+    {
+      "path": "licenses/LWJGL-3.3.3-BSD-3-Clause.txt",
+      "source": "https://raw.githubusercontent.com/LWJGL/lwjgl3/3.3.3/LICENSE.md",
+      "retrieved_on": "2026-10-29",
+      "sha256": "4c2f770897d0cfda4d9a65bb4d6d6983dccfd57d4c7eb74ea5ded0762cbc0e75",
+      "bytes": 1518,
+      "scope": "license evidence; actual inclusion subject to docs/provenance.md"
+    },
+    {
+      "path": "licenses/AtomChat-MIT.txt",
+      "source": "D:/AtomChat-Main/LICENSE",
+      "source_revision": "28fd6de0caf1133ffba97c63315d55bdf21aef48",
+      "license_revision": "e8cf67ca7c075b8ba563108b8f8c42d9a9794a8a",
+      "sha256": "f4680fde0775beb8cedc5fe633c5a95df07dd3c68b05c008029d3000ef1dcb42",
+      "bytes": 1064,
+      "scope": "only allowlisted AC source"
+    }
+  ],
+  "artifact_observations": [
+    {
+      "coordinate": "io.github.humbleui:skija-shared:0.143.18",
+      "observed_file": "C:/Users/NIUQU/.gradle/caches/modules-2/files-2.1/io.github.humbleui/skija-shared/0.143.18/c97f7bd0c853fb52bb515ec8d118efbb48b1feb5/skija-shared-0.143.18.jar",
+      "sha256": "972bca0f05f44d008c2eaa7b49e7275e23480e650da1394b7b1c319ebe8db4b4",
+      "bytes": 388781,
+      "embedded_notice_entries": [],
+      "redistribution_decision": "allow_with_archived_upstream_license_and_notices",
+      "probe_use": "isolated local testing is not a redistribution approval"
+    },
+    {
+      "coordinate": "io.github.humbleui:skija-windows-x64:0.143.18",
+      "observed_file": "C:/Users/NIUQU/.gradle/caches/modules-2/files-2.1/io.github.humbleui/skija-windows-x64/0.143.18/6c4759729ce8d6bb31fee2a7189eaba3bfb95a40/skija-windows-x64-0.143.18.jar",
+      "sha256": "837f53c07fb50ff09198326e86ff3ccc0a4b070f0c28d99694c3b4e8a39fc01e",
+      "bytes": 10583297,
+      "embedded_notice_entries": [],
+      "redistribution_decision": "exclude_pending_native_third_party_notice_closure",
+      "probe_use": "isolated local testing is not a redistribution approval"
+    },
+    {
+      "coordinate": "io.github.humbleui:skija-windows-arm64:0.143.18",
+      "observed_file": "C:/Users/NIUQU/.gradle/caches/modules-2/files-2.1/io.github.humbleui/skija-windows-arm64/0.143.18/5a88671163212c20bd10695aafe151424023a5d1/skija-windows-arm64-0.143.18.jar",
+      "sha256": "002fd46e071c499f7d72d76f17492177a6395e1ffd0e8f87da98c79b0c916b00",
+      "bytes": 9958774,
+      "embedded_notice_entries": [],
+      "redistribution_decision": "exclude_pending_native_third_party_notice_closure",
+      "probe_use": "isolated local testing is not a redistribution approval"
+    },
+    {
+      "coordinate": "io.github.humbleui:types:0.2.0",
+      "observed_file": "C:/Users/NIUQU/.gradle/caches/modules-2/files-2.1/io.github.humbleui/types/0.2.0/98e13503212afcdfd44b1fd6c6f1f4b98931a834/types-0.2.0.jar",
+      "sha256": "38d94d00770c4f261ffb50ee68d5da853c416c8fe7c57842f0e28049fc26cca8",
+      "bytes": 16218,
+      "embedded_notice_entries": [],
+      "redistribution_decision": "allow_with_archived_upstream_license_and_notices",
+      "probe_use": "isolated local testing is not a redistribution approval"
+    }
+  ],
+  "native_build_evidence": {
+    "skija_build_script": "https://github.com/HumbleUI/Skija/blob/0.143.18/script/build.py",
+    "skia_build_revision": "m143-da51f0d60e-5",
+    "skia_build_script": "https://github.com/HumbleUI/SkiaBuild/blob/m143-da51f0d60e-5/script/build.py",
+    "skia_revision_prefix": "da51f0d60e",
+    "limits": "Actual two-architecture DLL dependency/license coverage not closed; Skia BSD alone is insufficient."
+  }
+}

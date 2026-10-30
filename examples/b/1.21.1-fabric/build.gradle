@@ -1,0 +1,10 @@
+plugins { id 'java-library'; id 'maven-publish'; id 'fabric-loom' version '1.7.4' }
+dependencies {
+    minecraft 'com.mojang:minecraft:1.21.1'
+    mappings 'net.fabricmc:yarn:1.21.1+build.3:v2'
+    modImplementation 'net.fabricmc:fabric-loader:0.16.9'
+}
+
+ext.atomlibTargetKey = '1.21.1-fabric'
+ext.atomlibExampleId = 'atomlib_example_b'
+apply from: '../../consumer.gradle'

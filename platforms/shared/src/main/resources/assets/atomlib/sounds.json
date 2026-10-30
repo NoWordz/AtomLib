@@ -1,0 +1,5 @@
+{
+  "feedback.button": {"sounds": [{"name": "atomlib:feedback_button"}]},
+  "feedback.panel_open": {"sounds": [{"name": "atomlib:feedback_panel_open"}]},
+  "feedback.send": {"sounds": [{"name": "atomlib:feedback_send"}]}
+}

@@ -1,0 +1,3 @@
+pluginManagement { repositories { gradlePluginPortal(); mavenCentral() } }
+rootProject.name = 'atomlib'
+include 'core', 'runtime', 'ui', 'devtools', 'probes:yoga'
