@@ -11,7 +11,7 @@ displayTest="IGNORE_ALL_VERSION"
 [[dependencies.atomlib]]
 modId="forge"
 mandatory=true
-versionRange="[47.4.10,48)"
+versionRange="[47,)"
 ordering="NONE"
 side="BOTH"
 
