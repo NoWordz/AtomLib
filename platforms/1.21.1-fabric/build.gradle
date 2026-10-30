@@ -1,4 +1,9 @@
 plugins { id 'java-library'; id 'maven-publish'; id 'fabric-loom' version '1.7.4' }
+loom {
+    // Shutdown hook mixin: give Loom an explicit refmap so the named targets
+    // (MinecraftClient#close) are remapped to intermediary in the shipped jar.
+    mixin { defaultRefmapName = 'atomlib.refmap.json' }
+}
 dependencies {
     minecraft 'com.mojang:minecraft:1.21.1'
     mappings 'net.fabricmc:yarn:1.21.1+build.3:v2'

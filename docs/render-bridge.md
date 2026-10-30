@@ -105,6 +105,22 @@ BorrowedFrame 公开 `context()`、`backendRenderTarget()`、`surface()`。这�
 
 world snapshot 的业务失效、持有时长、切换世界释放仍由 AC adapter 管；releaseWorldSnapshot 只关闭自己拥有的 Image。prepare/captureFrame/withFrameAccess 都不能从已有绘制 callback 再次调用。中央 MinecraftRenderBridge.close 用于 context 仍有效的最终关闭，不应在一个普通页面 close 时销毁其他宿主共用的绘制 context。
 
+## 客户端退出释放（2026-10-30 追加）
+
+共享 bridge 的生命周期闭合在三端各接了一次，页面 close 仍不销毁 context：
+
+| 目标 | 触发点 | 实现 |
+|---|---|---|
+| Forge 1.20.1 | `GameShuttingDownEvent`（`Minecraft#stop()`，渲染线程，窗口销毁前） | `AtomLibMod` 用 `FMLEnvironment.dist.isClient()` 守卫后交给 client-only `AtomLibClient` |
+| NeoForge 1.21.1 | 同上（`GameShuttingDownEvent`） | 同上，走 `NeoForge.EVENT_BUS` |
+| Fabric 1.21.1 | `MinecraftClient#close()` HEAD | `atomlib.mixins.json` 的 client mixin，refmap `atomlib.refmap.json` |
+
+三端都调用新增的 `MinecraftRenderBridge.releaseIfOpen()`：只有在 `instance` 已存在时才 close，从不为了退出而 `get()` 出一个新 bridge；关闭异常会记 WARNING 而不打断退出。专服不加载这些类（dist 守卫 / client-only entrypoint）。Fabric refmap 已实测包含 `class_310;close()V`；**尚未在真实客户端退出路径上运行验证**。
+
+### AC 消费者的两阶段拆分
+
+`ItemIconRenderer.prepare` 不再取出 context：原版物品绘制放在 `vanillaPass` 内的 `drawOffscreen`（宿主 FBO + 原始 GL），Skija texture 导入放在紧随其后的 `bridge.withContext(context -> ...)` 里，提交/关闭缓存在前一个同类型租借内完成。`SkiaGraphics.requireContext()` 已删除，改为唯一入口 `SkiaGraphics.withContext(Function)`，句柄不出回调。
+
 ## 实际验证
 
 2026-10-30 最后完整运行：

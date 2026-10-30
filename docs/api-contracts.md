@@ -22,7 +22,9 @@ context. Normal drawing uses `drawFrame`; Minecraft content uses `vanillaPass`;
 raw resource preparation uses the synchronous `withFrameAccess` or
 `withContext` lease. Objects returned by a lease are borrowed only for that
 callback. A page's `close()` never closes the shared render bridge. Close the
-bridge and runtime on the render thread before the GL context is destroyed.
+bridge and runtime on the render thread before the GL context is destroyed;
+`MinecraftRenderBridge.releaseIfOpen()` does exactly that and is wired to each
+loader's client shutdown, releasing only a bridge that already exists.
 
 `UiView` owns only its base/overlay Yoga engines, focus, capture, scrolling and
 layout snapshot. `showOverlay`/`closeTopOverlay` maintain one authoritative

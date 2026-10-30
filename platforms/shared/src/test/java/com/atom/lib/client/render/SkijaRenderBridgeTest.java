@@ -3,9 +3,14 @@ package com.atom.lib.client.render;
 
 import com.atom.lib.AtomLibRuntime;
 import com.atom.lib.RuntimeHandle;
+import io.github.humbleui.skija.BackendTexture;
+import io.github.humbleui.skija.ColorAlphaType;
+import io.github.humbleui.skija.ColorType;
+import io.github.humbleui.skija.GLTextureInfo;
 import io.github.humbleui.skija.Paint;
 import io.github.humbleui.skija.Bitmap;
 import io.github.humbleui.skija.Image;
+import io.github.humbleui.skija.SurfaceOrigin;
 import io.github.humbleui.types.Rect;
 import org.junit.jupiter.api.Test;
 import java.util.concurrent.CompletableFuture;
@@ -81,6 +86,71 @@ final class SkijaRenderBridgeTest extends HiddenGlFixture {
             }
         }
         assertTrue(glIsFramebuffer(target.framebuffer()));assertTrue(glIsTexture(target.colorTexture()));
+        assertEquals(GL_NO_ERROR,glGetError());
+    }
+
+    /**
+     * The consumer shape AC uses for item icons: render into a host FBO outside
+     * any Skija pass with dirty PACK/UNPACK/PBO state, then import the finished
+     * texture inside one borrowed context callback. The borrowed phase must
+     * normalize pixel transfer and restore exactly what the host left behind.
+     */
+    @Test void hostOffscreenTextureImportsInsideTheBorrowAfterAPollutedVanillaPass() {
+        FramebufferTarget target=framebuffer(16,16);
+        FramebufferTarget icon=framebuffer(16,16);
+        int pack=buffer(),unpack=buffer();
+        try(RuntimeHandle runtime=AtomLibRuntime.open("gl-host-import");SkijaRenderBridge bridge=new SkijaRenderBridge(runtime)) {
+            bridge.prepare(target);
+            glBindBuffer(GL_PIXEL_PACK_BUFFER,pack);glBufferData(GL_PIXEL_PACK_BUFFER,4096,GL_STREAM_READ);
+            glBindBuffer(GL_PIXEL_UNPACK_BUFFER,unpack);glBufferData(GL_PIXEL_UNPACK_BUFFER,4096,GL_STREAM_DRAW);
+            glPixelStorei(GL_UNPACK_ROW_LENGTH,37);glPixelStorei(GL_UNPACK_SKIP_ROWS,5);glPixelStorei(GL_UNPACK_ALIGNMENT,8);
+            bridge.vanillaPass(() -> {
+                glBindFramebuffer(GL_FRAMEBUFFER,icon.framebuffer());
+                glViewport(0,0,16,16);glDisable(GL_SCISSOR_TEST);glColorMask(true,true,true,true);
+                glClearColor(1f,0f,0f,1f);glClear(GL_COLOR_BUFFER_BIT);
+            });
+            Image imported=bridge.withContext(context -> {
+                assertEquals(0,glGetInteger(GL_PIXEL_PACK_BUFFER_BINDING),"the borrow normalizes PACK PBO");
+                assertEquals(0,glGetInteger(GL_PIXEL_UNPACK_BUFFER_BINDING),"the borrow normalizes UNPACK PBO");
+                assertEquals(0,glGetInteger(GL_UNPACK_ROW_LENGTH));
+                try(BackendTexture backend=BackendTexture.makeGL(16,16,false,
+                        new GLTextureInfo(GL_TEXTURE_2D,icon.colorTexture(),GL_RGBA8))) {
+                    return Image.borrowTextureFrom(context,backend,SurfaceOrigin.BOTTOM_LEFT,
+                            ColorType.RGBA_8888,ColorAlphaType.PREMUL,null,() -> {});
+                }
+            });
+            // Checked before any readback helper, which binds its own PACK PBO.
+            assertEquals(pack,glGetInteger(GL_PIXEL_PACK_BUFFER_BINDING));
+            assertEquals(unpack,glGetInteger(GL_PIXEL_UNPACK_BUFFER_BINDING));
+            assertEquals(37,glGetInteger(GL_UNPACK_ROW_LENGTH));
+            assertEquals(5,glGetInteger(GL_UNPACK_SKIP_ROWS));
+            assertEquals(8,glGetInteger(GL_UNPACK_ALIGNMENT));
+            try(imported) {
+                bridge.draw(target,c -> c.drawImageRect(imported,Rect.makeXYWH(0,0,16,16)));
+                assertArrayEquals(new int[]{255,0,0,255},pixel(target,8,8));
+            }
+            bridge.draw(target,c -> c.clear(0xff00ff00));
+            assertArrayEquals(new int[]{0,255,0,255},pixel(target,6,6));
+        }
+        assertEquals(GL_NO_ERROR,glGetError());
+    }
+
+    @Test void aFailedBorrowImportExpiresAndRestoresTheHostPixelState() {
+        FramebufferTarget target=framebuffer(16,16);
+        int unpack=buffer();
+        try(RuntimeHandle runtime=AtomLibRuntime.open("gl-host-import-failure");SkijaRenderBridge bridge=new SkijaRenderBridge(runtime)) {
+            bridge.prepare(target);
+            glBindBuffer(GL_PIXEL_UNPACK_BUFFER,unpack);glBufferData(GL_PIXEL_UNPACK_BUFFER,4096,GL_STREAM_DRAW);
+            glPixelStorei(GL_UNPACK_ALIGNMENT,8);
+            assertThrows(IllegalStateException.class,() -> bridge.withContext(context -> {
+                assertEquals(1,glGetInteger(GL_UNPACK_ALIGNMENT),"the borrow normalizes UNPACK alignment");
+                throw new IllegalStateException("import failed");
+            }));
+            assertEquals(unpack,glGetInteger(GL_PIXEL_UNPACK_BUFFER_BINDING));
+            assertEquals(8,glGetInteger(GL_UNPACK_ALIGNMENT));
+            bridge.draw(target,c -> c.clear(0xff0000ff));
+            assertArrayEquals(new int[]{0,0,255,255},pixel(target,4,4));
+        }
         assertEquals(GL_NO_ERROR,glGetError());
     }
 

@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.atom.lib.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "MinecraftClientShutdownMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -41,6 +41,22 @@ public final class MinecraftRenderBridge implements AutoCloseable {
     }
     public void vanillaPass(Runnable painter) { RenderSystem.assertOnRenderThread();bridge.vanillaPass(painter); }
     public void invalidate() { RenderSystem.assertOnRenderThread();bridge.invalidate(); }
+    /**
+     * Client shutdown: release a bridge that was actually created. Never makes
+     * one, so a session that never drew does not pay for native setup at exit.
+     * Must run on the render thread while the GL context is still current.
+     */
+    public static void releaseIfOpen() {
+        RenderSystem.assertOnRenderThread();
+        MinecraftRenderBridge current=instance;
+        if(current==null) return;
+        try { current.close(); }
+        catch(RuntimeException|Error failure) {
+            instance=null;
+            System.getLogger("atomlib.render").log(System.Logger.Level.WARNING,
+                    "AtomLib render bridge failed to close during client shutdown",failure);
+        }
+    }
     @Override public void close() {
         RenderSystem.assertOnRenderThread();bridge.close();runtime.close();if(instance==this) instance=null;
     }

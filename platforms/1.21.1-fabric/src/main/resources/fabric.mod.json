@@ -5,6 +5,9 @@
   "name": "AtomLib",
   "license": "Apache-2.0",
   "environment": "*",
+  "mixins": [
+    "atomlib.mixins.json"
+  ],
   "entrypoints": {
     "client": [
       "com.atom.lib.platform.fabric.AtomLibClient"
