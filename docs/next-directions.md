@@ -103,6 +103,12 @@ any new API surface (C) is built. D is a packaging step once the artifact is
 stable; its Maven host choice (leaning Modrinth Maven for anonymous reads)
 can wait until then. E stays deferred until a second consumer exists.
 
+Status (2026-10-31): A, F, B and C are implemented. The current release is
+`v0.1.0-beta-beta3`, and AtomChat consumes it (fonts swapped to the
+Lib-side default package, `versions/atomlib.json` re-pinned). E stays
+deferred. D (publishing beyond GitHub; Maven host) remains undecided.
+
+
 ## F. Default font package  (implemented 2026-10-31)
 
 AtomLib does not bundle fonts; the host does. AtomChat gets good text because
