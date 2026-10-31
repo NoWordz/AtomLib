@@ -121,6 +121,23 @@ world snapshot 的业务失效、持有时长、切换世界释放仍由 AC adap
 
 `ItemIconRenderer.prepare` 不再取出 context：原版物品绘制放在 `vanillaPass` 内的 `drawOffscreen`（宿主 FBO + 原始 GL），Skija texture 导入放在紧随其后的 `bridge.withContext(context -> ...)` 里，提交/关闭缓存在前一个同类型租借内完成。`SkiaGraphics.requireContext()` 已删除，改为唯一入口 `SkiaGraphics.withContext(Function)`，句柄不出回调。
 
+## pixels-per-unit 契约（2026-10-31 追加，行为实测）
+
+`YogaLayoutEngine` 把 `Viewport.pixelsPerUnit` 原样映射到 `YGConfigSetPointScaleFactor`，每次 `layout()` 前设置。Yoga 的 point scale factor 会把**每个节点的布局结果吸附到 1/pointScaleFactor 的网格上**（Yoga 按 `floor(v*scale+0.5)/scale` 取整）。实测（`platforms/shared/src/test/java/com/atom/lib/layout/YogaRescaleHiddenGlTest.java`，三平台 hiddenGlTest）：
+
+- `pixelsPerUnit=1` 时，100.4u 的根节点结果为 100u，50.5u 的子节点为 51u——小数布局在 1u 网格上必然漂移，最大半格。
+- `pixelsPerUnit=16` 时同样两个值分别输出 100.375u 与 50.5u——1/16 网格保留了 AtomChat 纯 float 布局的实际取值（复刻夹具的 tile 几何在 16 档逐值相等）。
+- Yoga 对纯容器树会复用旧 scale 的缓存结果：换 `pixelsPerUnit` 重排必须整树标脏（`YGNodeMarkDirty` 只接受带 measure 回调的叶子，树级入口 `YGNodeMarkDirtyAndPropagateToDescendants` 在 LWJGL 3.3.1/3.3.3 拼写不同，适配器按目标生成桥接，见 `ui/build.gradle` 的 `generateYogaDirty`）。该往返已被回归覆盖，宿主在同一 engine 上逐帧改 `pixelsPerUnit` 是受支持路径。
+- pointScaleFactor=0（Yoga 语义上"关闭取整"）经本适配器**不可达**：`Viewport` 构造校验 `pixelsPerUnit > 0`（`core/src/main/java/com/atom/lib/geometry/Viewport.java`）。即 AtomLib 的 Yoga 布局永远有网格吸附，没有"纯 float"档位。
+
+宿主义务：
+
+1. **永远传真实物理像素比**（MC：framebuffer 像素宽 / GUI scale），不要图省事传 1。传 1 意味着接受整格吸附；要精确小数布局就传大 scale（如 16，代价只是 Yoga 取整计算，不改变测量回调次数语义——标脏后仍会重测）。
+2. 一帧内保持 `pixelsPerUnit` 稳定；密度变化只允许发生在两次 `layout()` 之间。
+3. 坐标系不变：viewport 与 measure 回调都以"unit"为单位，pixelsPerUnit 只影响 Yoga 输出吸附到哪一档网格，不做单位换算。
+
+背景：AtomChat 自身布局是纯 float、从不吸附，1u 网格下复刻 settings 首页 tile 偏差最大 1.25u（`docs/evidence/settings-home-replication/report.md` 第 1 条）。这是取整策略分歧，不是表达力缺口。
+
 ## 实际验证
 
 2026-10-30 最后完整运行：

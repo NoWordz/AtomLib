@@ -127,3 +127,45 @@ is three concrete fixes, not another extraction round.
   classpath change (`testRuntimeOnly 'org.lwjgl:lwjgl-yoga:3.3.3'` in the
   fabric platform, needed because the AtomLib input nests its Yoga binding
   behind jarJar where the test classpath never unpacks it).
+
+## Post-fix run (2026-10-31, direction-B fixes 1-3)
+
+The three fixes landed on `codex/atomlib-extraction` (same 0.1.0-beta input,
+rebuilt from the fixed branch, published locally and fed to the fixture via
+`-PatomlibMavenRepo`):
+
+1. Yoga binding per target — `ui/build.gradle` compiles `:ui` against the
+   target's locked yoga version and generates the
+   `YGNodeMarkDirtyAndPropagate/PropogateToDescendants` spelling the probe
+   finds in that binding (`generateYogaDirty`); relayouting a live engine at a
+   new `pixelsPerUnit` is regression-covered by
+   `platforms/shared/src/test/java/com/atom/lib/layout/YogaRescaleHiddenGlTest.java`
+   on all three targets.
+2. Subpixel shaping — `FontRegistry.openFont` sets `Font.setSubpixel(true)`
+   (`runtime/src/main/java/com/atom/lib/font/FontRegistry.java`), asserted by
+   `TextLayoutTest.shapedLineWidthMatchesMeasuredWidthOnCjkText`.
+3. pixels-per-unit contract — documented in `docs/render-bridge.md`
+   (behavior measured, not assumed); no code change by design.
+
+Raw data: `post-fix/results.json` (21 checks, 4 failed) plus both PNGs.
+
+### Comparison against the B-period run
+
+| Check | Before | After |
+|---|---|---|
+| textMetrics.subpixelProbe | `Font.isSubpixel=false`, measure 37.5 vs shapeLine 38.0 | `Font.isSubpixel=true`, both 37.5 |
+| titleWidth.appearance | ac 37.5 vs lib 38.0, delta 0.500 — pass (at tolerance edge) | delta 0.000 — pass |
+| titleWidth.chat | ac 93.75 vs lib 95.0, delta 1.250 — FAIL | delta 0.000 — pass |
+| titleWidth.privacy | FAIL (delta 1.250) | delta 0.000 — pass |
+| titleWidth.about | FAIL (delta 0.500) | delta 0.000 — pass |
+| Line widths overall | 2/4 fail | **4/4 pass** |
+| yoga.pixelDensityChangeOnLiveEngine | threw `NoSuchMethodError` (recorded as failed) | "no error" (check now computes its outcome; passes) |
+| tileGeometry (4 checks) | fail at the 1u grid (off up to 1.25u) | unchanged — fail by documented contract; the 1/16u column matches AC exactly in every detail |
+| pixelSmoke.nonText | 0.76% | 0.76% (same limit) |
+
+Summary: 7 failed -> **4 failed**, and the remaining four are exactly the
+documented 1-unit rounding grid disagreement from fix 3. A host passing the
+real physical pixels-per-unit (or any fine grid such as 16) reproduces
+AtomChat's float layout value-for-value; 0 remaining failures would require
+either that contract being honored or a rounding-mode switch, which is an API
+decision, not an extraction gap.
