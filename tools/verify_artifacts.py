@@ -125,8 +125,6 @@ def verify_artifact(path, *, loader, version='0.1.0-local', skija='0.143.18', ty
                     classes[name] = here
                     if name.startswith(('com/atom/chat/', 'com/atomchat/')):
                         error(f'AC class: {here}')
-                    if name.startswith('com/atom/lib/devtools/'):
-                        error(f'devtools in player jar: {here}')
                     if name.endswith('/AtomLibMod.class') and any(s in data for s in (b'net/minecraft/client/', b'io/github/humbleui/', b'org/lwjgl/', b'AtomLibRuntime')):
                         error(f'unsafe common entrypoint signature or native initialization: {here}')
                     if name.startswith('org/lwjgl/') and not name.startswith('org/lwjgl/util/yoga/'):

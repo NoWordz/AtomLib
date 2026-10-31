@@ -1,5 +1,7 @@
 # UI view 生产链独立审查
 
+> 历史记录（2026-10-31 注）：本文审查的 `UiView`、component、overlay、scroll、interaction 与 shell 代码已在后续提取中整体删除。保留本文仅作当时的缺陷、修复与验证记录，不代表当前 AtomLib 仍包含这些能力。
+
 日期：2026-10-29。审查者：Codex。结论：**确认 7 项 P2 正确性问题，均有当前生产类的限域复现；本轮没有修改实现或测试源码。** 优先处理手势终止／异常与 close 清理，再处理 hidden、焦点 reveal 和 overlay 状态一致性。
 
 ## 范围与证据

@@ -12,7 +12,7 @@
 
 - 三端统一版本 `0.1.0-local`；平台元组在 `versions/targets.json`，Skija/types 版本读取主代理维护的 `versions/dependencies.properties`。
 - 本地坐标为 `com.atom.lib:atomlib-<目标>:0.1.0-local`，发布目录为 `D:/AtomLib/build/test-maven`。没有配置外部仓库发布、商店发布或部署。
-- 三个工程分别复用 core/runtime/ui 的源码工程，公共字节码 Java 17。输出隔离到各平台 `build/modules/<模块>`。玩家 jar 只合入 core/runtime/ui；devtools 已移出依赖、settings 及合包输入。
+- 三个工程分别复用 core/runtime/ui 的源码工程，公共字节码 Java 17。输出隔离到各平台 `build/modules/<模块>`。玩家 jar 只合入 core/runtime/ui。被删除的组件层与 devtools 不再进入依赖或合包输入。
 - 两个示例位于 `examples/a`、`examples/b`，各有三个独立 settings/wrapper 工程。只声明对应 AtomLib 平台坐标；共享的示例源码只在各自 example 目录。没有 includeBuild、源码 project 依赖、mavenLocal 或 AC 源码引用。
 - Wrapper 从 AC 对应工程复制，保留脚本许可头，每个副本附 `gradle/WRAPPER-NOTICE.txt`，声明上游 Gradle Apache-2.0 来源。
 
@@ -30,7 +30,7 @@
 6. 同版本 lwjgl-yoga 的 natives-windows。
 7. 同版本 lwjgl-yoga 的 natives-windows-arm64。
 
-不带字体、AC 类、devtools 类或 lwjgl-core。MC 自带的 lwjgl-core 保持原版本。平台 Maven 的 compile API 导出 shared/types/Yoga Java 包；四份 native 以 runtime 依赖导出，保证消费者开发类路径可用。排除外部依赖的隐式传递，避免带入 lwjgl-core。
+不带字体、AC 类或 lwjgl-core；组件层与 devtools 已删除，不在发行内容中。MC 自带的 lwjgl-core 保持原版本。平台 Maven 的 compile API 导出 shared/types/Yoga Java 包；四份 native 以 runtime 依赖导出，保证消费者开发类路径可用。排除外部依赖的隐式传递，避免带入 lwjgl-core。
 
 Forge/NF 使用 JarJar，Fabric 使用 Loom include。Forge 的 ContainedJarIdentifier 只有 group/artifact，不能区分 Yoga classifier：最终 metadata 为两个 classifier 增加独立 artifact 选择身份，并保留版本与正确路径。
 
@@ -38,7 +38,7 @@ Yoga 两个 Windows native 原包的 JPMS 名均为 `org.lwjgl.yoga.natives`。F
 
 实际 native 路径：Skija 为 `io/github/humbleui/skija/windows/{x64,arm64}/skija.dll`；Yoga 为 `windows/{x64,arm64}/org/lwjgl/yoga/lwjgl_yoga.dll`。PE Machine 分别校验 0x8664、0xAA64。
 
-MavenPublication 和 java component 的 apiElements/runtimeElements 必须共同导出 distributionJar。仅 setArtifacts 会导致 GenerateModuleMetadata 报组件原产物被移除。不要退回 slim jar 或关闭 Gradle metadata 来绕过组件产物一致性检查。
+MavenPublication 与 Gradle 的 apiElements/runtimeElements 必须共同导出 distributionJar。仅 setArtifacts 会导致 GenerateModuleMetadata 报原产物被移除。不要退回 slim jar 或关闭 Gradle metadata 来绕过产物一致性检查。
 
 ## 本地验证入口
 

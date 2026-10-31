@@ -145,9 +145,6 @@ class ArtifactTests(unittest.TestCase):
     def test_lwjgl_core_rejected(self):
         self.reject(mutate_nested(fixture(),'lwjgl-yoga-3.3.1.jar',lambda es:es+[('org/lwjgl/system/MemoryUtil.class',clazz())]),'LWJGL core')
 
-    def test_devtools_not_shipped_to_players(self):
-        self.reject(fixture()+[('com/atom/lib/devtools/LayoutInspector.class',clazz())], 'devtools')
-
     def test_common_entrypoint_cannot_trigger_native(self):
         es=[(n,d+b'com/atom/lib/AtomLibRuntime' if n.endswith('/AtomLibMod.class') else d) for n,d in fixture()]
         self.reject(es,'entrypoint')

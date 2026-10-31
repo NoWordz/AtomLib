@@ -13,8 +13,8 @@ permissions:
 
 jobs:
   # Only the pure-Java contract module and the Python verifiers are
-  # platform-neutral. ui/devtools hardcode Windows Yoga + Skija natives (the
-  # shipped platform set), so their tests live in the Windows job below.
+  # platform-neutral. ui hardcodes Windows Yoga + Skija natives (the shipped
+  # platform set), so its tests live in the Windows job below.
   source:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -34,10 +34,10 @@ jobs:
           python3 tools/verify_ui_examples.py
 
   source-native:
-    # ui/devtools testRuntimeOnly pins natives-windows and skija-windows-x64;
-    # runtime selects the native by host OS. A Linux runner therefore cannot
-    # load the Yoga/Skija natives at all, so the full source suite runs on the
-    # Windows host the library is actually validated on.
+    # ui testRuntimeOnly pins natives-windows and skija-windows-x64; runtime
+    # selects the native by host OS. A Linux runner therefore cannot load the
+    # Yoga/Skija natives at all, so the full source suite runs on the Windows
+    # host the library is actually validated on.
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
@@ -50,7 +50,7 @@ jobs:
         run: |
           $testFont='C:\Windows\Fonts\msyh.ttc'
           if (-not (Test-Path $testFont)) { $testFont='C:\Windows\Fonts\arial.ttf' }
-          .\gradlew.bat :runtime:test :ui:test :devtools:test "-PatomlibTestFont=$testFont" --no-daemon --console=plain
+          .\gradlew.bat :runtime:test :ui:test "-PatomlibTestFont=$testFont" --no-daemon --console=plain
 
   hidden-gl:
     runs-on: windows-latest

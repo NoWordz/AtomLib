@@ -2,6 +2,8 @@
 
 AtomLib version `0.1.0-local`; Java common bytecode 17. No release was made.
 
+> 历史记录（2026-10-31 注）：本文统计包含当时仍存在的 `ui` 组件/浮层/壳层测试和 `devtools`。这些模块与测试已在后续提取中删除；本文数字仅作为删除前的证据保留，不代表当前发行内容或测试数量。
+
 此为 Hubble 实施阶段证据。主代理随后发现未解决问题，当前状态以 `docs/STATUS.md` 和 AC 的 `docs/verification/2026-10-30-atomlib-checkpoint.md` 为准；不构成最终验收通过。
 
 - Root standard suites: 116 tests passed (`core` 9, `runtime` 23, `ui` 82,

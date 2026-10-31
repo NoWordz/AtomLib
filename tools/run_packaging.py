@@ -54,6 +54,25 @@ def run(project,key,tasks,logname,font=None):
     return True
 
 
+def clear_loom_cache(project):
+    """Loom keys remapped mods by coordinate, so a republished same-version
+    AtomLib stays stale until the cached jars are gone."""
+    for root in (project / '.gradle/loom-cache', project / 'build/loom-cache'):
+        if not root.is_dir():
+            continue
+        for path in root.rglob('atomlib*.jar'):
+            try:
+                path.unlink()
+            except OSError:
+                pass
+
+
+def consumer(pair):
+    project = ROOT / 'examples' / pair[0] / pair[1]
+    clear_loom_cache(project)
+    return run(project, pair[1], ['verifyConsumer'], 'consumer.log')
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('stage',choices=['all','platforms','consumers','verify'])
@@ -75,7 +94,7 @@ def main():
     if args.stage in ['all','consumers']:
         work=[(letter,key) for letter in ['a','b'] for key in keys]
         with ThreadPoolExecutor(max_workers=args.jobs) as pool:
-            results=list(pool.map(lambda pair:run(ROOT/'examples'/pair[0]/pair[1],pair[1],['verifyConsumer'],'consumer.log'),work))
+            results=list(pool.map(consumer,work))
         if not all(results): return 1
     return 0
 

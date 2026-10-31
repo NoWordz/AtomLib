@@ -1,25 +1,31 @@
 # AI authoring guide
 
-Build ordinary pages from `Section`, `SettingRow`, `Label`, `Button`, `Slider`,
-`Toggle`, `TextField`, `VirtualList`, overlays and other public components.
-Describe data, actions and hierarchy; Yoga calculates sibling positions.
+AtomLib is a rendering bridge, a Yoga layout engine and an optional design
+package. There is no `Section`, `SettingRow`, `AppShell` or other widget layer
+to build pages from. A host describes its own tree with `LayoutTree`,
+`LayoutNode` and `LayoutStyle`, lets `YogaLayoutEngine` calculate it, and paints
+with Skija.
 
-Use semantic `ThemeSnapshot` values (`palette`, `spacing`, `radius`, `type`,
-`motion`) instead of literal colours or page-level coordinate arithmetic. A
-new appearance variant belongs in a production component or the component
-gallery first. Use `CustomPainter` or a raw Skija callback only when the visual
-cannot be represented by a component, and document the reason in the host code.
+When matching AtomChat, use `com.atom.lib.design.atomchat`: `UiTokens` for
+sizes, radii, shadows and colour derivation; `SkiaDraw` for rounded rectangles,
+highlights, images and blur; `UiCards` for card surfaces. When you need a
+different look, draw directly with a `Canvas` and keep the geometry in your own
+code.
 
+Use token values instead of literal colours or repeated page-level arithmetic.
 Do not hard-code a development font path into a distributable sample. Pass the
 host font explicitly and keep font bytes outside AtomLib. Do not make global
-static theme, view, focus, capture or animation state; each host and `UiView`
-owns its own lifecycle and clock.
+static theme, layout, capture or animation state; each host owns its lifecycle
+and clock.
 
 Host business state, persistence, networking, chat drafts, identity images and
-IME composition remain outside the library. Keep layout, paint, hit testing and
-scroll on the same `PresentationFrame`, and use stable `NodeId` values for
+IME composition remain outside the library. Keep layout, paint and hit testing
+on the same `PresentationFrame`, and use stable `NodeId` values for
 reconciliation.
 
-`tools/verify_ui_examples.py` guards the three example paths and rejects raw
-geometry/colour injection in semantic page examples. It is a supplemental
-check; production render tests and user visual acceptance remain necessary.
+`tools/verify_ui_examples.py` guards the two example paths: example A must use
+`UiTokens`, `SkiaDraw` and `UiCards`; example B must use Yoga and a native
+Skija `Canvas`; no example may import a removed component/overlay/shell layer.
+It also keeps fixture checks that reject development-machine paths and raw
+ARGB/geometry injection in pages. It is a supplemental check; production
+render tests and user visual acceptance remain necessary.

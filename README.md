@@ -1,9 +1,10 @@
 # AtomLib
 
 AtomLib is an independent Minecraft UI foundation built on Skija and Yoga. It
-provides a single render bridge, host-owned font loading, unified layout/hit
-geometry, components, overlays, scrolling, HUD/crop interaction, an optional
-shell and local development previews.
+provides a single render bridge, host-owned font loading, a Yoga layout engine
+and an optional AtomChat design package. Hosts own their page structure, screen
+lifecycle and business state. The earlier generic component, overlay, scroll,
+interaction, view-host and shell layer has been removed.
 
 The project is currently `0.1.0-local`. It is not published to Maven or a mod
 store. AtomLib-authored code is Apache-2.0; allowlisted AtomChat adaptations
@@ -22,6 +23,15 @@ Skija, HumbleUI types, the matching Yoga Java API and Windows x64/ARM64 native
 packages. Minecraft's own LWJGL, fonts and business state stay with the host.
 Linux and macOS clients are outside the first release's native support scope.
 
+## Modules
+
+| Module | Contents |
+|---|---|
+| `core` | geometry, layout tree/snapshot contracts, input records and dispatch, frame clock and springs |
+| `runtime` | Skija native/runtime scopes, host fonts and text, images, CPU render sessions, backdrop blur |
+| `ui` | the Yoga layout engine, presentation frames and the optional `com.atom.lib.design.atomchat` package |
+| `platforms` | per-loader Minecraft render bridges and distribution JARs |
+
 ## Install
 
 Install the matching AtomLib platform JAR in `mods/` alongside the mod that
@@ -32,7 +42,7 @@ native runtime.
 
 Fonts are host resources. AtomLib never bundles a TTF/OTF/TTC/WOFF file. The
 host registers bytes with `FontRegistry` and passes the selected body `FontId`
-through `HostContext`.
+to `TextService` and the host's own layout code.
 
 ## Build
 
@@ -40,7 +50,7 @@ Use the JDK documented in the table above. On Windows:
 
 ```powershell
 $env:JAVA_HOME='C:/Program Files/Java/jdk-17.0.18'
-.\gradlew.bat :core:test :runtime:test :ui:test :devtools:test --no-daemon
+.\gradlew.bat :core:test :runtime:test :ui:test --no-daemon
 python tools/run_packaging.py all --jobs 1
 ```
 
@@ -51,9 +61,17 @@ See [getting-started.md](docs/getting-started.md), [api-contracts.md](docs/api-c
 [ai-guide.md](docs/ai-guide.md), and `docs/STATUS.md` for the implemented scope
 and known limits.
 
+## Examples
+
+`examples/a` shows the optional design package: `UiTokens`, `SkiaDraw` and
+`UiCards` compose AtomChat's card surface without a widget framework.
+`examples/b` shows the minimal path: build a layout tree, run it through Yoga
+and paint the resulting geometry with a native Skija `Canvas`.
+
 ## Optional design package
 
 `com.atom.lib.design.atomchat` carries AtomChat's own look — tokens, drawing
 primitives, card surfaces and icon paths — for mods that want to match it.
 It is a separate import, not a requirement: the render bridge and Yoga layout
-work without it. See [design-package.md](docs/design-package.md).
+work without it. These are drawing helpers and tokens, not widgets. See
+[design-package.md](docs/design-package.md).
