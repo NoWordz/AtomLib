@@ -59,6 +59,8 @@ def fixture(loader='forge', version='0.1.0-beta', yoga='3.3.1'):
             records.append({'identifier':{'group':group, 'artifact':artifact}, 'version':{'range':f'[{v}]','artifactVersion':v}, 'path':prefix+n})
         entries += [('META-INF/jarjar/metadata.json', json.dumps({'jars':records})), ('META-INF/neoforge.mods.toml' if loader=='neoforge' else 'META-INF/mods.toml', f'modLoader="javafml"\n[[mods]]\nmodId="atomlib"\nversion="{version}"\n')]
     entries.append(('com/atom/lib/platform/AtomLibMod.class', clazz()))
+    entries.append(('com/atom/lib/fonts/bundled-default.otf', b'\x00\x01\x00\x00subsetted Noto Sans SC'))
+    entries.append(('com/atom/lib/fonts/bundled-default-bold.otf', b'OTTOsubsetted Noto Sans SC bold'))
     return entries
 
 
@@ -132,6 +134,15 @@ class ArtifactTests(unittest.TestCase):
     def test_font_magic_under_false_extension(self):
         for magic in [b'\0\1\0\0',b'OTTO',b'ttcf',b'wOFF',b'wOF2']:
             with self.subTest(magic=magic): self.reject(fixture()+[('assets/hidden.bin',magic+b'123456')],'font')
+
+    def test_shipped_default_font_with_wrong_magic(self):
+        for path,magic in [('com/atom/lib/fonts/bundled-default.otf',b'ttcf'),('com/atom/lib/fonts/bundled-default-bold.otf',b'wOFF')]:
+            with self.subTest(path=path):
+                entries=[(n,magic+b'x' if n==path else d) for n,d in fixture()]
+                self.reject(entries,'font')
+
+    def test_shipped_default_font_outside_dist_top_level(self):
+        self.reject(mutate_nested(fixture(),'types-0.2.0.jar',lambda es:es+[('com/atom/lib/fonts/bundled-default.otf',b'OTTOcopy')]),'font')
 
     def test_ac_class_inside_nested_jar(self):
         self.reject(mutate_nested(fixture(),'types-0.2.0.jar',lambda es:es+[('com/atom/chat/Chat.class',clazz())]),'AC class')

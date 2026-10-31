@@ -12,6 +12,14 @@ import zipfile
 
 FONT_MAGIC = (b'\x00\x01\x00\x00', b'OTTO', b'ttcf', b'wOFF', b'wOF2', b'true', b'typ1')
 FONT_EXT = {'.ttf', '.otf', '.ttc', '.woff', '.woff2', '.eot', '.pfb', '.pfa'}
+# Direction F ships a subsetted Noto Sans SC as the default font package.
+# Exactly these classpath entries are allowed at the top level of the dist
+# jar, each pinned to its real sfnt magic; anything else font-like (any
+# depth) stays a distribution error.
+SHIPPED_FONTS = {
+    'com/atom/lib/fonts/bundled-default.otf': b'\x00\x01\x00\x00',
+    'com/atom/lib/fonts/bundled-default-bold.otf': b'OTTO',
+}
 
 
 def module_name(data):
@@ -110,7 +118,8 @@ def verify_artifact(path, *, loader, version='0.1.0-beta', skija='0.143.18', typ
                 data = z.read(info)
                 here = f'{location}!{name}'
                 if Path(name).suffix.lower() in FONT_EXT or data.startswith(FONT_MAGIC):
-                    error(f'font found: {here}')
+                    if not (depth == 0 and data.startswith(SHIPPED_FONTS.get(name, b'\0' * 5))):
+                        error(f'font found: {here}')
                 if name.endswith('.jar'):
                     if depth == 0:
                         nested[name] = data
