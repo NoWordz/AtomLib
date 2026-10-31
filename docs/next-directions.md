@@ -111,7 +111,7 @@ gets tofu for all CJK. Decide the library's font story once:
   byte-identical, which also keeps B's pixel baseline honest.
 - Cost: half a day. Risk: low.
 
-## G. LayoutStyle API expansion  (decided during B follow-up)
+## G. LayoutStyle API expansion  (decided during B follow-up; implemented 2026-10-31)
 
 The settings-home replication (see `evidence/settings-home-replication/`)
 showed square tiles had to be assembled from measure callbacks and spacer

@@ -91,7 +91,14 @@ public final class YogaLayoutEngine implements LayoutEngine {
         for(var node:tree.nodes()){
             var entry=entries.get(node.id());entry.setMeasure(node);
             if(!node.style().equals(entry.style)){applyStyle(entry.pointer,node.style());entry.style=node.style();}
-            YGNodeStyleSetMargin(entry.pointer,YGEdgeRight,0);YGNodeStyleSetMargin(entry.pointer,YGEdgeBottom,0);
+            // Re-apply the style's own margins every frame: the gap pass below
+            // overwrites the trailing edges with margin+gap, and a node that
+            // became the root must not keep a stale gap-only margin.
+            var margin=node.style().margin();
+            YGNodeStyleSetMargin(entry.pointer,YGEdgeTop,margin.top());
+            YGNodeStyleSetMargin(entry.pointer,YGEdgeBottom,margin.bottom());
+            YGNodeStyleSetMargin(entry.pointer,YGEdgeLeft,margin.left());
+            YGNodeStyleSetMargin(entry.pointer,YGEdgeRight,margin.right());
         }
         for(var node:tree.nodes()){
             var entry=entries.get(node.id());var children=node.children().stream().map(LayoutNode::id).toList();
@@ -100,8 +107,9 @@ public final class YogaLayoutEngine implements LayoutEngine {
             for(var child:node.children()){
                 float gap=visible.isEmpty()||visible.get(visible.size()-1).id().equals(child.id())?0:node.style().gap();
                 long p=entries.get(child.id()).pointer;
-                YGNodeStyleSetMargin(p,YGEdgeRight,node.style().direction()==LayoutStyle.Direction.ROW?gap:0);
-                YGNodeStyleSetMargin(p,YGEdgeBottom,node.style().direction()==LayoutStyle.Direction.COLUMN?gap:0);
+                var childMargin=child.style().margin();
+                YGNodeStyleSetMargin(p,YGEdgeRight,childMargin.right()+(node.style().direction()==LayoutStyle.Direction.ROW?gap:0));
+                YGNodeStyleSetMargin(p,YGEdgeBottom,childMargin.bottom()+(node.style().direction()==LayoutStyle.Direction.COLUMN?gap:0));
             }
         }
         YGConfigSetPointScaleFactor(config,nextViewport.pixelsPerUnit());
@@ -131,7 +139,9 @@ public final class YogaLayoutEngine implements LayoutEngine {
         long p=entries.get(node.id()).pointer;
         var border=new Rect(px+YGNodeLayoutGetLeft(p),py+YGNodeLayoutGetTop(p),Math.max(0,YGNodeLayoutGetWidth(p)),Math.max(0,YGNodeLayoutGetHeight(p)));
         var clip=node.style().clip()?inheritedClip.intersect(border):inheritedClip;
-        var content=border.inset(node.style().padding());
+        var pad=node.style().padding();
+        var content=new Rect(border.x()+pad.left(),border.y()+pad.top(),
+                Math.max(0,border.width()-pad.left()-pad.right()),Math.max(0,border.height()-pad.top()-pad.bottom()));
         boxes.put(node.id(),new LayoutBox(border,content,border,clip,parent,scrollOwner));order.add(node.id());
         var nextScroll=node.style().scroll()?node.id():scrollOwner;
         for(var child:node.children())collect(child,node.id(),nextScroll,border.x(),border.y(),clip,boxes,order);
@@ -148,7 +158,19 @@ public final class YogaLayoutEngine implements LayoutEngine {
         YGNodeStyleSetMaxWidth(p,Float.isInfinite(s.maxWidth())?Float.NaN:s.maxWidth());YGNodeStyleSetMaxHeight(p,Float.isInfinite(s.maxHeight())?Float.NaN:s.maxHeight());
         YGNodeStyleSetFlexGrow(p,s.grow());YGNodeStyleSetFlexShrink(p,s.shrink());
         switch(s.basis().unit()){case AUTO->YGNodeStyleSetFlexBasisAuto(p);case POINTS->YGNodeStyleSetFlexBasis(p,s.basis().value());case PERCENT->YGNodeStyleSetFlexBasisPercent(p,s.basis().value());}
-        YGNodeStyleSetPadding(p,YGEdgeAll,s.padding());YGNodeStyleSetFlexWrap(p,s.wrap()?YGWrapWrap:YGWrapNoWrap);YGNodeStyleSetDisplay(p,s.hidden()?YGDisplayNone:YGDisplayFlex);
+        YGNodeStyleSetPadding(p,YGEdgeTop,s.padding().top());
+        YGNodeStyleSetPadding(p,YGEdgeBottom,s.padding().bottom());
+        YGNodeStyleSetPadding(p,YGEdgeLeft,s.padding().left());
+        YGNodeStyleSetPadding(p,YGEdgeRight,s.padding().right());
+        YGNodeStyleSetFlexWrap(p,s.wrap()?YGWrapWrap:YGWrapNoWrap);YGNodeStyleSetDisplay(p,s.hidden()?YGDisplayNone:YGDisplayFlex);
+        YGNodeStyleSetAspectRatio(p,s.aspectRatio()>0?s.aspectRatio():YGUndefined);
+        YGNodeStyleSetAlignItems(p,switch(s.align()){
+            case FLEX_START->YGAlignFlexStart;case CENTER->YGAlignCenter;case FLEX_END->YGAlignFlexEnd;case STRETCH->YGAlignStretch;
+        });
+        YGNodeStyleSetJustifyContent(p,switch(s.justify()){
+            case FLEX_START->YGJustifyFlexStart;case CENTER->YGJustifyCenter;case FLEX_END->YGJustifyFlexEnd;
+            case SPACE_BETWEEN->YGJustifySpaceBetween;case SPACE_AROUND->YGJustifySpaceAround;
+        });
     }
     private static void setLength(long p,Length value,boolean width){
         switch(value.unit()){

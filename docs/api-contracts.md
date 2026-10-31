@@ -17,6 +17,19 @@ consume the same `LayoutSnapshot`/`PresentationFrame`. Identical node IDs in
 separate engines do not share state. A closed engine rejects further layout
 work, and close is idempotent on the owning thread.
 
+`LayoutStyle` stays a single flat record with wither methods and the
+`column()`/`row()` factories. Per-edge spacing uses the `Edges` record
+(top/right/bottom/left, finite values, negatives legal): `margin(Edges)`
+accepts negative edges (Yoga allows them) and stacks with the container's
+`gap`; `padding` is an `Edges` field with the old uniform `padding(float)`
+and `spacing(float,float)` kept as sugar. `aspectRatio(float)` follows Yoga's
+width/height ratio when exactly one dimension is definite; 0 disables it.
+Cross-axis and main-axis alignment map onto Yoga's `alignItems` and
+`justifyContent`: `Align` defaults to STRETCH and `Justify` to FLEX_START,
+both matching Yoga's own defaults (pinned by measured-coordinate tests).
+Absolute positioning and relative offsets remain unsupported by design —
+screens needing absolute coordinates draw them in the render layer.
+
 `FontRegistry`, `TextService` and the design package's host inputs are borrowed
 from the host. The host owns those resources and closes its layout engine and
 text/font resources before the runtime. Theme changes do not replace borrowed
