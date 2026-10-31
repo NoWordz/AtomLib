@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 package com.atom.lib.client.render;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -15,13 +17,25 @@ import static org.lwjgl.opengl.GL33C.*;
 /** Each test owns its real hidden core GL context and resources. No skip path. */
 abstract class HiddenGlFixture {
     private long window;
-    private GLFWErrorCallback errors;
+    private static GLFWErrorCallback errors;
     final List<Runnable> disposers = new ArrayList<>();
 
-    @BeforeEach void openHiddenWindow() {
+    // GLFW's global init/terminate cycle races on X11 when repeated per test
+    // (intermittent glfwInit failure mid-suite), so the library initializes
+    // once per class while every test still gets its own window and context.
+    @BeforeAll static void initGlfwLibrary() {
         errors = GLFWErrorCallback.createPrint(System.err);
         errors.set();
         assertTrue(glfwInit(), "GLFW initialization failed; this test requires a graphics driver");
+    }
+
+    @AfterAll static void terminateGlfwLibrary() {
+        glfwTerminate();
+        glfwSetErrorCallback(null);
+        if (errors != null) errors.free();
+    }
+
+    @BeforeEach void openHiddenWindow() {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -42,9 +56,6 @@ abstract class HiddenGlFixture {
             glfwMakeContextCurrent(0);
             glfwDestroyWindow(window);
         }
-        glfwTerminate();
-        glfwSetErrorCallback(null);
-        if (errors != null) errors.free();
     }
 
     FramebufferTarget framebuffer(int width, int height) {
