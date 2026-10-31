@@ -1,7 +1,7 @@
 # AtomLib
 
 Skija and Yoga for Minecraft UI, by E33EPUS and NoWordz.
-Apache-2.0. Repository: https://github.com/example/atomlib (placeholder).
+Apache-2.0. Repository: https://github.com/NoWordz/AtomLib.
 
 AtomLib is an independent Minecraft UI foundation built on Skija and Yoga. It
 provides a single render bridge, host-owned font loading, a Yoga layout engine

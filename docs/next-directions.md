@@ -12,10 +12,16 @@ AtomChat repository, and AtomLib's own workflows have never run anywhere. That
 makes the library's health depend on the consumer's pipeline.
 
 - Work: create the repository, push `codex/atomlib-extraction`, let `build.yml`
-  run on a real runner, tag `0.1.0-beta`, attach the three platform jars.
+  run on a real runner, tag `0.1.0-beta`, attach the three platform jars; then
+  switch AtomChat to fetch the input from the new repository — update its
+  resolve script (`gradle/atomchat-atomlib.gradle`), its CI download step, and
+  re-pin the SHA-256 lock in `versions/atomlib.json`. During the beta, expect
+  to re-pin after every rebuild of the same version tag; keep each re-pin in
+  its own commit referencing the Lib build it came from.
 - Buys: an independent version and release trail; a place for the input archive
   so AtomChat stops hosting it.
-- Cost: half a day. Risk: low.
+- Cost: half a day to a day. Risk: low-medium; the workflows have never run on
+  a real runner, so budget for the first run failing.
 
 ## B. Prove the stack on one real screen
 
@@ -64,10 +70,11 @@ not interfere.
 
 ## Suggested order
 
-A, then C, then B, then E, then D. A is a prerequisite for everything else; C
-removes the first-hour friction; B decides whether more of AtomChat should move
-into the library; E matters as soon as two consumers exist; D is a packaging
-step once the artifact is stable.
+A, then B, then C, then E, then D. A is a prerequisite for everything else; B
+is the fork in the road — its evidence decides whether more of AtomChat moves
+into the library, and possibly forces API design changes, so it runs before
+any new API surface (C) is built. E matters as soon as two consumers exist; D
+is a packaging step once the artifact is stable.
 
 ## Explicit non-goals
 
