@@ -31,7 +31,12 @@ public final class YogaLayoutEngine implements LayoutEngine {
         void setMeasure(LayoutNode node){
             if(measure==node.measure()&&measureRevision==node.measureRevision())return;
             measure=node.measure();measureRevision=node.measureRevision();
-            if(measure==null){YGNodeSetMeasureFunc(pointer,(YGMeasureFunc)null);if(callback!=null){callback.free();callback=null;}YGNodeMarkDirtyAndPropogateToDescendants(pointer);}
+            // YGNodeSetMeasureFunc(null) does not dirty the node in Yoga itself.
+            // YGNodeMarkDirty asserts a measure func, and only a whole-subtree
+            // dirty invalidates Yoga's cached container layouts, so the renamed
+            // tree-wide entry point (spelling generated per target, see
+            // YogaDirty) stays load-bearing here.
+            if(measure==null){YGNodeSetMeasureFunc(pointer,(YGMeasureFunc)null);if(callback!=null){callback.free();callback=null;}YogaDirty.markDirtyAndPropagateToDescendants(pointer);}
             else {
                 if(callback==null){
                     callback=YGMeasureFunc.create((p,w,wm,h,hm,out)->{
@@ -100,13 +105,19 @@ public final class YogaLayoutEngine implements LayoutEngine {
             }
         }
         YGConfigSetPointScaleFactor(config,nextViewport.pixelsPerUnit());
-        if(viewport!=null&&viewport.pixelsPerUnit()!=nextViewport.pixelsPerUnit())YGNodeMarkDirtyAndPropogateToDescendants(entries.get(tree.root().id()).pointer);
+        // Yoga keeps per-node cached layouts; a new point scale factor only
+        // takes effect once the subtree is dirty again, so the tree-wide
+        // dirty must reach container nodes too (YGNodeMarkDirty cannot: it
+        // asserts a measure func). The binding spelling differs between the
+        // locked target versions — YogaDirty is generated against whichever
+        // lwjgl-yoga this build compiles with.
+        if(viewport!=null&&viewport.pixelsPerUnit()!=nextViewport.pixelsPerUnit())YogaDirty.markDirtyAndPropagateToDescendants(entries.get(tree.root().id()).pointer);
         callbackFailure=null;
         // A finite owner height makes Yoga stretch an auto root to the viewport.
         // Passing undefined here lets Yoga derive the popup height from its children.
         YGNodeCalculateLayout(entries.get(tree.root().id()).pointer,nextViewport.width(),naturalHeight?Float.NaN:nextViewport.height(),YGDirectionLTR);
         if(callbackFailure!=null){
-            for(var entry:entries.values())if(entry.measure!=null)YGNodeMarkDirty(entry.pointer);
+            markMeasureLeavesDirty();
             if(callbackFailure instanceof Error error)throw error;
             throw new IllegalStateException("Yoga leaf measurement failed",callbackFailure);
         }
@@ -124,6 +135,10 @@ public final class YogaLayoutEngine implements LayoutEngine {
         boxes.put(node.id(),new LayoutBox(border,content,border,clip,parent,scrollOwner));order.add(node.id());
         var nextScroll=node.style().scroll()?node.id():scrollOwner;
         for(var child:node.children())collect(child,node.id(),nextScroll,border.x(),border.y(),clip,boxes,order);
+    }
+    /** YGNodeMarkDirty asserts a measure func, so only leaves with one qualify. */
+    private void markMeasureLeavesDirty(){
+        for(var entry:entries.values())if(entry.measure!=null)YGNodeMarkDirty(entry.pointer);
     }
     private static Constraints.Axis axis(float value,int mode){return mode==YGMeasureModeExactly?Constraints.Axis.exactly(value):mode==YGMeasureModeAtMost?Constraints.Axis.atMost(Math.max(0,value)):Constraints.Axis.undefined();}
     private static void applyStyle(long p,LayoutStyle s){
