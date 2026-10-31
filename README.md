@@ -57,9 +57,12 @@ python tools/run_packaging.py all --jobs 1
 The local Maven repository is `build/test-maven`; the six standalone example
 consumers compile only against published platform coordinates.
 
-See [getting-started.md](docs/getting-started.md), [api-contracts.md](docs/api-contracts.md),
-[ai-guide.md](docs/ai-guide.md), and `docs/STATUS.md` for the implemented scope
-and known limits.
+See [quickstart.md](docs/quickstart.md) for the shortest path from an empty
+mod to a painted screen, [getting-started.md](docs/getting-started.md) for the
+runtime details, [api-contracts.md](docs/api-contracts.md),
+[ai-guide.md](docs/ai-guide.md), and docs/STATUS.md for the implemented scope
+and known limits. [releasing.md](docs/releasing.md) covers versions and the
+release checklist.
 
 ## Examples
 

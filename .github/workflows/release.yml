@@ -1,0 +1,43 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: Label for the draft release
+        required: false
+        default: local
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: |
+            17
+            21
+      - name: Build platform jars
+        run: python tools/run_packaging.py platforms --jobs 1
+      - name: Verify jars
+        run: python tools/run_packaging.py verify
+      - name: Build consumers
+        run: python tools/run_packaging.py consumers --jobs 1
+      - name: Collect jars
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item platforms/*/build/libs/atomlib-*.jar dist/
+          Get-ChildItem dist
+      - name: Draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $version = (Select-String -Path gradle.properties -Pattern '^atomlib_version=(.+)$').Matches[0].Groups[1].Value
+          gh release create "v$version-${{ inputs.label }}" --draft --title "AtomLib $version" --notes "Platform jars for Minecraft 1.20.1 Forge and 1.21.1 Fabric/NeoForge." dist/*
