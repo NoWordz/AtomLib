@@ -88,9 +88,11 @@ Only Skija drawing belongs in that callback. Vanilla GuiGraphics work goes
 through vanillaPass, and GL state the host needs back is restored when the
 callback exits.
 
-## 5. Route input
+## 5. Wire input
 
-InputDispatcher needs one thing from you: which node is under the pointer.
+`ScreenInputAdapter` turns screen callbacks into `InputDispatcher` calls, so
+you forward one line per callback instead of mapping events yourself. It has
+no Minecraft types and is identical on every loader.
 
 ~~~java
 HitTester hit = (x, y) -> {
@@ -99,16 +101,52 @@ HitTester hit = (x, y) -> {
     }
     return null;
 };
-InputDispatcher input = new InputDispatcher(hit);
-input.setTargets(Map.of(buttonId, myButtonTarget));
-
-// from Screen#mouseClicked / mouseReleased / mouseDragged, already GUI-scaled
-input.dispatch(new PointerEvent(PointerEvent.Type.PRESS, mouseX, mouseY, button));
+InputDispatcher dispatcher = new InputDispatcher(hit);
+dispatcher.setTargets(Map.of(buttonId, myButtonTarget));
+ScreenInputAdapter input = new ScreenInputAdapter(dispatcher)
+        .onScroll((x, y, dx, dy) -> { myScrollView.scrollBy(dx, dy); return true; });
 ~~~
 
-Minecraft gives screen callbacks coordinates in GUI-scaled space, the same
-space your viewport uses, so no extra scale conversion is needed. Work out the
-screen's pixelsPerUnit once per frame from the window size and GUI scale.
+Then forward from your Screen — one line per callback. Both mappings name the
+callbacks the same; the only version difference is the scroll signature
+(three arguments on 1.20.1, horizontal plus vertical on 1.21.1):
+
+~~~java
+// 1.20.1 Forge (Mojmap) — mouseScrolled has one delta; 1.21.1 Fabric/NeoForge
+// has mouseScrolled(double x, double y, double horizontalAmount, double verticalAmount)
+@Override public boolean mouseClicked(double x, double y, int button) {
+    return input.press(x, y, button) || super.mouseClicked(x, y, button);
+}
+@Override public boolean mouseDragged(double x, double y, int button, double dx, double dy) {
+    return input.drag(x, y, button, dx, dy) || super.mouseDragged(x, y, button, dx, dy);
+}
+@Override public boolean mouseReleased(double x, double y, int button) {
+    return super.mouseReleased(x, y, button) || input.release(x, y, button);
+}
+@Override public boolean mouseScrolled(double x, double y, double delta) { // 1.20.1
+    return input.scroll(x, y, 0, delta) || super.mouseScrolled(x, y, delta);
+}
+@Override public void removed() { // same name on Fabric (Yarn) and Forge (Mojmap)
+    input.removed(); // ends the active gesture with a cancel, never a release
+    super.removed();
+}
+~~~
+
+Notes:
+
+- Coordinates stay in Minecraft's GUI-scaled screen space, the same space
+  your viewport and hit rectangles use; no conversion is needed. If your
+  unit space differs, `input.scale(multiplier)` multiplies every coordinate
+  before the dispatcher sees it (it returns the adapter, so keep the result).
+- Scroll is not a `PointerEvent` type. The dispatcher never sees wheel
+  events; your `onScroll` handler decides, and it can consult
+  `dispatcher.captureOwner()` if it wants to respect an active drag.
+- While a gesture is captured, the dispatcher owns drag and release for the
+  captured node — it never re-runs the hit test, and a press that opened a
+  modal or removed the target is cancelled rather than committed.
+- The adapter's press/drag/release return true only when the dispatcher
+  consumed the event; false falls through to `super` so vanilla widgets and
+  keyboard focus handling keep working.
 
 ## 6. Lifecycle
 

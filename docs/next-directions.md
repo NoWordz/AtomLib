@@ -42,7 +42,7 @@ gets extracted on a hunch.
 - Cost: 1-2 days. Risk: medium; may expose gaps in text measurement or
   font fallback that force a design change.
 
-## C. Input adapter
+## C. Input adapter  (implemented 2026-10-31)
 
 A creator currently writes the mouse-to-`PointerEvent` mapping and the hit
 table themselves. It is small, but every author gets it slightly wrong.
@@ -52,6 +52,22 @@ table themselves. It is small, but every author gets it slightly wrong.
 - Buys: removes the most common first-hour friction.
 - Cost: about a day. Risk: low-medium; the callbacks differ slightly between
   1.20.1 and 1.21.1, so keep the shared part free of Minecraft types.
+
+Implemented as one shared `ScreenInputAdapter` in `core/input` (zero
+Minecraft types, pure unit tests). Signature verification against the
+compiled loader artifacts showed press/drag/release are identical across
+1.20.1 Forge, 1.21.1 Fabric and 1.21.1 NeoForge (`mouseClicked(double,
+double, int)`, `mouseDragged(double, double, int, double, double)`,
+`mouseReleased(double, double, int)`), so per-loader glue classes would only
+duplicate the same five forwarding lines; the only real difference is the
+scroll callback (one delta on 1.20.1, horizontal plus vertical on 1.21.1).
+The quickstart's input-wiring recipe therefore ships one adapter plus exact
+forwarding snippets per loader instead of per-loader glue classes. Scroll
+stays outside the dispatcher (no `PointerEvent.Type.SCROLL` exists): the
+adapter routes wheel events to a host `ScrollHandler`, which can consult
+`captureOwner()`. A lib-shipped base Screen class was considered and
+rejected — it would intrude on the host's single inheritance for five lines
+the recipe already covers.
 
 ## D. Publishing beyond GitHub
 

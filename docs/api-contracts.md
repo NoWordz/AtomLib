@@ -7,6 +7,17 @@ sessions and the backdrop blur helper. `ui` supplies the native Yoga layout
 engine and presentation frames, plus the optional
 `com.atom.lib.design.atomchat` package.
 
+`ScreenInputAdapter` (also `core`, no Minecraft types) turns screen-style
+pointer callbacks into `InputDispatcher` calls: `press`/`drag`/`release`
+(double coordinates, int button) return true only when the dispatcher
+consumed the event, `scroll` routes wheel events to a host `ScrollHandler`
+instead of the dispatcher (scroll is not a `PointerEvent` type), and
+`removed()` ends an active gesture with a cancel, never a release. Loaders
+only differ in their scroll callback arity (one delta on 1.20.1, horizontal
+plus vertical on 1.21.1); the adapter and the recipe in quickstart cover all
+three. Hit testing stays with the host's `HitTester`, capture with the
+dispatcher, and reactions with the `PointerTarget`s.
+
 There is no generic component, overlay, scroll, interaction, view-host, shell
 or devtools layer in this distribution. Hosts own their page trees, focus,
 gestures, screen lifecycle and business state.
