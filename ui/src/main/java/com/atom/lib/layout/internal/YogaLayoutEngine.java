@@ -8,6 +8,7 @@ import static org.lwjgl.util.yoga.Yoga.*;
 
 /** One view owns one engine. Only the creating thread may access its native tree. */
 public final class YogaLayoutEngine implements LayoutEngine {
+    static { YogaNatives.ensure(); }
     private final Thread thread=Thread.currentThread();
     private final long config=YGConfigNew();
     private final Map<NodeId,Entry> entries=new LinkedHashMap<>();
