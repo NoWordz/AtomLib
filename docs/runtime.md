@@ -1,6 +1,6 @@
 # Runtime：宿主资源、字体与纯 CPU 绘制
 
-本轮实现 T3 的纯 runtime 资源生命周期与 CPU Canvas 作用域，以及 T4 的宿主字体、统一纯文本布局、位图与 SVG 存储接口。**这不代表完整 T3/T4 已验收**：没有 MC GL 桥、加载器启动、GPU 状态恢复或通用资产迁移。所有新增实现独立编写，使用 Apache-2.0；没有读取、复制 Tuui ARR 反编译实现，也没有向库内复制字体文件。
+本轮实现 T3 的纯 runtime 资源生命周期与 CPU Canvas 作用域，以及 T4 的宿主字体、统一纯文本布局、位图与 SVG 存储接口。**这不代表完整 T3/T4 已验收**：没有 MC GL 桥、加载器启动、GPU 状态恢复或通用资产迁移。所有新增实现独立编写，使用 Apache-2.0；没有读取、复制 Tuui ARR 反编译实现。方向 F（2026-10-31）起库内附带子集化 Noto Sans SC 默认字体（见下），此外仍不复制任何字体文件。
 
 ## 稳定接口与接入
 
@@ -11,8 +11,8 @@
 | `AtomLibRuntime` | `open()` 或 `open(namespace)` 显式加载 Skija native，返回宿主独立的 `RuntimeHandle`。加载这些类不会自动加载 native。 |
 | `RuntimeHandle` | `namespace()`、`isClosed()`、`requireOpen()`、`own(AutoCloseable)`、幂等 `close()`。关闭释放宿主资源，不卸载进程级 DLL。 |
 | `font.FontId` | 注册表内的字体身份。不同字体、字重或样式文件应注册不同 FontId。 |
-| `font.FontSource` | `read() throws IOException` 提供可重复读取的宿主字体字节；`file(Path)` 读取宿主路径，`bytes(byte[])` 保存防御性副本。没有自动选择系统字体或绑定 AC 路径。 |
-| `font.FontRegistry` | `register`、`setFallbacks`、`resolve`、`openFont`、`reload`、`generation`、`close`。构造需传已打开的 RuntimeHandle，注册表由该 handle 管理。 |
+| `font.FontSource` | `read() throws IOException` 提供可重复读取的字体字节；`file(Path)` 读取宿主路径，`bytes(byte[])` 保存防御性副本，`resource(String)` 读取 classpath 资源（库自带默认字体走这条路）。没有自动选择系统字体或绑定 AC 路径。 |
+| `font.FontRegistry` | `register`、`setFallbacks`、`registerDefaults`、`resolve`、`openFont`、`reload`、`generation`、`close`。构造需传已打开的 RuntimeHandle，注册表由该 handle 管理。 |
 | `text.TextRequest` | 文本、FontId、字号、ARGB 颜色、maxLines 和 ellipsis；四参数构造默认不限行且不加省略号。 |
 | `text.TextService` | `layout(TextRequest, Constraints) -> TextLayout`；`draw(Canvas, TextLayout, x, y)` 绘制同一布局。构造参数可设置缓存条数与 UTF-16 字符预算；`close()` 清空缓存。 |
 | `text.TextLayout` | 不可变 `size()`、`lines()`、`truncated()`；`hitTest(x,y)`、`selection(from,to)` 读取该布局中的相同几何。没有可由外部关闭的 native 对象。 |
@@ -45,6 +45,7 @@ try (RuntimeHandle runtime = AtomLibRuntime.open("example");
 - Registry 独占其创建的 Typeface。解析过程中临时 Data 使用 try-with-resources 关闭；默认 FontMgr 是 Skija 的借用单例，库不关闭它，也不把它返回给宿主。
 - `openFont(id,size,grapheme)` 每次返回新的、由调用者关闭的 Font，**不会缓存或重复返回可由外部关闭、修改的 Font**。Font 保留自己的 native Typeface 引用，因此已返回的 Font 不因 registry reload 而悬空；调用者仍须关闭它。
 - 不同宿主使用不同 registry，即使 FontId 同名也不会共享来源、回退序列或代次。字体变更、回退变更及成功重载增加 generation。新字体解析失败不替换旧项；全量重载中任一来源失败，已构造的新 Typeface 释放，旧注册表及 generation 保留。
+- `registerDefaults()` 把库自带的子集化 Noto Sans SC（`com/atom/lib/fonts/bundled-default.otf` 保留变量 wght 轴 + `bundled-default-bold.otf` 静态粗体，OFL，字符集契约 `tools/default-font-charset.txt`）注册到保留 id `atomlib/default`、`atomlib/default-bold`，并**追加**到现有回退链尾部；宿主字体仍按 primary → 宿主回退 → 默认字体的顺序生效。某个默认面加载失败只记 warning 并跳过（对齐 AC FontManager），不拖垮文本渲染。默认包刻意不含 Emoji、成句韩文与 GBK 扩展；需要更多覆盖时用 `tools/subset_default_font.py` 重新子集化。
 - `setFallbacks(List<FontId>)` 仅接收已注册的字体。回退按**完整 grapheme**选择一个可覆盖该簇的字体，优先 primary。全部字体都缺少字形时保留 primary 的缺字行为，不捏造 Emoji 或字体资产。
 - 字重不由颜色、字号或一个隐式 bold 标记猜测；用不同 FontId 绑定实际字重文件。当前没有 TTC face-index、可变字体轴配置、自动系统字体发现或样式匹配 API。
 - TextService 在字体锁内布局、绘制并校验代次。旧布局在字体重载后仍可读取历史几何，但不能再次绘制；宿主应重新 layout。Yoga dirty 通知属于上层接线，应比较 generation 后触发，runtime 没有修改 Yoga 树。

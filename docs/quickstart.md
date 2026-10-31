@@ -36,15 +36,24 @@ TextService text = new TextService(fonts);
 YogaLayoutEngine layout = new YogaLayoutEngine();
 ~~~
 
-AtomLib ships no font. Register bytes you are allowed to ship, or a system
-file:
+AtomLib ships a default font: a subsetted Noto Sans SC (GB2312-complete hanzi,
+kana, Latin-1 supplement, punctuation and kaomoji symbols; charset contract in
+`tools/default-font-charset.txt`). Call `fonts.registerDefaults()` once and
+text renders CJK out of the box. Host-supplied fonts keep priority: register
+your own as the primary id, and the bundled faces join the fallback chain
+behind whatever you set.
 
 ~~~java
 FontId body = new FontId("myui.body");
 fonts.register(body, FontSource.file(Path.of("C:/Windows/Fonts/msyh.ttc")));
 // or: fonts.register(body, FontSource.bytes(myBundledTtfBytes));
+fonts.registerDefaults(); // appended behind your own fallbacks
 fonts.setFallbacks(List.of(/* ids that cover CJK and symbols */));
 ~~~
+
+Emoji, Hangul words and GBK extensions are deliberately not in the default
+package; hosts needing more coverage rerun the subsetting script
+(`tools/subset_default_font.py`).
 
 ## 3. Lay the page out
 

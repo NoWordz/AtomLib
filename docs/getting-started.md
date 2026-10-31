@@ -13,8 +13,14 @@ dependencies {
 }
 ```
 
-Open the runtime only from client code. Register a font supplied by the host;
-AtomLib does not include one.
+Open the runtime only from client code. Register a font supplied by the host
+for priority, and call `registerDefaults()` so text renders CJK out of the box
+through the bundled subsetted Noto Sans SC (GB2312-complete hanzi, kana,
+Latin-1 supplement, punctuation and kaomoji symbols; emoji, Hangul words and
+GBK extensions are intentionally excluded). Host fonts win: the bundled faces
+join the fallback chain behind whatever the host set. The charset contract and
+the regeneration workflow live in `tools/default-font-charset.txt` and
+`tools/subset_default_font.py`.
 
 ```java
 try (var runtime = AtomLibRuntime.open("example");
@@ -23,6 +29,7 @@ try (var runtime = AtomLibRuntime.open("example");
      var layout = new YogaLayoutEngine()) {
     var body = new FontId("host.body");
     fonts.register(body, FontSource.file(hostFontPath));
+    fonts.registerDefaults(); // appended behind your own fallbacks
 
     LayoutTree tree = buildHostTree(text, body);
     var frame = PresentationFrame.create(

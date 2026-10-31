@@ -463,12 +463,16 @@
       "source_git_author": null,
       "source_git_commit": null,
       "source_git_date": null,
-      "creator": null,
+      "creator": "Adobe / Google",
       "license": "OFL-1.1",
-      "decision": "exclude",
-      "copied_to_atomlib": false,
-      "target_path": null,
-      "reason": "Host-owned font selection; no font or associated font-only notice shipped by AtomLib; local font license remains AC responsibility"
+      "decision": "allow",
+      "copied_to_atomlib": true,
+      "target_path": "licenses/NotoSansSC-OFL.txt",
+      "reason": "OFL requires the license to accompany font redistribution; byte-identical copy (same SHA-256), recorded in licenses/sources.json",
+      "license_files": [
+        "licenses/NotoSansSC-OFL.txt"
+      ],
+      "changes": "none (byte-for-byte)"
     },
     {
       "id": "platforms/1.21.1-fabric/src/main/resources/assets/atomchat/font/bundled-bold.otf",
@@ -479,12 +483,17 @@
       "source_git_author": "E33EPUS",
       "source_git_commit": "7b79f7660db0233d6297898bd8c99bd385099fd2",
       "source_git_date": "2026-09-12T16:12:42+08:00",
-      "creator": null,
+      "creator": "Adobe / Google (Noto Sans CJK SC), SIL OFL 1.1",
       "license": "OFL-1.1",
-      "decision": "exclude",
+      "decision": "allow",
       "copied_to_atomlib": false,
-      "target_path": null,
-      "reason": "Host-owned font selection; no font or associated font-only notice shipped by AtomLib; local font license remains AC responsibility"
+      "target_path": "runtime/src/main/resources/com/atom/lib/fonts/bundled-default-bold.otf",
+      "reason": "Direction F reverses this T0 exclusion; the Sans2.004 source build 2.004;GOOG;NotoSansCJKsc-Bold;ADOBE matches this file's uniqueID verbatim",
+      "upstream": "https://github.com/notofonts/noto-cjk/releases/tag/Sans2.004",
+      "license_files": [
+        "licenses/NotoSansSC-OFL.txt"
+      ],
+      "changes": "Re-subsetted to tools/default-font-charset.txt (7671 covered codepoints, +122 over AC's 7549; zero drift verified)"
     },
     {
       "id": "platforms/1.21.1-fabric/src/main/resources/assets/atomchat/font/bundled.otf",
@@ -495,12 +504,17 @@
       "source_git_author": "E33EPUS",
       "source_git_commit": "7b79f7660db0233d6297898bd8c99bd385099fd2",
       "source_git_date": "2026-09-12T16:12:42+08:00",
-      "creator": null,
+      "creator": "Adobe / Google (Noto Sans SC), SIL OFL 1.1",
       "license": "OFL-1.1",
-      "decision": "exclude",
+      "decision": "allow",
       "copied_to_atomlib": false,
-      "target_path": null,
-      "reason": "Host-owned font selection; no font or associated font-only notice shipped by AtomLib; local font license remains AC responsibility"
+      "target_path": "runtime/src/main/resources/com/atom/lib/fonts/bundled-default.otf",
+      "reason": "Direction F (docs/next-directions.md, implemented 2026-10-31) reverses this T0 exclusion: the library ships a default subsetted Noto Sans SC. Output is re-subsetted from notofonts/noto-cjk Sans2.004 via tools/subset_default_font.py (AC's ADBO build is no longer downloadable); zero metric/outline drift on all 7549 codepoints AC shipped, verified codepoint by codepoint",
+      "upstream": "https://github.com/notofonts/noto-cjk/releases/tag/Sans2.004",
+      "license_files": [
+        "licenses/NotoSansSC-OFL.txt"
+      ],
+      "changes": "Re-subsetted to tools/default-font-charset.txt (7835 requested, 7671 covered by the source; variable wght axis preserved)"
     },
     {
       "id": "platforms/1.21.1-fabric/src/main/resources/assets/atomchat/lang/en_us.json",

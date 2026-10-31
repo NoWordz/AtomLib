@@ -106,6 +106,14 @@
       "sha256": "f4680fde0775beb8cedc5fe633c5a95df07dd3c68b05c008029d3000ef1dcb42",
       "bytes": 1064,
       "scope": "only allowlisted AC source"
+    },
+    {
+      "path": "licenses/NotoSansSC-OFL.txt",
+      "source": "https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/Sans/SubsetOTF/LICENSE (same text shipped by AtomChat at assets/atomchat/font/OFL.txt)",
+      "retrieved_on": "2026-10-31",
+      "sha256": "de4628fbc8a764d6f36b5543d55a87249dd453cbe02f95c87a42d42f0e2b83e4",
+      "bytes": 4659,
+      "scope": "license evidence; actual inclusion subject to docs/provenance.md"
     }
   ],
   "artifact_observations": [

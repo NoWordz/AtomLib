@@ -8,6 +8,13 @@ import java.util.*;
 
 /** Owns typefaces only. Each openFont returns a fresh caller-owned Font. */
 public final class FontRegistry implements AutoCloseable {
+    /** Reserved ids of the bundled default faces; see {@link #registerDefaults()}. */
+    public static final FontId DEFAULT_REGULAR = new FontId("atomlib/default");
+    public static final FontId DEFAULT_BOLD = new FontId("atomlib/default-bold");
+    private static final String DEFAULT_REGULAR_RESOURCE = "/com/atom/lib/fonts/bundled-default.otf";
+    private static final String DEFAULT_BOLD_RESOURCE = "/com/atom/lib/fonts/bundled-default-bold.otf";
+    private static final System.Logger LOG = System.getLogger(FontRegistry.class.getName());
+
     private final RuntimeHandle runtime;
     private final Map<FontId, FontSource> sources = new LinkedHashMap<>();
     private Map<FontId, Typeface> faces = new LinkedHashMap<>();
@@ -34,6 +41,40 @@ public final class FontRegistry implements AutoCloseable {
         List<FontId> copy = List.copyOf(ids);
         for (FontId id : copy) if (!faces.containsKey(id)) throw new IllegalArgumentException("Unknown font " + id);
         fallbacks = copy; generation++;
+    }
+    /**
+     * Registers the library-bundled Noto Sans SC subset as the default faces
+     * and appends both to the fallback chain. Host fonts win: resolve() keeps
+     * the primary unless it misses a grapheme, and these appended fallbacks
+     * sit behind any the host already set. The charset contract and the
+     * regeneration workflow live in {@code tools/subset_default_font.py}.
+     * Parity with AtomChat's FontManager: a face that fails to load is
+     * skipped with a warning instead of taking text rendering down; when both
+     * fail the registry keeps whatever the host registered.
+     *
+     * @return the ids that were actually registered.
+     */
+    public synchronized List<FontId> registerDefaults() {
+        requireOpen();
+        List<FontId> registered = new ArrayList<>();
+        registerDefault(DEFAULT_REGULAR, DEFAULT_REGULAR_RESOURCE, registered);
+        registerDefault(DEFAULT_BOLD, DEFAULT_BOLD_RESOURCE, registered);
+        if (!registered.isEmpty()) {
+            List<FontId> merged = new ArrayList<>(fallbacks);
+            for (FontId id : registered) if (!merged.contains(id)) merged.add(id);
+            fallbacks = List.copyOf(merged);
+            generation++;
+        }
+        return List.copyOf(registered);
+    }
+    private void registerDefault(FontId id, String resource, List<FontId> into) {
+        try {
+            register(id, FontSource.resource(resource));
+            into.add(id);
+        } catch (RuntimeException failure) {
+            LOG.log(System.Logger.Level.WARNING,
+                    "Bundled default font " + resource + " unavailable, text falls back to host fonts", failure);
+        }
     }
     /** Select one face for a whole grapheme; never split combining/ZWJ sequences. */
     public synchronized FontId resolve(FontId primary, String grapheme) {

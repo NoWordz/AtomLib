@@ -87,7 +87,7 @@ any new API surface (C) is built. D is a packaging step once the artifact is
 stable; its Maven host choice (leaning Modrinth Maven for anonymous reads)
 can wait until then. E stays deferred until a second consumer exists.
 
-## F. Default font package  (runs right after A)
+## F. Default font package  (implemented 2026-10-31)
 
 AtomLib does not bundle fonts; the host does. AtomChat gets good text because
 it ships a subsetted Noto Sans SC, but a library consumer starting from zero
@@ -110,6 +110,19 @@ gets tofu for all CJK. Decide the library's font story once:
   charset contract; AtomChat switching to the library font keeps rendering
   byte-identical, which also keeps B's pixel baseline honest.
 - Cost: half a day. Risk: low.
+
+Implemented as `FontRegistry.registerDefaults()` with the two subsetted faces
+under `com/atom/lib/fonts/` (`bundled-default.otf` keeps AtomChat's variable
+wght axis; `bundled-default-bold.otf` is the static bold). The original
+AtomChat files were built from a no-longer-downloadable Adobe "ADBO" build, so
+both faces were re-subsetted from the notofonts/noto-cjk Sans 2.004 release
+via `tools/subset_default_font.py`; all 7549 codepoints AtomChat shipped are
+bit-stable in metrics and outlines (verified codepoint by codepoint), plus 122
+newly covered codepoints (Latin-1 supplement, general punctuation, spacing
+modifier letters, and the exact characters AtomChat's kaomoji panel uses).
+Noto Sans SC itself lacks some requested codepoints (Thai, Arabic, most
+modifier letters); those stay tofu exactly as in AtomChat today and are listed
+by the script's `coverage` mode.
 
 ## G. LayoutStyle API expansion  (decided during B follow-up; implemented 2026-10-31)
 

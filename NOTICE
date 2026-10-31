@@ -41,9 +41,19 @@ MIT. Full texts are in `licenses/LWJGL-3.3.1-BSD-3-Clause.txt`,
 The per-target dependency manifest and nested JAR identities are generated from
 the actual build rather than inferred from candidate records.
 
-No font file, AC branding image, notification sound, Tuui implementation or
-AtomChat business payload is included. See docs/provenance.md,
+No AC branding image, Tuui implementation or AtomChat business payload is
+included; the only font files are the subsetted Noto default faces below.
+See docs/provenance.md,
 assets/provenance.json and platforms/shared/src/main/resources/assets/MANIFEST.sha256.
 Retain every applicable upstream notice when redistributing a built JAR.
 
 Tuui is excluded; no ARR implementation or asset is licensed by this NOTICE.
+
+Included default fonts under `com/atom/lib/fonts/` (subsetted, direction F):
+Noto Sans SC (regular VF) and Noto Sans CJK SC (bold), both subsetted from
+the notofonts/noto-cjk Sans 2.004 release.
+Copyright 2014-2021 Adobe (http://www.adobe.com/), with Reserved Font Name
+"Source". Copyright 2012 Google Inc. All Rights Reserved.
+SIL Open Font License 1.1; full text: licenses/NotoSansSC-OFL.txt.
+The charset contract and regeneration workflow: tools/subset_default_font.py
+and tools/default-font-charset.txt.

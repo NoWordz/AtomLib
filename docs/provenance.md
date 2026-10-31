@@ -129,7 +129,8 @@ git show e8cf67ca:LICENSE
 ### 6.3 其他资源
 
 - 六种 blur shader 的实际资源副本逐文件 X／待独立实现，历史线索见第 4 节；实际副本数量以 JSON 中 Git 跟踪路径为准，不假设每目标都有独立一套；材质与特效不可只因是几行数学就直接搬。
-- 两份 OTF 与 OFL、logo、wordmark、about_hero、作者头像、两份语言表逐文件 X。字体即使 OFL 可分发也被用户明确排除；品牌、作者头像和业务翻译留 AC，不对其法律归属作推断。
+- logo、wordmark、about_hero、作者头像、两份语言表逐文件 X。品牌、作者头像和业务翻译留 AC，不对其法律归属作推断。
+- 两份 OTF 与 OFL：T0 时逐文件 X（"字体即使 OFL 可分发也被用户明确排除"）。**docs/next-directions.md 方向 F（2026-10-31，implemented）推翻该排除决定**：库附带子集化 Noto Sans SC 默认字体。两份成品不是字节搬运 AC 文件，而是用 `tools/subset_default_font.py` 从 notofonts/noto-cjk `Sans2.004` release 重新子集化（AC 原文件的 ADBO 构建已无从下载；bold 源 uniqueID `2.004;GOOG;NotoSansCJKsc-Bold;ADOBE` 与 AC 文件逐字一致，regular 用同 release 的 NotoSansSC VF）。7549 个 AC 已有码点 advance/lsb/outline 逐码点零漂移（工具 verify 模式），新增 Latin-1 补充区、常用标点区与 AC 颜文字面板实际用字共 122 码点。OFL 原文 `licenses/NotoSansSC-OFL.txt`（SHA-256 与 AC `assets/atomchat/font/OFL.txt` 一致），归属见根 NOTICE。
 - 运行时用户图片／皮肤／壁纸、截图、测试 golden、未知插画／材质均不准入；不把用户数据或参考图当库素材。
 
 ## 7. 依赖许可清单与发行缺口
