@@ -6,6 +6,7 @@ import com.atom.lib.font.*;
 import com.atom.lib.layout.Constraints;
 import com.atom.lib.text.*;
 import io.github.humbleui.skija.*;
+import io.github.humbleui.skija.shaper.Shaper;
 import org.junit.jupiter.api.Test;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
@@ -93,6 +94,32 @@ class TextLayoutTest {
             var dots = text.layout(new TextRequest("first\nsecond third", BODY, 18, 0, 2, true), width(1));
             assertEquals(1, dots.lines().get(1).start());
             assertEquals(1, dots.hitTest(0, dots.lines().get(1).top()+1));
+        }
+    }
+    @Test void shapedLineWidthMatchesMeasuredWidthOnCjkText() {
+        // Direction-B finding: with Font subpixel off the shaper rounds each
+        // glyph advance to whole pixels while measureTextWidth stays
+        // fractional, so shaped lines drift ~+0.25 units per CJK glyph
+        // against AtomChat's unrounded measure/draw path.
+        try (var handle = AtomLibRuntime.open("text"); var fonts = new FontRegistry(handle)) {
+            fonts.register(BODY, FontSource.file(FontIsolationTest.fontPath()));
+            String cjk = "外观聊天与通知";
+            try (var font = fonts.openFont(BODY, 20, "")) {
+                assertTrue(font.isSubpixel(),
+                        "FontRegistry must open fonts with subpixel shaping enabled");
+            }
+            try (var shaper = Shaper.makeShapeDontWrapOrReorder();
+                 var font = fonts.openFont(BODY, 20, "")) {
+                // CJK-only samples: kerning-free, so shape and measure must
+                // agree exactly. (Mixed Latin runs legitimately diverge by
+                // kerning, which measureTextWidth does not apply.)
+                for (var sample : new String[]{cjk, "聊天与通知"}) {
+                    try (var shaped = shaper.shapeLine(sample, font)) {
+                        assertEquals(font.measureTextWidth(sample), shaped.getWidth(), 0.02,
+                                "shaped width must match measured width for '" + sample + "'");
+                    }
+                }
+            }
         }
     }
     @Test void requestRejectsUnpairedSurrogatesAndUnsupportedBidiInsteadOfCorruptingOffsets() {

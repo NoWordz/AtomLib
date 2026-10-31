@@ -47,7 +47,15 @@ public final class FontRegistry implements AutoCloseable {
     public synchronized Font openFont(FontId primary, float size, String grapheme) {
         requireOpen();
         if (!Float.isFinite(size) || size <= 0) throw new IllegalArgumentException("Invalid font size");
-        return new Font(faces.get(resolve(primary, grapheme)), size);
+        Font font = new Font(faces.get(resolve(primary, grapheme)), size);
+        // Subpixel shaping keeps fractional glyph advances. With it off, the
+        // shaper rounds every advance to whole pixels while measureTextWidth
+        // stays fractional, so shaped line widths drift from measured widths
+        // (measured +0.25 units per CJK glyph against AtomChat's unrounded
+        // path). Every Font this registry hands out shapes and measures
+        // through the same unrounded advances.
+        font.setSubpixel(true);
+        return font;
     }
     public synchronized void reload() {
         requireOpen();
