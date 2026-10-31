@@ -23,6 +23,11 @@ makes the library's health depend on the consumer's pipeline.
 - Cost: half a day to a day. Risk: low-medium; the workflows have never run on
   a real runner, so budget for the first run failing.
 
+Update (2026-10-31): the re-pin rule was exercised end to end — release run
+41191895972 published `v0.1.0-beta-beta2` (fresh jars plus a rebuilt input
+archive) and AtomChat re-pinned `versions/atomlib.json` to it in its own
+commit.
+
 ## B. Prove the stack on one real screen
 
 Redraw one AtomChat screen with `TextService` + Yoga + the design package inside
