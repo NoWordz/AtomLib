@@ -105,9 +105,11 @@ jobs:
           $testFont='C:\Windows\Fonts\msyh.ttc'
           if (-not (Test-Path $testFont)) { $testFont='C:\Windows\Fonts\arial.ttf' }
           $env:ATOMLIB_TEST_FONT=$testFont
-          python tools/run_packaging.py all --jobs 1
-          python tools/test_verify_artifacts.py
-          python tools/test_verify_consumers.py
+          # pwsh does not fail the step on a native command's non-zero exit,
+          # so each command must propagate its exit code explicitly.
+          python tools/run_packaging.py all --jobs 1; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python tools/test_verify_artifacts.py; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python tools/test_verify_consumers.py; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python tools/verify_ui_examples.py
       - name: Archive pinned Maven input
         shell: pwsh
