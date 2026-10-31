@@ -106,6 +106,23 @@ gets tofu for all CJK. Decide the library's font story once:
   byte-identical, which also keeps B's pixel baseline honest.
 - Cost: half a day. Risk: low.
 
+## G. LayoutStyle API expansion  (decided during B follow-up)
+
+The settings-home replication (see `evidence/settings-home-replication/`)
+showed square tiles had to be assembled from measure callbacks and spacer
+nodes because `LayoutStyle` lacks layout primitives. Decided scope:
+
+- Add: `Edges margin`, per-edge `padding` (uniform float stays as sugar),
+  `aspectRatio` (0 = none), and main/cross-axis alignment (`align` +
+  `justify`). These are layout primitives, not components, so they do not
+  violate the non-goal below.
+- Explicitly not added: absolute positioning (or relative offsets). It breaks
+  the pure-function layout philosophy; screens needing absolute coordinates
+  draw them in the render layer. Recorded as a non-goal.
+- Shape: keep the single flat record with wither methods and the
+  `column()`/`row()` factories; new fields default so callers stay
+  source-compatible.
+
 ## Explicit non-goals
 
 Rebuilding a component or shell framework, cloning AtomChat's screens for third
