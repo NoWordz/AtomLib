@@ -1,0 +1,137 @@
+{
+  "fixture": "settings-home-replication",
+  "acSide": "SettingsHomePage.render on Surface.makeRasterN32Premul, zh_cn, bundled Noto",
+  "libSide": "YogaLayoutEngine + TextService + design package, same font bytes",
+  "panel": [
+    40.0,
+    20.0,
+    480.0,
+    860.0
+  ],
+  "list": [
+    55.0,
+    102.5,
+    450.0,
+    700.0
+  ],
+  "summary": {
+    "failed": 7,
+    "checks": 21
+  },
+  "pixelSmoke": {
+    "deltaLimitPerChannel": 16,
+    "differingPixels": 7866,
+    "differingOutsideTextBoxes": 3384,
+    "ratios": {
+      "whole": 0.014943,
+      "excludingText": 0.007643
+    }
+  },
+  "checks": [
+    {
+      "name": "acTitle.appearance",
+      "pass": true,
+      "detail": "外观"
+    },
+    {
+      "name": "acTitle.chat",
+      "pass": true,
+      "detail": "聊天与通知"
+    },
+    {
+      "name": "acTitle.privacy",
+      "pass": true,
+      "detail": "隐私与屏蔽"
+    },
+    {
+      "name": "acTitle.about",
+      "pass": true,
+      "detail": "关于"
+    },
+    {
+      "name": "fontFixtureBytes",
+      "pass": true,
+      "detail": "regular\u003d4082228B bold\u003d3513652B (the same files FontManager loads)"
+    },
+    {
+      "name": "libFontRegistrations",
+      "pass": true,
+      "detail": "bundled.otf variation axes\u003d1 (FontManager clones it to wght 500; FontRegistry loads it as-is)"
+    },
+    {
+      "name": "yoga.pixelDensityChangeOnLiveEngine",
+      "pass": false,
+      "detail": "relayout at a new pixelsPerUnit threw java.lang.NoSuchMethodError: \u0027void org.lwjgl.util.yoga.Yoga.YGNodeMarkDirtyAndPropogateToDescendants(long)\u0027"
+    },
+    {
+      "name": "tileGeometry.appearance",
+      "pass": false,
+      "detail": "ac\u003d(63.000,115.000,210.750,210.750) lib@1u\u003d(63.000,115.500,211.000,212.000) lib@1/16u\u003d(63.000,115.000,210.750,210.750) maxDelta\u003d1.250"
+    },
+    {
+      "name": "tileGeometry.chat",
+      "pass": false,
+      "detail": "ac\u003d(286.250,115.000,210.750,210.750) lib@1u\u003d(286.000,115.500,211.000,212.000) lib@1/16u\u003d(286.250,115.000,210.750,210.750) maxDelta\u003d1.250"
+    },
+    {
+      "name": "tileGeometry.privacy",
+      "pass": false,
+      "detail": "ac\u003d(63.000,338.250,210.750,210.750) lib@1u\u003d(63.000,338.500,211.000,212.000) lib@1/16u\u003d(63.000,338.250,210.750,210.750) maxDelta\u003d1.250"
+    },
+    {
+      "name": "tileGeometry.about",
+      "pass": false,
+      "detail": "ac\u003d(286.250,338.250,210.750,210.750) lib@1u\u003d(286.000,338.500,211.000,212.000) lib@1/16u\u003d(286.250,338.250,210.750,210.750) maxDelta\u003d1.250"
+    },
+    {
+      "name": "textMetrics.subpixelProbe",
+      "pass": true,
+      "detail": "Font.isSubpixel\u003dfalse measureTextWidth(\"外观\")\u003d37.5 shapeLine(\"外观\").getWidth()\u003d38.0"
+    },
+    {
+      "name": "titleWidth.appearance",
+      "pass": true,
+      "detail": "ac\u003d37.500 lib\u003d38.000 delta\u003d0.500 lines\u003d1 truncated\u003dfalse"
+    },
+    {
+      "name": "titleLineHeight.appearance",
+      "pass": true,
+      "detail": "acTextHeight\u003d27.150 libLineHeight\u003d27.150 delta\u003d0.000 (group centering reads textHeight, so glyph-label gap shifts by half of the delta)"
+    },
+    {
+      "name": "titleWidth.chat",
+      "pass": false,
+      "detail": "ac\u003d93.750 lib\u003d95.000 delta\u003d1.250 lines\u003d1 truncated\u003dfalse"
+    },
+    {
+      "name": "titleLineHeight.chat",
+      "pass": true,
+      "detail": "acTextHeight\u003d27.150 libLineHeight\u003d27.150 delta\u003d0.000 (group centering reads textHeight, so glyph-label gap shifts by half of the delta)"
+    },
+    {
+      "name": "titleWidth.privacy",
+      "pass": false,
+      "detail": "ac\u003d93.750 lib\u003d95.000 delta\u003d1.250 lines\u003d1 truncated\u003dfalse"
+    },
+    {
+      "name": "titleLineHeight.privacy",
+      "pass": true,
+      "detail": "acTextHeight\u003d27.150 libLineHeight\u003d27.150 delta\u003d0.000 (group centering reads textHeight, so glyph-label gap shifts by half of the delta)"
+    },
+    {
+      "name": "titleWidth.about",
+      "pass": true,
+      "detail": "ac\u003d37.500 lib\u003d38.000 delta\u003d0.500 lines\u003d1 truncated\u003dfalse"
+    },
+    {
+      "name": "titleLineHeight.about",
+      "pass": true,
+      "detail": "acTextHeight\u003d27.150 libLineHeight\u003d27.150 delta\u003d0.000 (group centering reads textHeight, so glyph-label gap shifts by half of the delta)"
+    },
+    {
+      "name": "pixelSmoke.nonText",
+      "pass": true,
+      "detail": "whole\u003d0.014943 excludingText\u003d0.007643 (limit 0.02, per-channel delta \u003e 16)"
+    }
+  ]
+}
