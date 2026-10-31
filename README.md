@@ -50,3 +50,10 @@ consumers compile only against published platform coordinates.
 See [getting-started.md](docs/getting-started.md), [api-contracts.md](docs/api-contracts.md),
 [ai-guide.md](docs/ai-guide.md), and `docs/STATUS.md` for the implemented scope
 and known limits.
+
+## Optional design package
+
+`com.atom.lib.design.atomchat` carries AtomChat's own look — tokens, drawing
+primitives, card surfaces and icon paths — for mods that want to match it.
+It is a separate import, not a requirement: the render bridge and Yoga layout
+work without it. See [design-package.md](docs/design-package.md).
