@@ -53,7 +53,10 @@ jobs:
           .\gradlew.bat :runtime:test :ui:test "-PatomlibTestFont=$testFont" --no-daemon --console=plain
 
   hidden-gl:
-    runs-on: windows-latest
+    # Windows runners have no OpenGL driver beyond GDI Generic 1.1, so a 3.3
+    # core context cannot be created there. Linux runners run the same tests
+    # under Xvfb with Mesa llvmpipe, matching AtomChat's Linux CI practice.
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -61,6 +64,10 @@ jobs:
         target: [1.20.1-forge, 1.21.1-fabric, 1.21.1-neoforge]
     steps:
       - uses: actions/checkout@v7
+      - name: Install Xvfb and GL libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1 xvfb
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
@@ -68,8 +75,9 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
       - name: Real hidden GLFW/OpenGL round trips
         working-directory: platforms/${{ matrix.target }}
-        shell: pwsh
-        run: .\gradlew.bat hiddenGlTest --no-daemon --console=plain
+        run: |
+          chmod +x gradlew
+          xvfb-run -a ./gradlew hiddenGlTest --no-daemon --console=plain
       - uses: actions/upload-artifact@v7
         if: always()
         with:

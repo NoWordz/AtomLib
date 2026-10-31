@@ -39,6 +39,12 @@ dependencies {
         hiddenGlTestImplementation "org.lwjgl:${module}:${renderLwjgl}"
         hiddenGlTestRuntimeOnly "org.lwjgl:${module}:${renderLwjgl}:${renderClassifier}"
     }
+    // The shipped jar (:ui) pins windows natives regardless of host OS, so the
+    // hidden-window tests must pull their own host-matched Skija/Yoga natives.
+    hiddenGlTestRuntimeOnly "org.lwjgl:lwjgl-yoga:${renderLwjgl}:${renderClassifier}"
+    def skijaOs = renderOs.startsWith('windows') ? 'windows' : renderOs.contains('mac') ? 'macos' : 'linux'
+    def skijaArch = renderArch in ['aarch64', 'arm64'] ? 'arm64' : 'x64'
+    hiddenGlTestRuntimeOnly "io.github.humbleui:skija-${skijaOs}-${skijaArch}:${rootProject.dependencyVersions.skija}"
     hiddenGlTestImplementation platform("org.junit:junit-bom:${rootProject.dependencyVersions.junit}")
     hiddenGlTestImplementation 'org.junit.jupiter:junit-jupiter'
     hiddenGlTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
