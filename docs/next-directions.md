@@ -70,11 +70,36 @@ not interfere.
 
 ## Suggested order
 
-A, then B, then C, then E, then D. A is a prerequisite for everything else; B
-is the fork in the road — its evidence decides whether more of AtomChat moves
+A, then F, then B, then C, then E, then D. A is a prerequisite for everything
+else; F settles the font contract before B pins its pixel baseline; B is the
+fork in the road — its evidence decides whether more of AtomChat moves
 into the library, and possibly forces API design changes, so it runs before
 any new API surface (C) is built. E matters as soon as two consumers exist; D
 is a packaging step once the artifact is stable.
+
+## F. Default font package  (runs right after A)
+
+AtomLib does not bundle fonts; the host does. AtomChat gets good text because
+it ships a subsetted Noto Sans SC, but a library consumer starting from zero
+gets tofu for all CJK. Decide the library's font story once:
+
+- Work: move AtomChat's two subsetted OTFs plus `OFL.txt` into the library
+  byte-for-byte and load them as the default; host-supplied fonts still win.
+  Extend the subset with two cheap ranges: Latin-1 supplement (currently 20/96
+  — `é`, `ü` tofu today) and the kaomoji symbol ranges (`¯` U+00AF is missing).
+  Publish the subsetting script in `tools/` and document the default charset
+  spec: GB2312 complete (6763 hanzi + 682 symbols, verified), kana, symbols.
+- Explicitly out of the default package: GBK/GB18030, Hangul, emoji. Full
+  Noto Sans SC is 10-16 MB per weight; a library cannot promise "never tofu"
+  for arbitrary Unicode and should rely on the host/system fallback chain
+  instead. Hosts needing more coverage rerun the subsetting script.
+- Emoji note: Noto Sans SC has no emoji codepoints at all, so past tofu there
+  is not a subsetting gap. Color emoji (Noto Color Emoji, CBDT, ~10 MB) is a
+  separate direction if it is ever wanted.
+- Buys: CJK-capable text out of the box for every consumer; a documented
+  charset contract; AtomChat switching to the library font keeps rendering
+  byte-identical, which also keeps B's pixel baseline honest.
+- Cost: half a day. Risk: low.
 
 ## Explicit non-goals
 
