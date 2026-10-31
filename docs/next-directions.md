@@ -58,7 +58,11 @@ downloaded by hand.
 - Buys: normal dependency management for consumers.
 - Cost: about a day plus review. Risk: low. Needs A first.
 
-## E. Multi-consumer coexistence
+## E. Multi-consumer coexistence  (deferred — not scheduled)
+
+Deferred until a second consumer actually exists; with only AtomChat using
+the library there is no real scenario to validate against. When the second
+consumer appears, run this before that consumer's first release:
 
 Two mods loading one AtomLib jar share a single render bridge. Nothing today
 proves that the second consumer's screen and the first one's shutdown path do
@@ -70,12 +74,13 @@ not interfere.
 
 ## Suggested order
 
-A, then F, then B, then C, then E, then D. A is a prerequisite for everything
+A, then F, then B, then C, then D. A is a prerequisite for everything
 else; F settles the font contract before B pins its pixel baseline; B is the
 fork in the road — its evidence decides whether more of AtomChat moves
 into the library, and possibly forces API design changes, so it runs before
-any new API surface (C) is built. E matters as soon as two consumers exist; D
-is a packaging step once the artifact is stable.
+any new API surface (C) is built. D is a packaging step once the artifact is
+stable; its Maven host choice (leaning Modrinth Maven for anonymous reads)
+can wait until then. E stays deferred until a second consumer exists.
 
 ## F. Default font package  (runs right after A)
 
