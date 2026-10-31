@@ -1,18 +1,24 @@
 # AtomLib status
 
-Status date: 2026-10-31. Version remains `0.1.0-beta`.
+Status date: 2026-10-31. Version `0.1.0-beta`.
 
-Implemented: T0 provenance gate, locked LWJGL Yoga selection, three independent
-loader builds, seven embedded dependencies per target, one shared Skija render
-bridge, host-font/runtime resources, unified Yoga layout and presentation
-frames, the optional AtomChat design package, six Maven consumers, and pinned CI
-input handling.
+Implemented: one shared Skija render bridge with a borrowed-frame contract,
+LWJGL Yoga with runtime native extraction, host-owned fonts and text layout
+(`TextService`), immutable presentation frames, the optional AtomChat design
+package, three loader jars with Windows x64/ARM64 natives, six standalone Maven
+consumers, and pinned input handling for the AtomChat build.
 
-The earlier generic component, overlay, scroll, interaction, view-host, style
-and shell layer has been deleted. `ui` now contains Yoga layout and the optional
-`com.atom.lib.design.atomchat` package only. `devtools` is deleted and is no
-longer part of the CI jobs, build input or distribution.
+The generic component, overlay, scroll, interaction, view-host, style and shell
+layer is gone. `ui` contains Yoga layout and `com.atom.lib.design.atomchat`
+only; `devtools` is deleted. Release metadata is in place (authors, Apache-2.0,
+description, placeholder logo and repository URL).
 
-本轮提取后只保存本地开发检查点，尚未最终验收。单元测试、示例编译和打包由主代理统一执行；本文件不把计划中的检查写成已通过。
+What has actually been verified: `:core:test`, `:runtime:test` and `:ui:test`
+pass locally (44 tests), `run_packaging.py platforms/verify/consumers` pass for
+all three targets, and AtomChat main builds and tests against these jars with
+its CI green.
 
-`docs/verification-2026-10-30.md` 记录的是删除前范围的证据，不适用于当前模块清单；`docs/reviews/ui-view.md` 审查的组件/浮层/视图代码已删除。当前开放问题以主代理的最终构建与用户验收为准。没有推送、远端创建、外部 Maven 发布、商店发布或部署。
+What has not: no external consumer has used the library, this repository has
+no remote so its own CI has never run, ARM64 hardware is untested, and the text
+stack has only been exercised by generated examples. Repository URL and logo
+are placeholders. See [next-directions.md](next-directions.md).

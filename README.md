@@ -65,7 +65,7 @@ mod to a painted screen, [getting-started.md](docs/getting-started.md) for the
 runtime details, [api-contracts.md](docs/api-contracts.md),
 [ai-guide.md](docs/ai-guide.md), and docs/STATUS.md for the implemented scope
 and known limits. [releasing.md](docs/releasing.md) covers versions and the
-release checklist.
+release checklist. Possible directions beyond the current scope are listed in [next-directions.md](docs/next-directions.md).
 
 ## Examples
 

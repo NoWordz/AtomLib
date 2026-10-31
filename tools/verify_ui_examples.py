@@ -28,12 +28,14 @@ DOCS = (
     "quickstart.md",
     "releasing.md",
     "design-package.md",
+    "next-directions.md",
     "getting-started.md",
     "api-contracts.md",
     "ai-guide.md",
     "STATUS.md",
     "packaging.md",
     "design-package.md",
+    "next-directions.md",
 )
 
 
