@@ -33,7 +33,7 @@ def clazz(major=61):
     return b'\xca\xfe\xba\xbe\0\0' + struct.pack('>H', major)
 
 
-def fixture(loader='forge', version='0.1.0-local', yoga='3.3.1'):
+def fixture(loader='forge', version='0.1.0-beta', yoga='3.3.1'):
     deps = {
         'skija-shared-0.143.18.jar': [('io/github/humbleui/skija/Canvas.class', clazz()), ('io/github/humbleui/skija/Font.class', clazz())],
         'types-0.2.0.jar': [('io/github/humbleui/types/Rect.class', clazz())],
@@ -77,7 +77,7 @@ class ArtifactTests(unittest.TestCase):
     def check_entries(self, entries, loader='forge', yoga='3.3.1'):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/'atomlib.jar'; p.write_bytes(jar(entries))
-            return verify_artifact(p, loader=loader, version='0.1.0-local', skija='0.143.18', types='0.2.0', yoga=yoga)
+            return verify_artifact(p, loader=loader, version='0.1.0-beta', skija='0.143.18', types='0.2.0', yoga=yoga)
 
     def reject(self, entries, marker, **kwargs):
         errors=self.check_entries(entries, **kwargs)

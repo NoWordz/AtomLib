@@ -9,7 +9,7 @@ repositories { maven { url = uri('/absolute/path/to/AtomLib/build/test-maven') }
              mavenCentral() }
 dependencies {
     // Fabric: modImplementation; Forge/NeoForge: implementation
-    implementation 'com.atom.lib:atomlib-1.20.1-forge:0.1.0-local'
+    implementation 'com.atom.lib:atomlib-1.20.1-forge:0.1.0-beta'
 }
 ```
 

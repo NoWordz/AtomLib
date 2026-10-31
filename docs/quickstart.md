@@ -20,7 +20,7 @@ Declare it in development against the same coordinate:
 repositories { maven { url = uri('/absolute/path/to/AtomLib/build/test-maven') } }
 dependencies {
     // Fabric: modImplementation; Forge and NeoForge: implementation
-    implementation 'com.atom.lib:atomlib-1.20.1-forge:0.1.0-local'
+    implementation 'com.atom.lib:atomlib-1.20.1-forge:0.1.0-beta'
 }
 ~~~
 

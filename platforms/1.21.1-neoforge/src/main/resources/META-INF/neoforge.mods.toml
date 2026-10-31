@@ -5,7 +5,11 @@ license="Apache-2.0"
 [[mods]]
 modId="atomlib"
 version="${version}"
-displayName="atomlib"
+displayName="AtomLib"
+authors="E33EPUS & NoWordz"
+description='Skija and Yoga for Minecraft UI. Draw, lay out and paint with an optional AtomChat-inspired design package.'
+logoFile="atomlib.png"
+displayURL="https://github.com/example/atomlib"
 displayTest="IGNORE_ALL_VERSION"
 
 [[dependencies.atomlib]]

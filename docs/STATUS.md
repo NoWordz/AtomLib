@@ -1,6 +1,6 @@
 # AtomLib status
 
-Status date: 2026-10-31. Version remains `0.1.0-local`.
+Status date: 2026-10-31. Version remains `0.1.0-beta`.
 
 Implemented: T0 provenance gate, locked LWJGL Yoga selection, three independent
 loader builds, seven embedded dependencies per target, one shared Skija render

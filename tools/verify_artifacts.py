@@ -67,7 +67,7 @@ def expected_dependencies(skija, types, yoga):
     return result
 
 
-def verify_artifact(path, *, loader, version='0.1.0-local', skija='0.143.18', types='0.2.0', yoga='3.3.1', consumer=False):
+def verify_artifact(path, *, loader, version='0.1.0-beta', skija='0.143.18', types='0.2.0', yoga='3.3.1', consumer=False):
     errors, classes, nested, modules = [], {}, {}, {}
     path = Path(path)
     expected = expected_dependencies(skija, types, yoga)
@@ -249,7 +249,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('jar', type=Path)
     parser.add_argument('--loader', choices=['forge','fabric','neoforge'], required=True)
-    parser.add_argument('--version', default='0.1.0-local')
+    parser.add_argument('--version', default='0.1.0-beta')
     parser.add_argument('--skija', default='0.143.18')
     parser.add_argument('--types', default='0.2.0')
     parser.add_argument('--yoga', required=True)

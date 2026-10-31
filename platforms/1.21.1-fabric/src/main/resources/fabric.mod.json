@@ -17,5 +17,16 @@
     "fabricloader": ">=0.16.9",
     "minecraft": "~1.21.1",
     "java": ">=21"
-  }
+  },
+  "description": "Skija and Yoga for Minecraft UI. Draw, lay out and paint with an optional AtomChat-inspired design package.",
+  "authors": [
+    "E33EPUS",
+    "NoWordz"
+  ],
+  "contact": {
+    "homepage": "https://github.com/example/atomlib",
+    "sources": "https://github.com/example/atomlib",
+    "issues": "https://github.com/example/atomlib/issues"
+  },
+  "icon": "atomlib.png"
 }

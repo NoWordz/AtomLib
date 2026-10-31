@@ -14,10 +14,10 @@ class ConsumerTests(unittest.TestCase):
             (root/'versions/targets.json').write_text(json.dumps({'targets': {'1.21.1-fabric': {'loader': 'fabric', 'yoga': '3.3.3'}}}))
             project = root/'consumer'
             (project/'build/reports').mkdir(parents=True)
-            ours = {'group': group, 'name': 'atomlib-1.21.1-fabric', 'version': '0.1.0-local'}
+            ours = {'group': group, 'name': 'atomlib-1.21.1-fabric', 'version': '0.1.0-beta'}
             api = [{'group':g,'name':n,'version':v} for g,n,v in [('io.github.humbleui','skija-shared','0.143.18'),('io.github.humbleui','types','0.2.0'),('org.lwjgl','lwjgl-yoga','3.3.3')]]
             natives = [{'group':'org.lwjgl' if n=='lwjgl-yoga' else 'io.github.humbleui','name':n,'classifier':c,'version':'3.3.3' if n=='lwjgl-yoga' else '0.143.18'} for n,c in [('skija-windows-x64',None),('skija-windows-arm64',None),('lwjgl-yoga','natives-windows'),('lwjgl-yoga','natives-windows-arm64')]]
-            report = {'declared': [{'group':'com.atom.lib','name':'atomlib-1.21.1-fabric','version':'0.1.0-local'}], 'configurations': {'compileClasspath': [ours]+api, 'runtimeClasspath': [ours]+api+natives}}
+            report = {'declared': [{'group':'com.atom.lib','name':'atomlib-1.21.1-fabric','version':'0.1.0-beta'}], 'configurations': {'compileClasspath': [ours]+api, 'runtimeClasspath': [ours]+api+natives}}
             (project/'build/reports/maven-consumer.json').write_text(json.dumps(report))
             jar = project/'consumer.jar'
             with zipfile.ZipFile(jar,'w') as archive:
