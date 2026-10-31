@@ -1,0 +1,4 @@
+# Resource-pack assets and the manifest that pins their bytes must survive
+# checkout byte-exact; autocrlf on Windows runners turned sounds.json into
+# CRLF and broke the sha256 manifest check.
+platforms/shared/src/main/resources/assets/** -text
