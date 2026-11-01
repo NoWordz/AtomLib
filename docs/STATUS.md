@@ -1,24 +1,30 @@
 # AtomLib status
 
-Status date: 2026-10-31. Version `0.1.0-beta`.
+Status date: 2026-11-01. Version `0.1.0-beta`, current release
+[v0.1.0-beta-beta3](https://github.com/NoWordz/AtomLib/releases/tag/v0.1.0-beta-beta3).
 
-Implemented: one shared Skija render bridge with a borrowed-frame contract,
-LWJGL Yoga with runtime native extraction, host-owned fonts and text layout
-(`TextService`), immutable presentation frames, the optional AtomChat design
-package, three loader jars with Windows x64/ARM64 natives, six standalone Maven
-consumers, and pinned input handling for the AtomChat build.
+The library now has its own public repository and CI (six jobs: pure-Java
+contract tests, Windows source suite, hidden GL round trips on Xvfb for all
+three loader targets, and the packaging/verifier job). AtomChat consumes the
+pinned input archive from this repository's releases; the old secret-based
+fetch on the AtomChat side is retired.
 
-The generic component, overlay, scroll, interaction, view-host, style and shell
-layer is gone. `ui` contains Yoga layout and `com.atom.lib.design.atomchat`
-only; `devtools` is deleted. Release metadata is in place (authors, Apache-2.0,
-description, placeholder logo and repository URL).
+Implemented since the extraction checkpoint: Yoga bindings compiled per
+target behind a generated bridge (3.3.1 vs 3.3.3 renamed symbols, the resize
+crash blocker), subpixel text shaping in `FontRegistry`, the decided
+`LayoutStyle` expansion (`Edges`, per-edge margin/padding, `aspectRatio`,
+`align`/`justify`; absolute positioning is a non-goal), the default font
+package (same-source Noto Sans SC VF re-subset, 7671 codepoints, zero drift
+against the previous subset including at wght 500, Latin-1 and kaomoji ranges
+added), `ScreenInputAdapter` with zero Minecraft types, and the
+pixels-per-unit contract in `render-bridge.md`.
 
-What has actually been verified: `:core:test`, `:runtime:test` and `:ui:test`
-pass locally (44 tests), `run_packaging.py platforms/verify/consumers` pass for
-all three targets, and AtomChat main builds and tests against these jars with
-its CI green.
+Evidence: the offscreen settings-home replication test lives in AtomChat and
+its reports live in [evidence/settings-home-replication](evidence/);
+line-width drift is fixed to 4/4, the four remaining geometry deltas are the
+documented 1u rounding contract.
 
-What has not: no external consumer has used the library, this repository has
-no remote so its own CI has never run, ARM64 hardware is untested, and the text
-stack has only been exercised by generated examples. Repository URL and logo
-are placeholders. See [next-directions.md](next-directions.md).
+What has not: no external consumer yet, ARM64 hardware untested, D (Maven
+host beyond GitHub releases) and the deferred E (multi-consumer
+coexistence) not started. See [next-directions.md](next-directions.md) for
+the live plan and its status notes.
