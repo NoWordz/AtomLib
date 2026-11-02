@@ -26,7 +26,7 @@ def java_home(version):
     raise RuntimeError(f'Set JAVA{version}_HOME to the appropriate JDK')
 
 
-def run(project,key,tasks,logname,font=None):
+def run(project,key,tasks,logname,font=None,maven=None):
     home=java_home(TARGETS[key]['java'])
     java=home/'bin'/('java.exe' if os.name=='nt' else 'java')
     log=project/'build'/logname
@@ -38,6 +38,8 @@ def run(project,key,tasks,logname,font=None):
              f'-PpythonExecutable={sys.executable}']
     if font:
         command.append(f'-PatomlibTestFont={font}')
+    if maven:
+        command.append(f'-PatomlibTestMavenRepo={Path(maven).resolve()}')
     env=os.environ.copy();env['JAVA_HOME']=str(home)
     if log.exists():
         from datetime import datetime
@@ -67,10 +69,10 @@ def clear_loom_cache(project):
                 pass
 
 
-def consumer(pair):
+def consumer(pair,maven=None):
     project = ROOT / 'examples' / pair[0] / pair[1]
     clear_loom_cache(project)
-    return run(project, pair[1], ['verifyConsumer'], 'consumer.log')
+    return run(project, pair[1], ['verifyConsumer'], 'consumer.log', maven=maven)
 
 
 def main():
@@ -79,6 +81,7 @@ def main():
     parser.add_argument('--target',choices=list(TARGETS))
     parser.add_argument('--jobs',type=int,default=1)
     parser.add_argument('--test-font',default=os.environ.get('ATOMLIB_TEST_FONT'))
+    parser.add_argument('--maven',type=Path)
     args=parser.parse_args()
     keys=[args.target] if args.target else list(TARGETS)
     if args.stage=='verify':
@@ -89,12 +92,12 @@ def main():
         tasks=[':build',':publishToTestRepository',':verifyArtifact']
     if args.stage in ['all','platforms','verify']:
         with ThreadPoolExecutor(max_workers=args.jobs) as pool:
-            results=list(pool.map(lambda key:run(ROOT/'platforms'/key,key,tasks,'packaging.log',args.test_font),keys))
+            results=list(pool.map(lambda key:run(ROOT/'platforms'/key,key,tasks,'packaging.log',args.test_font,args.maven),keys))
         if not all(results): return 1
     if args.stage in ['all','consumers']:
         work=[(letter,key) for letter in ['a','b'] for key in keys]
         with ThreadPoolExecutor(max_workers=args.jobs) as pool:
-            results=list(pool.map(consumer,work))
+            results=list(pool.map(lambda pair:consumer(pair,args.maven),work))
         if not all(results): return 1
     return 0
 

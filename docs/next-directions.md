@@ -1,5 +1,9 @@
 # Next directions
 
+> 2026-11-02 阶段收口：可组合模态、控件图像槽、三端原版图标离屏适配与 CreatorTrial 薄 Screen 已形成独审代码候选，见[实施方案与剩余项](superpowers/plans/2026-11-02-composable-modal-and-item-icons.md)及 [STATUS](STATUS.md)。当前停止扩展；下次先拆分图标 CPU prepare+close 约 9–10ms 的成本，再在重新获得启动授权后验真实 Minecraft。公开 beta3/AC 输入不变，本地提交不代表发版。下文 A–G 与原非目标保留为提取阶段历史，不用于否定后续已明确批准的有限 controls/modal/图标范围。
+
+> 2026-11-01 后续批准范围：基于独立 lib-only BLOCKED 结果，在本地候选恢复一个有限可选 controls 包（Slider／Toggle／单确认窗＋UiSession），以及真实字体角色和 CJK_UI。不是恢复旧完整 SDK。实现合同见 [方案](superpowers/plans/2026-11-01-minimal-controls-and-fonts.md)，消费合同见 [controls](controls.md)；下文已发布 foundation 的 implemented 事实与 beta3 锁保持历史边界。
+
 The three planned layers exist: the Skija render bridge, the Yoga layout engine
 and the optional AtomChat design package. What is left is turning that into
 something another author can pick up. The options below are independent; each
@@ -111,9 +115,9 @@ deferred. D (publishing beyond GitHub; Maven host) remains undecided.
 
 ## F. Default font package  (implemented 2026-10-31)
 
-AtomLib does not bundle fonts; the host does. AtomChat gets good text because
-it ships a subsetted Noto Sans SC, but a library consumer starting from zero
-gets tofu for all CJK. Decide the library's font story once:
+Before direction F, AtomLib did not bundle fonts; the host did. AtomChat got
+good text because it shipped a subsetted Noto Sans SC, but a library consumer
+starting from zero got tofu for all CJK. The proposed work was:
 
 - Work: move AtomChat's two subsetted OTFs plus `OFL.txt` into the library
   byte-for-byte and load them as the default; host-supplied fonts still win.

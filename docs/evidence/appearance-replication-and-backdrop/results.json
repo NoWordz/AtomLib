@@ -1,0 +1,790 @@
+{
+  "schema_version": 1,
+  "status": "PENDING_GAME_AND_USER_VISUAL",
+  "implementation": "COMPLETE_WITH_DOCUMENTED_LIMITS",
+  "public_beta": "UNCHANGED_NOT_RELEASED",
+  "root_tests": {
+    "core": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "runtime": {
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "ui": {
+      "tests": 73,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "hidden_gl": {
+    "1.20.1-forge": {
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "1.21.1-fabric": {
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "1.21.1-neoforge": {
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "sample_tests": {
+    "AppearancePageTest": {
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "InteractionSliceTest": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "AppearanceReplicationTest": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "sample": {
+    "artifact": {
+      "path": "D:\\AtomLib-Usability\\build\\appearance-inputs\\c051386335fab712f756d8f9b340fd9af6b07767057ab47aed5269035f9f7f08\\libs\\atomlib-usability-0.1.0-partial.jar",
+      "bytes": 17001,
+      "sha256": "6f48b5216316fb40816eb35a9d990c7982c25d15b4ce6eb60322a945e716c928"
+    },
+    "input": {
+      "schema_version": 1,
+      "group": "com.atom.lib",
+      "artifact": "atomlib-1.21.1-fabric",
+      "version": "0.1.0-beta",
+      "target": "1.21.1-fabric",
+      "sha256": "c051386335fab712f756d8f9b340fd9af6b07767057ab47aed5269035f9f7f08"
+    },
+    "png": 25,
+    "independence": {
+      "projects": 1,
+      "includedBuilds": 0,
+      "sourceRoots": [
+        "D:\\AtomLib-Usability\\src\\main\\resources",
+        "D:\\AtomLib-Usability\\src\\main\\java"
+      ],
+      "compiledPlatform": [
+        {
+          "coordinate": "net_fabricmc_yarn_1_21_1_1_21_1_build_3_v2.com.atom.lib:atomlib-1.21.1-fabric:0.1.0-beta",
+          "file": "D:\\AtomLib-Usability\\.gradle\\loom-cache\\remapped_mods\\net_fabricmc_yarn_1_21_1_1_21_1_build_3_v2\\com\\atom\\lib\\atomlib-1.21.1-fabric\\0.1.0-beta\\atomlib-1.21.1-fabric-0.1.0-beta.jar"
+        }
+      ],
+      "jarClasses": [
+        "dev/atomlib/usability/AppearancePage$1.class",
+        "dev/atomlib/usability/AppearancePage$PageFrame.class",
+        "dev/atomlib/usability/AppearancePage.class",
+        "dev/atomlib/usability/MaterialsScreen.class",
+        "dev/atomlib/usability/UsabilityClient.class",
+        "dev/atomlib/usability/UsabilityKeyMixin.class"
+      ],
+      "bundledLibraryClasses": 0,
+      "bundledFonts": 0,
+      "bundledNestedJars": 0
+    }
+  },
+  "candidate_jars": {
+    "1.20.1-forge": {
+      "path": "D:\\AtomLib\\build\\appearance-candidate\\maven\\com\\atom\\lib\\atomlib-1.20.1-forge\\0.1.0-beta\\atomlib-1.20.1-forge-0.1.0-beta.jar",
+      "sha256": "0ec0f8205c815d04d41903be37cfcfda227efedba5ea2653d11ee7b8a8c0b0ee"
+    },
+    "1.21.1-fabric": {
+      "path": "D:\\AtomLib\\build\\appearance-candidate\\maven\\com\\atom\\lib\\atomlib-1.21.1-fabric\\0.1.0-beta\\atomlib-1.21.1-fabric-0.1.0-beta.jar",
+      "sha256": "c051386335fab712f756d8f9b340fd9af6b07767057ab47aed5269035f9f7f08"
+    },
+    "1.21.1-neoforge": {
+      "path": "D:\\AtomLib\\build\\appearance-candidate\\maven\\com\\atom\\lib\\atomlib-1.21.1-neoforge\\0.1.0-beta\\atomlib-1.21.1-neoforge-0.1.0-beta.jar",
+      "sha256": "4a2b4262d4164c44e8c2a972ced651900a849e97e518807b80a9bc685b6a814e"
+    }
+  },
+  "input_zip": {
+    "path": "D:\\AtomLib\\build\\appearance-candidate\\input.zip",
+    "sha256": "f9f702e42470ecc72ed4f5601c0c8278b0e8a38c0aaea875417a68f0f762f78a",
+    "bytes": 100835575
+  },
+  "source_archive": {
+    "path": "D:\\AtomLib\\build\\appearance-candidate\\source.zip",
+    "sha256": "72f5fa180adf10be3282bceac3bf8a553bd33ef39e31033d3e0604f4eecc67e0",
+    "bytes": 9109915,
+    "entries": 527
+  },
+  "behavior_mutations": [
+    {
+      "name": "row-falls-back-to-card",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sourceSha256": "599e6f43bd83e7d4e5e85488b21a76f227e51fcbecad3f00b7ecba5918ded960",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "command": [
+        "C:\\Program Files\\Java\\jdk-17.0.18\\bin\\java.exe",
+        "-Dfile.encoding=UTF-8",
+        "-classpath",
+        "D:\\AtomLib\\gradle\\wrapper\\gradle-wrapper.jar",
+        "org.gradle.wrapper.GradleWrapperMain",
+        ":ui:test",
+        "--tests",
+        "com.atom.lib.controls.SettingsRowTest.rowSlider*",
+        "--offline",
+        "--no-daemon",
+        "--console=plain"
+      ]
+    },
+    {
+      "name": "missing-action-release",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sourceSha256": "ba49afcdce4660d49c1f0273f43bd2f96d24d2e92c95a9f977202c271de2c643",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "command": [
+        "C:\\Program Files\\Java\\jdk-17.0.18\\bin\\java.exe",
+        "-Dfile.encoding=UTF-8",
+        "-classpath",
+        "D:\\AtomLib\\gradle\\wrapper\\gradle-wrapper.jar",
+        "org.gradle.wrapper.GradleWrapperMain",
+        ":ui:test",
+        "--tests",
+        "com.atom.lib.controls.ActionControlTest.completeMouse*",
+        "--offline",
+        "--no-daemon",
+        "--console=plain"
+      ]
+    },
+    {
+      "name": "collapse-keeps-capture",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sourceSha256": "18618c9852c5688f21cd17bdce49fce8a0ac61d1232593ca20c18c8849acb67f",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "command": [
+        "C:\\Program Files\\Java\\jdk-17.0.18\\bin\\java.exe",
+        "-Dfile.encoding=UTF-8",
+        "-classpath",
+        "D:\\AtomLib\\gradle\\wrapper\\gradle-wrapper.jar",
+        "org.gradle.wrapper.GradleWrapperMain",
+        ":ui:test",
+        "--tests",
+        "com.atom.lib.controls.SettingsCompositionTest.collapsing*",
+        "--offline",
+        "--no-daemon",
+        "--console=plain"
+      ]
+    },
+    {
+      "name": "wheel-does-not-scroll",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sourceSha256": "6827012fd17db83ebcbb6606848cbf7d7da5e07dac645bbc524d22c4231a705b",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "command": [
+        "C:\\Program Files\\Java\\jdk-17.0.18\\bin\\java.exe",
+        "-Dfile.encoding=UTF-8",
+        "-classpath",
+        "D:\\AtomLib\\gradle\\wrapper\\gradle-wrapper.jar",
+        "org.gradle.wrapper.GradleWrapperMain",
+        ":ui:test",
+        "--tests",
+        "com.atom.lib.controls.SettingsCompositionTest.scrolling*",
+        "--offline",
+        "--no-daemon",
+        "--console=plain"
+      ]
+    },
+    {
+      "name": "missing-alpha-mask",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sourceSha256": "6b134e347c3b6366dc230848645812873e0c08230bebe986337a3ffbc70c99b9",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "command": [
+        "C:\\Program Files\\Java\\jdk-21.0.11\\bin\\java.exe",
+        "-Dfile.encoding=UTF-8",
+        "-classpath",
+        "D:\\AtomLib\\platforms\\1.21.1-fabric\\gradle\\wrapper\\gradle-wrapper.jar",
+        "org.gradle.wrapper.GradleWrapperMain",
+        "hiddenGlTest",
+        "--tests",
+        "com.atom.lib.client.render.BackdropHiddenGlTest.explicitDestination*",
+        "--offline",
+        "--no-daemon",
+        "--console=plain"
+      ]
+    },
+    {
+      "name": "wrong-destination",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sourceSha256": "6b134e347c3b6366dc230848645812873e0c08230bebe986337a3ffbc70c99b9",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "command": [
+        "C:\\Program Files\\Java\\jdk-21.0.11\\bin\\java.exe",
+        "-Dfile.encoding=UTF-8",
+        "-classpath",
+        "D:\\AtomLib\\platforms\\1.21.1-fabric\\gradle\\wrapper\\gradle-wrapper.jar",
+        "org.gradle.wrapper.GradleWrapperMain",
+        "hiddenGlTest",
+        "--tests",
+        "com.atom.lib.client.render.BackdropHiddenGlTest.explicitDestination*",
+        "--offline",
+        "--no-daemon",
+        "--console=plain"
+      ]
+    },
+    {
+      "name": "trust-source-alpha",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sourceSha256": "d11c862178b406ee0f8f19f1ff24022d0163283ee53f672b5bd223b19f3d69cf",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "command": [
+        "C:\\Program Files\\Java\\jdk-21.0.11\\bin\\java.exe",
+        "-Dfile.encoding=UTF-8",
+        "-classpath",
+        "D:\\AtomLib\\platforms\\1.21.1-fabric\\gradle\\wrapper\\gradle-wrapper.jar",
+        "org.gradle.wrapper.GradleWrapperMain",
+        "hiddenGlTest",
+        "--tests",
+        "com.atom.lib.client.render.BackdropHiddenGlTest.allDestinationAlpha*",
+        "--offline",
+        "--no-daemon",
+        "--console=plain"
+      ]
+    }
+  ],
+  "shader_jar_mutations": [
+    {
+      "target": "1.20.1-forge",
+      "resource": "assets/atomlib/shaders/backdrop/fullscreen.vert",
+      "mutation": "missing",
+      "rejected": true,
+      "diagnostics": [
+        "1.20.1-forge-fullscreen.vert-missing.jar: missing or duplicate required shader: assets/atomlib/shaders/backdrop/fullscreen.vert"
+      ]
+    },
+    {
+      "target": "1.20.1-forge",
+      "resource": "assets/atomlib/shaders/backdrop/fullscreen.vert",
+      "mutation": "corrupt",
+      "rejected": true,
+      "diagnostics": [
+        "1.20.1-forge-fullscreen.vert-corrupt.jar: incorrect shader bytes: assets/atomlib/shaders/backdrop/fullscreen.vert"
+      ]
+    },
+    {
+      "target": "1.20.1-forge",
+      "resource": "assets/atomlib/shaders/backdrop/kawase.frag",
+      "mutation": "missing",
+      "rejected": true,
+      "diagnostics": [
+        "1.20.1-forge-kawase.frag-missing.jar: missing or duplicate required shader: assets/atomlib/shaders/backdrop/kawase.frag"
+      ]
+    },
+    {
+      "target": "1.20.1-forge",
+      "resource": "assets/atomlib/shaders/backdrop/kawase.frag",
+      "mutation": "corrupt",
+      "rejected": true,
+      "diagnostics": [
+        "1.20.1-forge-kawase.frag-corrupt.jar: incorrect shader bytes: assets/atomlib/shaders/backdrop/kawase.frag"
+      ]
+    },
+    {
+      "target": "1.20.1-forge",
+      "resource": "assets/atomlib/shaders/backdrop/composite.frag",
+      "mutation": "missing",
+      "rejected": true,
+      "diagnostics": [
+        "1.20.1-forge-composite.frag-missing.jar: missing or duplicate required shader: assets/atomlib/shaders/backdrop/composite.frag"
+      ]
+    },
+    {
+      "target": "1.20.1-forge",
+      "resource": "assets/atomlib/shaders/backdrop/composite.frag",
+      "mutation": "corrupt",
+      "rejected": true,
+      "diagnostics": [
+        "1.20.1-forge-composite.frag-corrupt.jar: incorrect shader bytes: assets/atomlib/shaders/backdrop/composite.frag"
+      ]
+    },
+    {
+      "target": "1.21.1-fabric",
+      "resource": "assets/atomlib/shaders/backdrop/fullscreen.vert",
+      "mutation": "missing",
+      "rejected": true,
+      "diagnostics": [
+        "1.21.1-fabric-fullscreen.vert-missing.jar: missing or duplicate required shader: assets/atomlib/shaders/backdrop/fullscreen.vert"
+      ]
+    },
+    {
+      "target": "1.21.1-fabric",
+      "resource": "assets/atomlib/shaders/backdrop/fullscreen.vert",
+      "mutation": "corrupt",
+      "rejected": true,
+      "diagnostics": [
+        "1.21.1-fabric-fullscreen.vert-corrupt.jar: incorrect shader bytes: assets/atomlib/shaders/backdrop/fullscreen.vert"
+      ]
+    },
+    {
+      "target": "1.21.1-fabric",
+      "resource": "assets/atomlib/shaders/backdrop/kawase.frag",
+      "mutation": "missing",
+      "rejected": true,
+      "diagnostics": [
+        "1.21.1-fabric-kawase.frag-missing.jar: missing or duplicate required shader: assets/atomlib/shaders/backdrop/kawase.frag"
+      ]
+    },
+    {
+      "target": "1.21.1-fabric",
+      "resource": "assets/atomlib/shaders/backdrop/kawase.frag",
+      "mutation": "corrupt",
+      "rejected": true,
+      "diagnostics": [
+        "1.21.1-fabric-kawase.frag-corrupt.jar: incorrect shader bytes: assets/atomlib/shaders/backdrop/kawase.frag"
+      ]
+    },
+    {
+      "target": "1.21.1-fabric",
+      "resource": "assets/atomlib/shaders/backdrop/composite.frag",
+      "mutation": "missing",
+      "rejected": true,
+      "diagnostics": [
+        "1.21.1-fabric-composite.frag-missing.jar: missing or duplicate required shader: assets/atomlib/shaders/backdrop/composite.frag"
+      ]
+    },
+    {
+      "target": "1.21.1-fabric",
+      "resource": "assets/atomlib/shaders/backdrop/composite.frag",
+      "mutation": "corrupt",
+      "rejected": true,
+      "diagnostics": [
+        "1.21.1-fabric-composite.frag-corrupt.jar: incorrect shader bytes: assets/atomlib/shaders/backdrop/composite.frag"
+      ]
+    },
+    {
+      "target": "1.21.1-neoforge",
+      "resource": "assets/atomlib/shaders/backdrop/fullscreen.vert",
+      "mutation": "missing",
+      "rejected": true,
+      "diagnostics": [
+        "1.21.1-neoforge-fullscreen.vert-missing.jar: missing or duplicate required shader: assets/atomlib/shaders/backdrop/fullscreen.vert"
+      ]
+    },
+    {
+      "target": "1.21.1-neoforge",
+      "resource": "assets/atomlib/shaders/backdrop/fullscreen.vert",
+      "mutation": "corrupt",
+      "rejected": true,
+      "diagnostics": [
+        "1.21.1-neoforge-fullscreen.vert-corrupt.jar: incorrect shader bytes: assets/atomlib/shaders/backdrop/fullscreen.vert"
+      ]
+    },
+    {
+      "target": "1.21.1-neoforge",
+      "resource": "assets/atomlib/shaders/backdrop/kawase.frag",
+      "mutation": "missing",
+      "rejected": true,
+      "diagnostics": [
+        "1.21.1-neoforge-kawase.frag-missing.jar: missing or duplicate required shader: assets/atomlib/shaders/backdrop/kawase.frag"
+      ]
+    },
+    {
+      "target": "1.21.1-neoforge",
+      "resource": "assets/atomlib/shaders/backdrop/kawase.frag",
+      "mutation": "corrupt",
+      "rejected": true,
+      "diagnostics": [
+        "1.21.1-neoforge-kawase.frag-corrupt.jar: incorrect shader bytes: assets/atomlib/shaders/backdrop/kawase.frag"
+      ]
+    },
+    {
+      "target": "1.21.1-neoforge",
+      "resource": "assets/atomlib/shaders/backdrop/composite.frag",
+      "mutation": "missing",
+      "rejected": true,
+      "diagnostics": [
+        "1.21.1-neoforge-composite.frag-missing.jar: missing or duplicate required shader: assets/atomlib/shaders/backdrop/composite.frag"
+      ]
+    },
+    {
+      "target": "1.21.1-neoforge",
+      "resource": "assets/atomlib/shaders/backdrop/composite.frag",
+      "mutation": "corrupt",
+      "rejected": true,
+      "diagnostics": [
+        "1.21.1-neoforge-composite.frag-corrupt.jar: incorrect shader bytes: assets/atomlib/shaders/backdrop/composite.frag"
+      ]
+    },
+    {
+      "target": "consumer",
+      "mutation": "bundled-shader",
+      "rejected": true
+    }
+  ],
+  "sample_mutations": [
+    {
+      "name": "input-byte-mismatch",
+      "failureKind": "configuration-authentication",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "originalSha256": "c051386335fab712f756d8f9b340fd9af6b07767057ab47aed5269035f9f7f08"
+    },
+    {
+      "name": "missing-release",
+      "failureKind": "behavior-assertion",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "restoredSha256": "cd9744d83cf86c6ac450519b009043ac79aea72ab516a2810310820319bcb8e6"
+    }
+  ],
+  "comparisons": {
+    "reference_revision": "f6dbaa58",
+    "note": "Only native 1px/u references are compared; higher-density renders have no resized-reference pixel claim.",
+    "pairs": [
+      {
+        "reference": "D:\\AtomLib-Usability\\evidence\\reference\\phone-480.png",
+        "candidate": "D:\\AtomLib-Usability\\evidence\\appearance-candidate\\output\\phone-density-1.0.png",
+        "size": [
+          560,
+          920
+        ],
+        "referenceSha256": "40af015da209f646939a018f9add2626f6e41041137b833df1106dbb0b194d6a",
+        "candidateSha256": "09c38fe1139d6b8b408eb7a97f103b40fb167401eb948bd6373419ad4a7233f4",
+        "changedPixels": 405601,
+        "totalPixels": 515200,
+        "meanRgbMagnitude": 17.08417895962733,
+        "differenceImage": "D:\\AtomLib-Usability\\evidence\\appearance-candidate\\output\\phone-density-1.0-difference-x4.png",
+        "assessment": "OBSERVATION_ONLY; no automatic visual PASS threshold"
+      },
+      {
+        "reference": "D:\\AtomLib-Usability\\evidence\\reference\\phone-480-confirmation.png",
+        "candidate": "D:\\AtomLib-Usability\\evidence\\appearance-candidate\\output\\phone-density-1.0-dialog.png",
+        "size": [
+          560,
+          920
+        ],
+        "referenceSha256": "c58c546873f10a8e804184c395c94c1564fc224bacea75fe70526642e9eefacb",
+        "candidateSha256": "56163e52466777e1efd562afcdb63b444354f1f6b35a7f9476fd98a999131082",
+        "changedPixels": 515183,
+        "totalPixels": 515200,
+        "meanRgbMagnitude": 31.033163819875778,
+        "differenceImage": "D:\\AtomLib-Usability\\evidence\\appearance-candidate\\output\\phone-density-1.0-dialog-difference-x4.png",
+        "assessment": "OBSERVATION_ONLY; no automatic visual PASS threshold"
+      },
+      {
+        "reference": "D:\\AtomLib-Usability\\evidence\\reference\\narrow-280.png",
+        "candidate": "D:\\AtomLib-Usability\\evidence\\appearance-candidate\\output\\narrow-density-1.0.png",
+        "size": [
+          360,
+          920
+        ],
+        "referenceSha256": "1e6c5d7588a9175068dfa3f31449982de11b75ad3def21b2491cccbb8749df8a",
+        "candidateSha256": "de8d33ada539651c07ffe69e912bf2ae9ee0bb077772d04558aa2500ae161670",
+        "changedPixels": 236805,
+        "totalPixels": 331200,
+        "meanRgbMagnitude": 21.518315217391304,
+        "differenceImage": "D:\\AtomLib-Usability\\evidence\\appearance-candidate\\output\\narrow-density-1.0-difference-x4.png",
+        "assessment": "OBSERVATION_ONLY; no automatic visual PASS threshold"
+      },
+      {
+        "reference": "D:\\AtomLib-Usability\\evidence\\reference\\narrow-280-confirmation.png",
+        "candidate": "D:\\AtomLib-Usability\\evidence\\appearance-candidate\\output\\narrow-density-1.0-dialog.png",
+        "size": [
+          360,
+          920
+        ],
+        "referenceSha256": "793d8e43085c3ddae883b987c1e519db55499ac75c4b06771dfb92307a0b1d98",
+        "candidateSha256": "442aeafa1dcdfecaa96df240a11dc242beea3ba337df702f874a2d8d00c16f47",
+        "changedPixels": 331174,
+        "totalPixels": 331200,
+        "meanRgbMagnitude": 31.56177536231884,
+        "differenceImage": "D:\\AtomLib-Usability\\evidence\\appearance-candidate\\output\\narrow-density-1.0-dialog-difference-x4.png",
+        "assessment": "OBSERVATION_ONLY; no automatic visual PASS threshold"
+      },
+      {
+        "reference": "D:\\AtomLib-Usability\\evidence\\reference\\half-480.png",
+        "candidate": "D:\\AtomLib-Usability\\evidence\\appearance-candidate\\output\\half-density-1.0.png",
+        "size": [
+          560,
+          920
+        ],
+        "referenceSha256": "cb23e127434ca3cff1a5bbde4ce0d989d3869ac478a9a79b49d357ac2fa9edb5",
+        "candidateSha256": "ee5957a009f9cfc56d0da8fdc8d39b89a14bf32b7f673ea069b63f3e5650c3b7",
+        "changedPixels": 425090,
+        "totalPixels": 515200,
+        "meanRgbMagnitude": 55.25695263975155,
+        "differenceImage": "D:\\AtomLib-Usability\\evidence\\appearance-candidate\\output\\half-density-1.0-difference-x4.png",
+        "assessment": "OBSERVATION_ONLY; no automatic visual PASS threshold"
+      },
+      {
+        "reference": "D:\\AtomLib-Usability\\evidence\\reference\\half-480-confirmation.png",
+        "candidate": "D:\\AtomLib-Usability\\evidence\\appearance-candidate\\output\\half-density-1.0-dialog.png",
+        "size": [
+          560,
+          920
+        ],
+        "referenceSha256": "74d1d201b81004d150c6762f35b95de78412b9cd5ebd768676f17ee9cbf96b9a",
+        "candidateSha256": "e75345575a503f4d644b43d5b6fd34518f5ef42789d64b96b5d88bbe87ac3770",
+        "changedPixels": 515183,
+        "totalPixels": 515200,
+        "meanRgbMagnitude": 36.84179153726708,
+        "differenceImage": "D:\\AtomLib-Usability\\evidence\\appearance-candidate\\output\\half-density-1.0-dialog-difference-x4.png",
+        "assessment": "OBSERVATION_ONLY; no automatic visual PASS threshold"
+      }
+    ]
+  },
+  "protected_baseline": {
+    "protected_count": 404,
+    "missing": [],
+    "changed": [],
+    "ac_drift_observed": [
+      "D:/AtomChat-Main/platforms/1.20.1-forge/src/main/java/com/atom/chat/render/PanelBlurRenderer.java",
+      "D:/AtomChat-Main/platforms/1.20.1-forge/src/main/java/com/atom/chat/screen/AtomChatScreen.java",
+      "D:/AtomChat-Main/platforms/1.20.1-forge/src/main/resources/assets/atomchat/shaders/core/atomchat_panel_blur.fsh",
+      "D:/AtomChat-Main/platforms/1.20.1-forge/src/main/resources/assets/atomchat/shaders/core/atomchat_panel_blur.json",
+      "D:/AtomChat-Main/platforms/1.21.1-fabric/src/main/java/com/atom/chat/render/PanelBlurRenderer.java",
+      "D:/AtomChat-Main/platforms/1.21.1-fabric/src/main/java/net/minecraft/client/gui/screen/AtomChatScreen.java",
+      "D:/AtomChat-Main/platforms/1.21.1-fabric/src/main/resources/assets/minecraft/shaders/core/atomchat_panel_blur.fsh",
+      "D:/AtomChat-Main/platforms/1.21.1-fabric/src/main/resources/assets/minecraft/shaders/core/atomchat_panel_blur.json",
+      "D:/AtomChat-Main/platforms/1.21.1-neoforge/src/main/java/com/atom/chat/render/PanelBlurRenderer.java",
+      "D:/AtomChat-Main/platforms/1.21.1-neoforge/src/main/java/com/atom/chat/screen/AtomChatScreen.java",
+      "D:/AtomChat-Main/platforms/1.21.1-neoforge/src/main/resources/assets/atomchat/shaders/core/atomchat_panel_blur.fsh",
+      "D:/AtomChat-Main/platforms/1.21.1-neoforge/src/main/resources/assets/atomchat/shaders/core/atomchat_panel_blur.json",
+      "D:/AtomChat-Main/shared/PLATFORM-SEAMS.md",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/config/AtomChatConfig.java",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/nav/NavStackController.java",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/nav/PageTransitionDirector.java",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/ui/SpringAnim.java",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/ui/ToggleSwitch.java",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/ui/UiMotion.java",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/ui/UiSpring.java",
+      "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/nav/NavStackControllerTest.java",
+      "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/nav/NavStackWiringSourceTest.java",
+      "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/nav/PageTransitionDirectorTest.java",
+      "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/nav/PageTransitionWiringSourceTest.java",
+      "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/ui/CompatibilityRegressionSourceTest.java"
+    ],
+    "ac_scope": "read-only by this review; external work preserved"
+  },
+  "not_run": [
+    "Minecraft client/game",
+    "ARM64 hardware",
+    "Iris/OptiFine/Gnetum",
+    "other GPUs",
+    "real modpack coexistence",
+    "user visual acceptance"
+  ],
+  "commands": {
+    "root": "cd D:/AtomLib && ./gradlew.bat test -PatomlibTestFont=D:/AtomLib/runtime/src/main/resources/com/atom/lib/fonts/bundled-default.otf --offline --no-daemon --console=plain",
+    "package": "python tools/run_packaging.py all --jobs 1 --maven D:/AtomLib/build/appearance-candidate/maven --test-font D:/AtomLib/runtime/src/main/resources/com/atom/lib/fonts/bundled-default.otf",
+    "hidden_gl": "<platform>/gradlew.bat hiddenGlTest --offline --no-daemon --console=plain",
+    "sample": "cd D:/AtomLib-Usability && ./gradlew.bat test remapJar dependencyEvidence -PatomlibBuildPrefix=appearance-inputs -PatomlibMaven=D:/AtomLib/build/appearance-candidate/maven -PatomlibInputLock=evidence/appearance-candidate/input-lock.json -PevidenceRoot=evidence/appearance-candidate -PevidenceOutput=evidence/appearance-candidate/output --offline --no-daemon --console=plain",
+    "sample_verify": "python tools/verify_delivery.py --profile appearance --maven D:/AtomLib/build/appearance-candidate/maven --lock evidence/appearance-candidate/input-lock.json --evidence evidence/appearance-candidate"
+  },
+  "independent_review": {
+    "status": "REVIEWED_PENDING_GAME_AND_USER_VISUAL",
+    "reviewer": "main agent",
+    "fixes": [
+      {
+        "priority": "P2",
+        "issue": "Minimum-size scrollbar thumb could not reach content end",
+        "proof": "Independent expected offset9900, submitted implementation7600; red then green"
+      },
+      {
+        "priority": "P2",
+        "issue": "Right-button release terminated left-owned scrollbar drag",
+        "proof": "Independent pointer sequence red then green"
+      },
+      {
+        "priority": "P2",
+        "issue": "Escape passed to host during scrollbar capture and leaked its pointer tail",
+        "proof": "Independent expected CONSUMED, submitted PASS; red then green"
+      },
+      {
+        "priority": "P1",
+        "issue": "Screen-local frame counter restarted a bridge-owned backdrop service on reopen",
+        "proof": "Actual hiddenGL rejects counter5->1 and accepts client-clock sequence; sample now passes nowNanos, compile-verified; game reopen NOT_RUN"
+      }
+    ],
+    "root_tests": {
+      "core": {
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "runtime": {
+        "tests": 30,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "ui": {
+        "tests": 73,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "hidden_gl": {
+      "1.20.1-forge": {
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "1.21.1-fabric": {
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "1.21.1-neoforge": {
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "sample_tests": {
+      "AppearancePageTest": {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "InteractionSliceTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "AppearanceReplicationTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "total_junit": 238,
+    "protection": {
+      "protected_count": 404,
+      "missing": [],
+      "changed": [],
+      "ac_drift_observed": [
+        "D:/AtomChat-Main/platforms/1.20.1-forge/src/main/java/com/atom/chat/render/PanelBlurRenderer.java",
+        "D:/AtomChat-Main/platforms/1.20.1-forge/src/main/java/com/atom/chat/screen/AtomChatScreen.java",
+        "D:/AtomChat-Main/platforms/1.20.1-forge/src/main/resources/assets/atomchat/shaders/core/atomchat_panel_blur.fsh",
+        "D:/AtomChat-Main/platforms/1.20.1-forge/src/main/resources/assets/atomchat/shaders/core/atomchat_panel_blur.json",
+        "D:/AtomChat-Main/platforms/1.21.1-fabric/src/main/java/com/atom/chat/render/PanelBlurRenderer.java",
+        "D:/AtomChat-Main/platforms/1.21.1-fabric/src/main/java/net/minecraft/client/gui/screen/AtomChatScreen.java",
+        "D:/AtomChat-Main/platforms/1.21.1-fabric/src/main/resources/assets/minecraft/shaders/core/atomchat_panel_blur.fsh",
+        "D:/AtomChat-Main/platforms/1.21.1-fabric/src/main/resources/assets/minecraft/shaders/core/atomchat_panel_blur.json",
+        "D:/AtomChat-Main/platforms/1.21.1-neoforge/src/main/java/com/atom/chat/render/PanelBlurRenderer.java",
+        "D:/AtomChat-Main/platforms/1.21.1-neoforge/src/main/java/com/atom/chat/screen/AtomChatScreen.java",
+        "D:/AtomChat-Main/platforms/1.21.1-neoforge/src/main/resources/assets/atomchat/shaders/core/atomchat_panel_blur.fsh",
+        "D:/AtomChat-Main/platforms/1.21.1-neoforge/src/main/resources/assets/atomchat/shaders/core/atomchat_panel_blur.json",
+        "D:/AtomChat-Main/shared/PLATFORM-SEAMS.md",
+        "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/config/AtomChatConfig.java",
+        "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/nav/NavStackController.java",
+        "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/nav/PageTransitionDirector.java",
+        "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/ui/SpringAnim.java",
+        "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/ui/ToggleSwitch.java",
+        "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/ui/UiMotion.java",
+        "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/ui/UiSpring.java",
+        "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/nav/NavStackControllerTest.java",
+        "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/nav/NavStackWiringSourceTest.java",
+        "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/nav/PageTransitionDirectorTest.java",
+        "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/nav/PageTransitionWiringSourceTest.java",
+        "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/ui/CompatibilityRegressionSourceTest.java"
+      ],
+      "ac_scope": "read-only by this review; external work preserved"
+    },
+    "python_tests": {
+      "artifact": 34,
+      "consumer": 2,
+      "examples": 3
+    },
+    "accepted_limits": [
+      "Visual differences remain; user acceptance pending",
+      "Scale sliders apply layout scale on commit",
+      "Theme/display disabled by scope",
+      "No Minecraft, ARM64 or shader-mod/modpack verification",
+      "Warm 64x64 CPU submission is around 6ms on this machine; no performance acceptance or cost attribution"
+    ],
+    "verification_attempt_notes": [
+      "Initial root invocation omitted required atomlibTestFont fixture path; repeated with documented path passed",
+      "Initial extra GL probe assumed exact rounding of a fractional .5 channel; fixture changed to exact green endpoint to test capture sequencing without a rounding oracle"
+    ],
+    "submitted_behavior_mutations": "Original seven behavior mutations belong to submitted-stage source; not rerun after the independent UI fixes. Three new independent UI regressions have actual red/green logs. Final shader-jar and consumer mutations were rerun on the final candidate.",
+    "warm_submission": {
+      "1.20.1-forge": {
+        "samples": 32,
+        "size": [
+          64,
+          64
+        ],
+        "cpuSubmitMedianNanos": 6296400,
+        "cpuSubmitP95Nanos": 7744700,
+        "gameBenchmark": false
+      },
+      "1.21.1-fabric": {
+        "samples": 32,
+        "size": [
+          64,
+          64
+        ],
+        "cpuSubmitMedianNanos": 6192700,
+        "cpuSubmitP95Nanos": 7152700,
+        "gameBenchmark": false
+      },
+      "1.21.1-neoforge": {
+        "samples": 32,
+        "size": [
+          64,
+          64
+        ],
+        "cpuSubmitMedianNanos": 5361200,
+        "cpuSubmitP95Nanos": 6022600,
+        "gameBenchmark": false
+      }
+    }
+  },
+  "behavior_mutations_stage": "submitted implementation; see independent_review.submitted_behavior_mutations"
+}

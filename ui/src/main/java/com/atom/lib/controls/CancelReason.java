@@ -1,0 +1,2 @@
+package com.atom.lib.controls;
+public enum CancelReason { ESCAPE, MODAL_OPENED, REMOVED, DISABLED, FOCUS_LOST, COORDINATE_SPACE_CHANGED, HOST_OVERRIDE, CLOSED }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.atomlib.usability.EntrypointPackagingTest" tests="1" skipped="0" failures="1" errors="0" timestamp="2026-11-01T15:12:07" hostname="E33EPUS" time="0.025">
+  <properties/>
+  <testcase name="fabricEntrypointsAreOutsideTheReservedMixinPackage()" classname="dev.atomlib.usability.EntrypointPackagingTest" time="0.025">
+    <failure message="org.opentest4j.AssertionFailedError: Fabric entrypoint cannot live in the Mixin reserved package ==&gt; expected: &lt;false&gt; but was: &lt;true&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: Fabric entrypoint cannot live in the Mixin reserved package ==&gt; expected: &lt;false&gt; but was: &lt;true&gt;
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at app//org.junit.jupiter.api.AssertFalse.failNotFalse(AssertFalse.java:63)
+	at app//org.junit.jupiter.api.AssertFalse.assertFalse(AssertFalse.java:36)
+	at app//org.junit.jupiter.api.Assertions.assertFalse(Assertions.java:239)
+	at app//dev.atomlib.usability.EntrypointPackagingTest.fabricEntrypointsAreOutsideTheReservedMixinPackage(EntrypointPackagingTest.java:17)
+	at java.base@21.0.11/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base@21.0.11/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base@21.0.11/java.util.ArrayList.forEach(ArrayList.java:1596)
+</failure>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

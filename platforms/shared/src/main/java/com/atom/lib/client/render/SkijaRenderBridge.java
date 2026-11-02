@@ -29,6 +29,8 @@ import static org.lwjgl.opengl.GL33C.*;
 public final class SkijaRenderBridge implements AutoCloseable {
     private static final Map<Long,SkijaRenderBridge> OWNERS = new HashMap<>();
     private static final ThreadLocal<Boolean> PAINTING = ThreadLocal.withInitial(() -> false);
+    /** Guard for library Raw GL services sharing this context. */
+    public static void assertOutsideSkijaPass(){if(PAINTING.get())throw new IllegalStateException("Raw GL cannot run inside a Skija pass");}
     private final RuntimeHandle runtime;
     private final Thread thread = Thread.currentThread();
     private DirectContext context;

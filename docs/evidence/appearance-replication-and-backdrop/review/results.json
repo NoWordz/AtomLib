@@ -1,0 +1,169 @@
+{
+  "status": "REVIEWED_PENDING_GAME_AND_USER_VISUAL",
+  "reviewer": "main agent",
+  "fixes": [
+    {
+      "priority": "P2",
+      "issue": "Minimum-size scrollbar thumb could not reach content end",
+      "proof": "Independent expected offset9900, submitted implementation7600; red then green"
+    },
+    {
+      "priority": "P2",
+      "issue": "Right-button release terminated left-owned scrollbar drag",
+      "proof": "Independent pointer sequence red then green"
+    },
+    {
+      "priority": "P2",
+      "issue": "Escape passed to host during scrollbar capture and leaked its pointer tail",
+      "proof": "Independent expected CONSUMED, submitted PASS; red then green"
+    },
+    {
+      "priority": "P1",
+      "issue": "Screen-local frame counter restarted a bridge-owned backdrop service on reopen",
+      "proof": "Actual hiddenGL rejects counter5->1 and accepts client-clock sequence; sample now passes nowNanos, compile-verified; game reopen NOT_RUN"
+    }
+  ],
+  "root_tests": {
+    "core": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "runtime": {
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "ui": {
+      "tests": 73,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "hidden_gl": {
+    "1.20.1-forge": {
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "1.21.1-fabric": {
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "1.21.1-neoforge": {
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "sample_tests": {
+    "AppearancePageTest": {
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "InteractionSliceTest": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "AppearanceReplicationTest": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "total_junit": 238,
+  "protection": {
+    "protected_count": 404,
+    "missing": [],
+    "changed": [],
+    "ac_drift_observed": [
+      "D:/AtomChat-Main/platforms/1.20.1-forge/src/main/java/com/atom/chat/render/PanelBlurRenderer.java",
+      "D:/AtomChat-Main/platforms/1.20.1-forge/src/main/java/com/atom/chat/screen/AtomChatScreen.java",
+      "D:/AtomChat-Main/platforms/1.20.1-forge/src/main/resources/assets/atomchat/shaders/core/atomchat_panel_blur.fsh",
+      "D:/AtomChat-Main/platforms/1.20.1-forge/src/main/resources/assets/atomchat/shaders/core/atomchat_panel_blur.json",
+      "D:/AtomChat-Main/platforms/1.21.1-fabric/src/main/java/com/atom/chat/render/PanelBlurRenderer.java",
+      "D:/AtomChat-Main/platforms/1.21.1-fabric/src/main/java/net/minecraft/client/gui/screen/AtomChatScreen.java",
+      "D:/AtomChat-Main/platforms/1.21.1-fabric/src/main/resources/assets/minecraft/shaders/core/atomchat_panel_blur.fsh",
+      "D:/AtomChat-Main/platforms/1.21.1-fabric/src/main/resources/assets/minecraft/shaders/core/atomchat_panel_blur.json",
+      "D:/AtomChat-Main/platforms/1.21.1-neoforge/src/main/java/com/atom/chat/render/PanelBlurRenderer.java",
+      "D:/AtomChat-Main/platforms/1.21.1-neoforge/src/main/java/com/atom/chat/screen/AtomChatScreen.java",
+      "D:/AtomChat-Main/platforms/1.21.1-neoforge/src/main/resources/assets/atomchat/shaders/core/atomchat_panel_blur.fsh",
+      "D:/AtomChat-Main/platforms/1.21.1-neoforge/src/main/resources/assets/atomchat/shaders/core/atomchat_panel_blur.json",
+      "D:/AtomChat-Main/shared/PLATFORM-SEAMS.md",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/config/AtomChatConfig.java",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/nav/NavStackController.java",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/nav/PageTransitionDirector.java",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/ui/SpringAnim.java",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/ui/ToggleSwitch.java",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/ui/UiMotion.java",
+      "D:/AtomChat-Main/shared/src/main/java/com/atom/chat/ui/UiSpring.java",
+      "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/nav/NavStackControllerTest.java",
+      "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/nav/NavStackWiringSourceTest.java",
+      "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/nav/PageTransitionDirectorTest.java",
+      "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/nav/PageTransitionWiringSourceTest.java",
+      "D:/AtomChat-Main/shared/src/test/java/com/atom/chat/ui/CompatibilityRegressionSourceTest.java"
+    ],
+    "ac_scope": "read-only by this review; external work preserved"
+  },
+  "python_tests": {
+    "artifact": 34,
+    "consumer": 2,
+    "examples": 3
+  },
+  "accepted_limits": [
+    "Visual differences remain; user acceptance pending",
+    "Scale sliders apply layout scale on commit",
+    "Theme/display disabled by scope",
+    "No Minecraft, ARM64 or shader-mod/modpack verification",
+    "Warm 64x64 CPU submission is around 6ms on this machine; no performance acceptance or cost attribution"
+  ],
+  "verification_attempt_notes": [
+    "Initial root invocation omitted required atomlibTestFont fixture path; repeated with documented path passed",
+    "Initial extra GL probe assumed exact rounding of a fractional .5 channel; fixture changed to exact green endpoint to test capture sequencing without a rounding oracle"
+  ],
+  "submitted_behavior_mutations": "Original seven behavior mutations belong to submitted-stage source; not rerun after the independent UI fixes. Three new independent UI regressions have actual red/green logs. Final shader-jar and consumer mutations were rerun on the final candidate.",
+  "warm_submission": {
+    "1.20.1-forge": {
+      "samples": 32,
+      "size": [
+        64,
+        64
+      ],
+      "cpuSubmitMedianNanos": 6296400,
+      "cpuSubmitP95Nanos": 7744700,
+      "gameBenchmark": false
+    },
+    "1.21.1-fabric": {
+      "samples": 32,
+      "size": [
+        64,
+        64
+      ],
+      "cpuSubmitMedianNanos": 6192700,
+      "cpuSubmitP95Nanos": 7152700,
+      "gameBenchmark": false
+    },
+    "1.21.1-neoforge": {
+      "samples": 32,
+      "size": [
+        64,
+        64
+      ],
+      "cpuSubmitMedianNanos": 5361200,
+      "cpuSubmitP95Nanos": 6022600,
+      "gameBenchmark": false
+    }
+  }
+}

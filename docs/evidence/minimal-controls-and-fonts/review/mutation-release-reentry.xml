@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atom.lib.input.ReleaseReentryTest" tests="1" skipped="0" failures="1" errors="0" timestamp="2026-11-01T09:12:14" hostname="E33EPUS" time="0.025">
+  <properties/>
+  <testcase name="releaseEndsCaptureBeforeReentrantRemovalOrCancel()" classname="com.atom.lib.input.ReleaseReentryTest" time="0.025">
+    <failure message="org.opentest4j.AssertionFailedError: expected: &lt;null&gt; but was: &lt;NodeId[value=slider]&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: expected: &lt;null&gt; but was: &lt;NodeId[value=slider]&gt;
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at app//org.junit.jupiter.api.AssertNull.failNotNull(AssertNull.java:50)
+	at app//org.junit.jupiter.api.AssertNull.assertNull(AssertNull.java:35)
+	at app//org.junit.jupiter.api.AssertNull.assertNull(AssertNull.java:30)
+	at app//org.junit.jupiter.api.Assertions.assertNull(Assertions.java:279)
+	at app//com.atom.lib.input.ReleaseReentryTest$1.release(ReleaseReentryTest.java:17)
+	at app//com.atom.lib.input.InputDispatcher.deliver(InputDispatcher.java:36)
+	at app//com.atom.lib.input.InputDispatcher.dispatch(InputDispatcher.java:24)
+	at app//com.atom.lib.input.ReleaseReentryTest.releaseEndsCaptureBeforeReentrantRemovalOrCancel(ReleaseReentryTest.java:22)
+	at java.base@17.0.18/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+</failure>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

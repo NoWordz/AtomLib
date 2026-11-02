@@ -31,8 +31,10 @@ public final class InputDispatcher {
             if(event.type()==PointerEvent.Type.RELEASE){
                 if(event.button()!=button)return InputResult.PASS;
                 var target=capturedTarget;
-                try{target.release(event);}catch(RuntimeException|Error failure){abort(failure);throw failure;}
-                finally{if(capturedTarget==target)clearCapture();}
+                // Release is terminal before invoking business callbacks. A
+                // callback may open a modal or remove this target reentrantly.
+                clearCapture();
+                target.release(event);
                 return InputResult.CONSUMED;
             }
             return InputResult.CONSUMED;

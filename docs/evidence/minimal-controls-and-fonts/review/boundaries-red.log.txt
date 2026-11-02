@@ -1,0 +1,82 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :core:compileJava UP-TO-DATE
+> Task :core:processResources NO-SOURCE
+> Task :core:classes UP-TO-DATE
+> Task :core:jar UP-TO-DATE
+> Task :runtime:compileJava UP-TO-DATE
+> Task :runtime:processResources UP-TO-DATE
+> Task :runtime:classes UP-TO-DATE
+> Task :runtime:jar UP-TO-DATE
+> Task :ui:generateYogaDirty UP-TO-DATE
+> Task :ui:compileJava UP-TO-DATE
+> Task :ui:processResources NO-SOURCE
+> Task :ui:classes UP-TO-DATE
+> Task :ui:compileTestJava
+> Task :ui:processTestResources NO-SOURCE
+> Task :ui:testClasses
+
+> Task :ui:test FAILED
+
+ModalSkinLayoutTest > skinOwnsDialogWidthAndInsetsWhileSessionOnlyCentersIt() FAILED
+    org.opentest4j.AssertionFailedError: expected: <218.0> but was: <250.0>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:86)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:81)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1014)
+        at app//com.atom.lib.controls.ModalSkinLayoutTest.skinOwnsDialogWidthAndInsetsWhileSessionOnlyCentersIt(ModalSkinLayoutTest.java:23)
+
+ReviewInputBoundaryTest > densityCancellationEatsAllHeldAdjustmentRepeatsUntilEachRelease() FAILED
+    org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+        at app//org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+        at app//org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+        at app//org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:183)
+        at app//com.atom.lib.controls.ReviewInputBoundaryTest.densityCancellationEatsAllHeldAdjustmentRepeatsUntilEachRelease(ReviewInputBoundaryTest.java:58)
+
+ReviewInputBoundaryTest > backdropPressReleasedInsideCardDoesNotCancelButANewBackdropClickDoes() FAILED
+    org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+        at app//org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+        at app//org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+        at app//org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:183)
+        at app//com.atom.lib.controls.ReviewInputBoundaryTest.backdropPressReleasedInsideCardDoesNotCancelButANewBackdropClickDoes(ReviewInputBoundaryTest.java:33)
+
+ReviewInputBoundaryTest > cardPressReleasedOnBackdropDoesNotCreateABackdropGesture() FAILED
+    org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+        at app//org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+        at app//org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+        at app//org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:183)
+        at app//com.atom.lib.controls.ReviewInputBoundaryTest.cardPressReleasedOnBackdropDoesNotCreateABackdropGesture(ReviewInputBoundaryTest.java:41)
+
+ReviewInputBoundaryTest > cardTitleIconBodyAndPaddingOnlyConsumeTheirGestures() FAILED
+    org.opentest4j.AssertionFailedError: title ==> expected: <true> but was: <false>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+        at app//org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+        at app//org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:214)
+        at app//com.atom.lib.controls.ReviewInputBoundaryTest.cardTitleIconBodyAndPaddingOnlyConsumeTheirGestures(ReviewInputBoundaryTest.java:22)
+
+6 tests completed, 5 failed
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':ui:test'.
+> There were failing tests. See the report at: file:///D:/AtomLib/build/standalone/_ui/reports/tests/test/index.html
+
+* Try:
+> Run with --scan to get full insights.
+
+BUILD FAILED in 9s
+9 actionable tasks: 2 executed, 7 up-to-date

@@ -1,0 +1,43 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :core:compileJava UP-TO-DATE
+> Task :core:processResources NO-SOURCE
+> Task :core:classes UP-TO-DATE
+> Task :core:jar UP-TO-DATE
+> Task :runtime:compileJava UP-TO-DATE
+> Task :runtime:processResources UP-TO-DATE
+> Task :runtime:classes UP-TO-DATE
+> Task :runtime:jar UP-TO-DATE
+> Task :ui:generateYogaDirty UP-TO-DATE
+> Task :ui:compileJava
+> Task :ui:processResources NO-SOURCE
+> Task :ui:classes
+> Task :ui:compileTestJava UP-TO-DATE
+> Task :ui:processTestResources NO-SOURCE
+> Task :ui:testClasses UP-TO-DATE
+
+> Task :ui:test FAILED
+
+ActionIconRenderTest > bitmapSlotKeepsMeasuredGeometryAndClipsScaledPixels() FAILED
+    org.opentest4j.AssertionFailedError: expected: not equal but was: <-65536>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertNotEquals.failEqual(AssertNotEquals.java:277)
+        at app//org.junit.jupiter.api.AssertNotEquals.assertNotEquals(AssertNotEquals.java:94)
+        at app//org.junit.jupiter.api.AssertNotEquals.assertNotEquals(AssertNotEquals.java:86)
+        at app//org.junit.jupiter.api.Assertions.assertNotEquals(Assertions.java:1981)
+        at app//com.atom.lib.controls.ActionIconRenderTest.bitmapSlotKeepsMeasuredGeometryAndClipsScaledPixels(ActionIconRenderTest.java:19)
+
+1 test completed, 1 failed
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':ui:test'.
+> There were failing tests. See the report at: file:///D:/AtomLib/build/standalone/_ui/reports/tests/test/index.html
+
+* Try:
+> Run with --scan to get full insights.
+
+BUILD FAILED in 10s
+9 actionable tasks: 2 executed, 7 up-to-date

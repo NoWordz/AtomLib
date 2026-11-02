@@ -1,5 +1,9 @@
 # API contracts
 
+> 2026-11-01 本地候选新增可选 `ui/controls`：Slider、Toggle、单确认窗与 UiSession，合同见 [controls](controls.md)。下文 foundation 描述仍对应公开 beta3；选择候选控件时手势／焦点／模态归库，业务与页面结构归宿主，原始路径保持。release 在回调前已结束 capture，允许业务同步 open/close/setControls。
+
+> 独审修订：ControlSkin.modalDialogStyle(Viewport)拥有模态外层规格，通用会话不依赖 AC。绘制和命中均按 PresentationFrame 层序。卡片内非按钮区域仅吞事件；普通取消隔离 held-key 尾序列，窗口失焦由适配器清空物理跟踪，详见控件合同。
+
 `core` is platform-free: immutable geometry, layout trees/snapshots, input
 records, capture dispatch and frame-clocked springs. `runtime` owns Skija
 resource scopes, host fonts and text measurement/painting, images, CPU render
@@ -18,9 +22,11 @@ plus vertical on 1.21.1); the adapter and the recipe in quickstart cover all
 three. Hit testing stays with the host's `HitTester`, capture with the
 dispatcher, and reactions with the `PointerTarget`s.
 
-There is no generic component, overlay, scroll, interaction, view-host, shell
-or devtools layer in this distribution. Hosts own their page trees, focus,
-gestures, screen lifecycle and business state.
+The raw foundation path leaves page trees, interaction and business state to
+the host. The local candidate additionally offers the optional `controls`
+package described above: it owns only the three controls' gestures, focus and
+single confirmation lifecycle. It adds no generic scroll, view-host, shell,
+router or devtools layer; hosts still own page composition and business state.
 
 Layout and drawing must run on the thread that created `YogaLayoutEngine`;
 native Yoga trees are never exposed. All painting, clipping and hit testing
@@ -67,3 +73,8 @@ composition.
 `BackdropBlur.draw` accepts an already captured `Image`, a destination, sigma
 and fallback colour. Capture stays with the platform bridge. It does not read
 the default framebuffer or claim HDR/multisample support.
+
+
+### 可组合模态生命周期
+
+`open(ModalDialog, Consumer<ModalCloseReason>)` 打开单层模态，`closeModal` 在无活动模态时幂等。关闭原因区分完成、取消、宿主关闭、失焦和坐标尺度变化。正常关闭后退场期间继续隔离底页；失焦、宿主关闭、坐标尺度变化和抛异常的关闭回调会释放会话所有权。焦点与滚动使用成功绘制的几何，画布保存栈在异常时恢复；不要缓存上帧布局来命中新的内容。保留已有 `ConfirmationDialog` 接口。

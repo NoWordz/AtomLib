@@ -34,6 +34,18 @@ public final class UiCards {
     private UiCards() {
     }
 
+    /** Instance palette path. Never installs or reads global Design state. */
+    public static void drawCard(Canvas canvas, float x, float y, float w, float h,
+                                float radius, float hoverWeight, DesignHost host, Design.RippleSink ripple) {
+        int fill=UiTokens.cardFill(host);
+        ripple.region(x,y,w,h,radius,fill);
+        SkiaDraw.drawRoundedShadow(canvas,x,y,w,h,radius,UiTokens.CONTENT_SHADOW_BLUR,UiTokens.CARD_SHADOW);
+        SkiaDraw.drawRoundedRect(canvas,x,y,w,h,radius,fill);
+        int base=UiTokens.cardCutout(host);
+        SkiaDraw.drawEdgeHighlight(canvas,x,y,w,h,radius,UiTokens.s(1),UiTokens.hairline(base));
+        if(hoverWeight>0.01f)SkiaDraw.drawRoundedRect(canvas,x,y,w,h,radius,UiTokens.cardHover(host.accentColor(),base,hoverWeight));
+    }
+
     /** Filters only the current rounded backdrop; call before the card's alpha layer. */
     public static void drawNotificationBackdrop(Canvas canvas, float x, float y, float w, float h,
                                                 float radius, float alpha) {

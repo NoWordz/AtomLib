@@ -1,0 +1,24 @@
+{
+  "source": "User-provided logo.png, authorized as AtomLib mod logo on 2026-11-01",
+  "source_file": "assets/branding/logo-original.png",
+  "source_sha256": "6156fc697ded061c1813024a8bd11c2cb03a89df0ab7426ed5dd54dfcf13d013",
+  "source_dimensions": [
+    1254,
+    1254
+  ],
+  "source_bytes": 1202584,
+  "processing": "LANCZOS downsample to 256x256; optimized RGB PNG encoding; no redesign",
+  "output_dimensions": [
+    256,
+    256
+  ],
+  "output_bytes": 47867,
+  "output_sha256": "72be4343b5e85c243b550cf9e3e50bc0ddf5ad243a93c123fc0c417ee036d51f",
+  "reduction_percent": 96.02,
+  "targets": [
+    "platforms\\1.20.1-forge\\src\\main\\resources\\atomlib.png",
+    "platforms\\1.21.1-fabric\\src\\main\\resources\\atomlib.png",
+    "platforms\\1.21.1-neoforge\\src\\main\\resources\\atomlib.png"
+  ],
+  "original_download_unchanged": true
+}

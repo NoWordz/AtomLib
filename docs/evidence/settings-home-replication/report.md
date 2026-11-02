@@ -1,5 +1,9 @@
 # Direction B evidence: the settings home page, replicated offscreen
 
+Pixel counts in the original and `post-fix` runs below are historical: their
+comparator subtracted signed Java bytes. The 2026-11-01 unsigned-channel
+correction and current measurements are recorded at the end of this report.
+
 One AtomChat screen drawn twice in one JVM: once through AtomChat's shipping
 path (`SettingsHomePage.render`), once through the AtomLib stack (`YogaLayoutEngine`
 + `TextService` + the design package). Same bundled Noto bytes, same
@@ -169,3 +173,27 @@ real physical pixels-per-unit (or any fine grid such as 16) reproduces
 AtomChat's float layout value-for-value; 0 remaining failures would require
 either that contract being honored or a rounding-mode switch, which is an API
 decision, not an extraction gap.
+
+## Unsigned-channel correction (2026-11-01)
+
+The fixture's pixel comparator now converts each premultiplied N32 channel
+with `Byte.toUnsignedInt` before subtraction. The previous signed subtraction
+could treat opaque black versus white as a delta of 1, while treating gray
+127 versus 128 as a delta of 255. Two real raster-Surface regression tests
+failed against the old comparator and pass with the correction.
+
+Current raw data: [unsigned-channel-fix/results.json](unsigned-channel-fix/results.json),
+using AtomChat's pinned beta3 Maven input and its updated default-font bytes.
+The measurement still has 21 checks and exactly the four documented 1u
+geometry failures. Non-text differing pixels stay at 3384 (ratio 0.007643,
+below the existing 0.02 limit); whole-image differing pixels change from
+7851 to 7838 (ratio 0.014890). This does not broaden the comparison to glyph
+pixel equivalence or interactive-screen acceptance.
+
+Both PNGs are byte-identical to `post-fix/`, so no duplicate images are stored:
+`ac-settings-home.png` SHA-256
+`c0bd3761d79685e0068d5aa4c1c99e280a2e1976590c600b7363b1eca7d4c1bc`;
+`lib-settings-home.png` SHA-256
+`71c21df262859fae5f9b0154f7865d63bf0e6df25d9d0ef4491fac5fee1c7eb1`.
+The current font byte sizes are 4164908 (regular) and 3629252 (bold), so the
+new JSON is not claimed to be byte-identical to the historical JSON.

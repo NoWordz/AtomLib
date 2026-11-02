@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atom.lib.controls.SliderTest" tests="8" skipped="0" failures="2" errors="0" timestamp="2026-11-01T09:12:05" hostname="E33EPUS" time="0.969">
+  <properties/>
+  <testcase name="keyboardRepeatsCommitOnceAfterAllAdjustmentKeysUp()" classname="com.atom.lib.controls.SliderTest" time="0.27"/>
+  <testcase name="externalOverrideNeverWritesOldStartAndDensityChangeCancels()" classname="com.atom.lib.controls.SliderTest" time="0.114">
+    <failure message="java.lang.IndexOutOfBoundsException: Index 1 out of bounds for length 1" type="java.lang.IndexOutOfBoundsException">java.lang.IndexOutOfBoundsException: Index 1 out of bounds for length 1
+	at java.base/jdk.internal.util.Preconditions.outOfBounds(Preconditions.java:64)
+	at java.base/jdk.internal.util.Preconditions.outOfBoundsCheckIndex(Preconditions.java:70)
+	at java.base/jdk.internal.util.Preconditions.checkIndex(Preconditions.java:266)
+	at java.base/java.util.Objects.checkIndex(Objects.java:359)
+	at java.base/java.util.ArrayList.get(ArrayList.java:427)
+	at com.atom.lib.controls.SliderTest.externalOverrideNeverWritesOldStartAndDensityChangeCancels(SliderTest.java:37)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+</failure>
+  </testcase>
+  <testcase name="disablingAPreviewEchoKeepsRollbackAndIdleEscapePassesToHost()" classname="com.atom.lib.controls.SliderTest" time="0.094"/>
+  <testcase name="unchangedReleaseDoesNotSaveAndEscapeRollsBackOnce()" classname="com.atom.lib.controls.SliderTest" time="0.096"/>
+  <testcase name="coordinateChangeRollsBackBeforeTheHostRebuildsItsModelAndLayout()" classname="com.atom.lib.controls.SliderTest" time="0.098">
+    <failure message="org.opentest4j.AssertionFailedError: expected: &lt;480.0&gt; but was: &lt;490.19107&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: expected: &lt;480.0&gt; but was: &lt;490.19107&gt;
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:102)
+	at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:97)
+	at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:735)
+	at app//com.atom.lib.controls.SliderTest.coordinateChangeRollsBackBeforeTheHostRebuildsItsModelAndLayout(SliderTest.java:65)
+	at java.base@17.0.18/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+</failure>
+  </testcase>
+  <testcase name="identityReplacementAndDisableCancelExactlyOnce()" classname="com.atom.lib.controls.SliderTest" time="0.098"/>
+  <testcase name="continuousDragUsesNewDisplayedTravelWithoutRelayoutJump()" classname="com.atom.lib.controls.SliderTest" time="0.098"/>
+  <testcase name="smallFiniteBusinessRangesDoNotUsePixelSizedTolerance()" classname="com.atom.lib.controls.SliderTest" time="0.095"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

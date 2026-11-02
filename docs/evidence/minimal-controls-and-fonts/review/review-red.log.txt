@@ -1,0 +1,55 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :core:compileJava UP-TO-DATE
+> Task :core:processResources NO-SOURCE
+> Task :core:classes UP-TO-DATE
+> Task :core:jar
+> Task :runtime:compileJava UP-TO-DATE
+> Task :runtime:processResources
+> Task :runtime:classes
+> Task :runtime:jar
+> Task :ui:generateYogaDirty UP-TO-DATE
+> Task :ui:compileJava UP-TO-DATE
+> Task :ui:processResources NO-SOURCE
+> Task :ui:classes UP-TO-DATE
+
+> Task :ui:compileTestJava
+注: 某些输入文件使用或覆盖了已过时的 API。
+注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+
+> Task :ui:processTestResources NO-SOURCE
+> Task :ui:testClasses
+
+> Task :ui:test FAILED
+
+IndependentReviewTest > escapeCancelsTheHeldAdjustmentUntilItsRelease() FAILED
+    org.opentest4j.AssertionFailedError: Cancelled key gesture must not restart from a repeat ==> expected: <true> but was: <false>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+        at app//org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+        at app//org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:214)
+        at app//com.atom.lib.controls.IndependentReviewTest.escapeCancelsTheHeldAdjustmentUntilItsRelease(IndependentReviewTest.java:39)
+
+IndependentReviewTest > clickingDialogBodyDoesNotActAsBackdropCancellation() FAILED
+    org.opentest4j.AssertionFailedError: Dialog body is not the backdrop ==> expected: <true> but was: <false>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+        at app//org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+        at app//org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:214)
+        at app//com.atom.lib.controls.IndependentReviewTest.clickingDialogBodyDoesNotActAsBackdropCancellation(IndependentReviewTest.java:22)
+
+2 tests completed, 2 failed
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':ui:test'.
+> There were failing tests. See the report at: file:///D:/AtomLib/build/standalone/_ui/reports/tests/test/index.html
+
+* Try:
+> Run with --scan to get full insights.
+
+BUILD FAILED in 11s
+9 actionable tasks: 5 executed, 4 up-to-date

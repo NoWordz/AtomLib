@@ -20,6 +20,9 @@ SHIPPED_FONTS = {
     'com/atom/lib/fonts/bundled-default.otf': b'\x00\x01\x00\x00',
     'com/atom/lib/fonts/bundled-default-bold.otf': b'OTTO',
 }
+_SHADER_ROOT = Path(__file__).resolve().parents[1]/'platforms/shared/src/main/resources/assets/atomlib/shaders/backdrop'
+SHIPPED_SHADERS = {f'assets/atomlib/shaders/backdrop/{name}':(_SHADER_ROOT/name).read_bytes()
+                   for name in ('fullscreen.vert','kawase.frag','composite.frag')}
 
 
 def module_name(data):
@@ -108,7 +111,8 @@ def verify_artifact(path, *, loader, version='0.1.0-beta', skija='0.143.18', typ
                         modules[identity] = location
                 except (ValueError, KeyError, IndexError, struct.error) as exc:
                     error(f'invalid module descriptor: {location}: {exc}')
-            for name, count in Counter(z.namelist()).items():
+            entries = Counter(z.namelist())
+            for name, count in entries.items():
                 if count > 1 and not name.endswith('/'):
                     error(f'duplicate ZIP entry {location}!{name}')
             for info in z.infolist():
@@ -117,6 +121,8 @@ def verify_artifact(path, *, loader, version='0.1.0-beta', skija='0.143.18', typ
                     continue
                 data = z.read(info)
                 here = f'{location}!{name}'
+                if consumer and (name.startswith('assets/atomlib/shaders/') or name.endswith(('.frag','.vert','.glsl'))):
+                    error(f'consumer bundles shader: {here}')
                 if Path(name).suffix.lower() in FONT_EXT or data.startswith(FONT_MAGIC):
                     if not (depth == 0 and data.startswith(SHIPPED_FONTS.get(name, b'\0' * 5))):
                         error(f'font found: {here}')
@@ -161,6 +167,14 @@ def verify_artifact(path, *, loader, version='0.1.0-beta', skija='0.143.18', typ
                 return
             if consumer:
                 return
+            for name in SHIPPED_FONTS:
+                if entries[name] != 1:
+                    error(f'missing or duplicate default font: {name}')
+            for name,wanted in SHIPPED_SHADERS.items():
+                if entries[name] != 1:
+                    error(f'missing or duplicate required shader: {name}')
+                elif z.read(name) != wanted:
+                    error(f'incorrect shader bytes: {name}')
             try:
                 if loader == 'fabric':
                     meta = json.loads(z.read('fabric.mod.json'))

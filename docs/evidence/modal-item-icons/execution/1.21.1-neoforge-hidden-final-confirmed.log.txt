@@ -1,0 +1,112 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.2.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :core:compileJava UP-TO-DATE
+> Task :runtime:compileJava UP-TO-DATE
+> Task :ui:generateYogaDirty UP-TO-DATE
+> Task :ui:compileJava UP-TO-DATE
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :compileHiddenGlTestJava
+> Task :processHiddenGlTestResources NO-SOURCE
+> Task :hiddenGlTestClasses
+> Task :core:processResources NO-SOURCE
+> Task :core:classes UP-TO-DATE
+> Task :core:jar UP-TO-DATE
+> Task :runtime:processResources UP-TO-DATE
+> Task :runtime:classes UP-TO-DATE
+> Task :runtime:jar UP-TO-DATE
+> Task :ui:processResources NO-SOURCE
+> Task :ui:classes UP-TO-DATE
+> Task :ui:jar UP-TO-DATE
+
+> Task :hiddenGlTest
+
+BackdropHiddenGlTest > allDestinationAlphaSentinelsAndAllPixelsOutsideRoundedRegionAreUnchanged() PASSED
+
+BackdropHiddenGlTest > snapshotsExpireAndRendererInstancesDoNotShareBuffers() PASSED
+
+BackdropHiddenGlTest > dirtyStateIsRestoredIncludingLogicOpAndSampler() PASSED
+
+BackdropHiddenGlTest > captureDrawSameTargetHasNoFeedbackAndZeroRadiusIsUnblurredCopy() PASSED
+
+BackdropHiddenGlTest > explicitDestinationIgnoresSourceAlphaAndPreservesDestinationAlphaAndCorners() PASSED
+
+BackdropHiddenGlTest > resizeReuseReloadUnsupportedTargetAndThreadContextFailures() PASSED
+
+BackdropHiddenGlTest > recordsRealShaderSceneAndNonblockingTimingEvidence() PASSED
+
+BackdropIndependentReviewTest > screenLocalCounterCannotRestartTheSharedRendererButClientClockCan() PASSED
+
+GlStateScopeTest > scopesAreIndependentLifoAndCloseIsThreadConfined() PASSED
+
+GlStateScopeTest > scopeRejectsAnotherRealContextWithoutLosingItsOriginalSnapshot() PASSED
+
+GlStateScopeTest > exceptionRestoresDriverStateIncludingPixelBuffersAndHighTextureUnit() PASSED
+
+GlStateScopeTest > independentDrawBufferBlendAndColorMasksSurviveGlobalChanges() PASSED
+
+SkijaRenderBridgeTest > bridgeHasOneContextOwnerRejectsWrongThreadAndClosesExplicitly() PASSED
+
+SkijaRenderBridgeTest > skijaVanillaSkijaPaintsRealPixelsAndRebuildsForSameSizeNewFboAndResize() PASSED
+
+SkijaRenderBridgeTest > exceptionRestoresStateAndRejectsNestedDrawVanillaAndCloseInsidePass() PASSED
+
+SkijaRenderBridgeTest > aFailedBorrowImportExpiresAndRestoresTheHostPixelState() PASSED
+
+SkijaRenderBridgeTest > hostOffscreenTextureImportsInsideTheBorrowAfterAPollutedVanillaPass() PASSED
+
+SkijaRenderBridgeTest > captureReturnsAnOwnedImageAndFrameAccessExceptionsExpireTheBorrow() PASSED
+
+SkijaRenderBridgeTest > noStencilFramebufferWorksAndInvalidAttachmentDoesNotPoisonTheNextPass() PASSED
+
+SkijaRenderBridgeTest > realImageUploadIsProtectedFromHostPboAndPixelStoreSettings() PASSED
+
+SkijaRenderBridgeTest > borrowedFrameSharesOneContextAndExpiresAfterCallbackWithoutTransferringOwnership() PASSED
+
+ItemIconHiddenGlTest > nestedSkijaPrepareIsRejectedAndEmptyStackIsTransparent() PASSED
+
+ItemIconHiddenGlTest > failureRestoresFramebufferAndPollutedPixelTransfersAndCanRetry() PASSED
+
+ItemIconHiddenGlTest > depthIsOwnedAndHandlesRejectWrongThreadsAndContexts() PASSED
+
+ItemIconHiddenGlTest > capacityReusesAndInvalidationReleasesStorageAndBorrow() PASSED
+
+ItemIconHiddenGlTest > recordsPureGlColdAndWarmCostsWithoutClaimingMinecraftPerformance() PASSED
+
+ItemIconHiddenGlTest > orientationTransparentEdgeAndExpiryAreRealGpuSamples() PASSED
+
+ItemRenderStateTest > restoresPrivateCachesArraysReferencesAndMutableMatricesOnException() PASSED
+
+ControlsHiddenGlTest > threeControlsPaintAndCompleteModalWithoutOwningHostFramebuffer() PASSED
+
+LayoutStyleExpansionHiddenGlTest > styleMarginAddsToGapInsteadOfBeingOverwritten() PASSED
+
+LayoutStyleExpansionHiddenGlTest > perEdgePaddingOffsetsContentAndChildren() PASSED
+
+LayoutStyleExpansionHiddenGlTest > marginMovesSiblingsAndTheirOwnPosition() PASSED
+
+LayoutStyleExpansionHiddenGlTest > aspectRatioDerivesHeightFromTheDefiniteWidth() PASSED
+
+LayoutStyleExpansionHiddenGlTest > crossAxisStretchesByDefaultAndMainAxisStartsAtFlexStart() PASSED
+
+LayoutStyleExpansionHiddenGlTest > alignPositionsChildrenOnTheCrossAxis() PASSED
+
+LayoutStyleExpansionHiddenGlTest > justifyDistributesChildrenOnTheMainAxis() PASSED
+
+YogaRescaleHiddenGlTest > relayoutAtANewPixelsPerUnitRe_measuresAndRe_rounds() PASSED
+
+YogaRescaleHiddenGlTest > relayoutAtANewPixelsPerUnitSnapsEveryResultToItsScaleGrid() PASSED
+
+[Incubating] Problems report is available at: file:///D:/AtomLib/platforms/1.21.1-neoforge/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.2.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 12s
+13 actionable tasks: 2 executed, 11 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.2.1/userguide/configuration_cache_enabling.html

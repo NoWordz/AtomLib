@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-02",
+  "scope": "Local checkpoint; no push/release/deploy/game launch",
+  "candidate": "build/modal-item-icons-candidate/maven",
+  "validation": "Existing independent review; checkpoint only changes documentation/evidence",
+  "consumer_snapshot": {
+    "path": "creatortrial-source.zip",
+    "files": 76,
+    "sha256": "d7d267abb0fcb61679cafb250517bd161babb13c46692efa5c98fe00298de192",
+    "source_directory": "D:\\AtomLib-CreatorTrial",
+    "excluded": [
+      "build",
+      ".gradle",
+      "run"
+    ],
+    "note": "Sources, lock, wrapper and evidence; paths in lock refer to the local retained candidate."
+  },
+  "preserved_evidence": {
+    "docs/evidence/modal-item-icons/results.json": "8b81b40abc03eb09a68da646b23c8542d107f3c775d3446eef1c8aa488905205",
+    "docs/evidence/composable-modal-candidate/results.json": "a993f03714121371f753d45e1ccf0cee8f57d45a81b6094de2f007c016d1fae7",
+    "docs/evidence/modal-item-icons/execution/root-final.log.txt": "f68243de107b7094fa8bff060b0645a36cc9f42ad3a362a5944fc80fdaaae06b",
+    "docs/evidence/modal-item-icons/execution/packaging-final.log.txt": "20f8ae9e5df19baa4eb4161e64b67b4ca229224441d43f90e660d6b298f9dd47",
+    "docs/evidence/modal-item-icons/execution/native-pbo-red.log.txt": "2273d03918a5dbbd47206e502d40f3d38e6e1657b364403a0e3c85b1d1cb18cb",
+    "docs/evidence/modal-item-icons/execution/slot-clip-mutation-red.log.txt": "a5cb221d45d6a627704b12bdde3d76a38699dc4de7915a318b8dfa2fe8bee6e3",
+    "docs/evidence/modal-item-icons/execution/origin-mutation-red.log.txt": "8a4d756200e8d3dd8d9e58e5422dcb55d3a9039531839d8361429c6e080f7cfd",
+    "docs/evidence/modal-item-icons/execution/1.20.1-forge-hidden-final-confirmed.log.txt": "a3cbfa65bee026369103593605c03d3914f08968cd7d33e6e617d9c5b2614624",
+    "docs/evidence/modal-item-icons/execution/1.21.1-fabric-hidden-final-confirmed.log.txt": "943b2799ca7988ea9fbbf31416481d78a42d94f21830325dc0c10924a12e1ae8",
+    "docs/evidence/modal-item-icons/execution/1.21.1-neoforge-hidden-final-confirmed.log.txt": "f723f21728fa23450858e59a026762a986a885d6c1cf631658dc192e432e8567",
+    "docs/evidence/modal-item-icons/independent/m2-ui-executed.log.txt": "e60ddf5008c1284c8e6c8bda800e26c912e171e59c43d5b0f9ce54c6e8ab3ae4",
+    "docs/evidence/modal-item-icons/independent/m2-fabric-gl.log.txt": "a596c56a21c458c818c694440d14152c5228ac07f73c40de5c12e58af4823f19",
+    "docs/evidence/modal-item-icons/independent/m2-consumer-validation.log.txt": "284b21e27fa6008e48c0552acba22d2cbffb7bfe2a3d3280da8713270dea685a",
+    "docs/evidence/modal-item-icons/independent/m2-artifact-review.json": "0b241315ed84a60409d253c7f971b23f383a29a187fafcccea5d06c38372ac05",
+    "docs/evidence/modal-item-icons/gl/1.20.1-forge/pipeline-pattern-not-minecraft.png": "c306ab5f77a6bac6cad809cdfbc1981aa9cc83e9b4d63d6ea20788501b3948a8",
+    "docs/evidence/modal-item-icons/gl/1.20.1-forge/pure-gl-timing.json": "0d7fc49dac1697201712b15134c10bdac44adbaddbb6a9fd806fd14408c9e110",
+    "docs/evidence/modal-item-icons/gl/1.21.1-fabric/pipeline-pattern-not-minecraft.png": "c306ab5f77a6bac6cad809cdfbc1981aa9cc83e9b4d63d6ea20788501b3948a8",
+    "docs/evidence/modal-item-icons/gl/1.21.1-fabric/pure-gl-timing.json": "b719b03382e08dadf990fe791f7f2a47db37ae3d1100e1c8570134e5b53b0f0f",
+    "docs/evidence/modal-item-icons/gl/1.21.1-neoforge/pipeline-pattern-not-minecraft.png": "c306ab5f77a6bac6cad809cdfbc1981aa9cc83e9b4d63d6ea20788501b3948a8",
+    "docs/evidence/modal-item-icons/gl/1.21.1-neoforge/pure-gl-timing.json": "0cbc88e5111fd39b7b415c7f16d4473b6586f8a382fbd12c5b9c66340df9e5fc"
+  },
+  "pending": [
+    "Actual Minecraft model/input/reload/RenderSystem behavior",
+    "Performance acceptance; synthetic CPU prepare+close around 9-10 ms"
+  ]
+}

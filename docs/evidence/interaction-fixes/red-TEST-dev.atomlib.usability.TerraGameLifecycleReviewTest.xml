@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.atomlib.usability.TerraGameLifecycleReviewTest" tests="3" skipped="0" failures="1" errors="0" timestamp="2026-11-01T15:12:07" hostname="E33EPUS" time="0.689">
+  <properties/>
+  <testcase name="confirmationRemainsUsableAfterResizeToShortGameViewport()" classname="dev.atomlib.usability.TerraGameLifecycleReviewTest" time="0.348">
+    <failure message="org.opentest4j.AssertionFailedError: Unexpected exception thrown: java.lang.IllegalArgumentException: Control does not fit viewport: NodeId[value=reset]" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: Unexpected exception thrown: java.lang.IllegalArgumentException: Control does not fit viewport: NodeId[value=reset]
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+	at app//org.junit.jupiter.api.AssertDoesNotThrow.createAssertionFailedError(AssertDoesNotThrow.java:84)
+	at app//org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:75)
+	at app//org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:58)
+	at app//org.junit.jupiter.api.Assertions.assertDoesNotThrow(Assertions.java:3228)
+	at app//dev.atomlib.usability.TerraGameLifecycleReviewTest.confirmationRemainsUsableAfterResizeToShortGameViewport(TerraGameLifecycleReviewTest.java:30)
+	at java.base@21.0.11/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base@21.0.11/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base@21.0.11/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: java.lang.IllegalArgumentException: Control does not fit viewport: NodeId[value=reset]
+	at com.atom.lib.controls.UiSession.validate(UiSession.java:183)
+	at com.atom.lib.controls.UiSession.paint(UiSession.java:136)
+	at com.atom.lib.design.atomchat.SettingsShell.paint(SettingsShell.java:58)
+	at com.atom.lib.design.atomchat.SettingsShell.paint(SettingsShell.java:46)
+	at dev.atomlib.usability.AppearancePage.paint(AppearancePage.java:72)
+	at dev.atomlib.usability.AppearancePage.paint(AppearancePage.java:71)
+	at dev.atomlib.usability.TerraGameLifecycleReviewTest.show(TerraGameLifecycleReviewTest.java:16)
+	at dev.atomlib.usability.TerraGameLifecycleReviewTest.lambda$confirmationRemainsUsableAfterResizeToShortGameViewport$0(TerraGameLifecycleReviewTest.java:30)
+	at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:71)
+	... 6 more
+</failure>
+  </testcase>
+  <testcase name="focusLossCancelsDragAndFreshGestureCanCommit()" classname="dev.atomlib.usability.TerraGameLifecycleReviewTest" time="0.12"/>
+  <testcase name="closingDuringModalDoesNotCarryStateIntoFreshPage()" classname="dev.atomlib.usability.TerraGameLifecycleReviewTest" time="0.219"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

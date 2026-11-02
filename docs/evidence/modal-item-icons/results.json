@@ -1,0 +1,227 @@
+{
+  "status": "M2_CODE_CPU_GL_REVIEWED_MC_NOT_RUN_PERF_NOT_ACCEPTED",
+  "artifacts": {
+    "1.20.1-forge": {
+      "jar": "D:\\AtomLib\\build\\modal-item-icons-candidate\\maven\\com\\atom\\lib\\atomlib-1.20.1-forge\\0.1.0-beta\\atomlib-1.20.1-forge-0.1.0-beta.jar",
+      "sha256": "d1cc3838812bd29cc79e19fdd7bd3964911098c5e2596415e177890ad94a5157",
+      "sources_jar_sha256": "49b7fa4d2dd43e38012d0472265ad37b11073d4090191425ab7d59327d859a8e",
+      "shared_java_files_byte_matched": 105
+    },
+    "1.21.1-fabric": {
+      "jar": "D:\\AtomLib\\build\\modal-item-icons-candidate\\maven\\com\\atom\\lib\\atomlib-1.21.1-fabric\\0.1.0-beta\\atomlib-1.21.1-fabric-0.1.0-beta.jar",
+      "sha256": "7a96b1274d2f07d4a2ff1b0da36b849d960171c31c9f2dc5f84f6b9930977398",
+      "sources_jar_sha256": "7d3ebd347eece4170d1cc8730a31aede3d96f88551c7d3de06f64c04fa646875",
+      "shared_java_files_byte_matched": 105
+    },
+    "1.21.1-neoforge": {
+      "jar": "D:\\AtomLib\\build\\modal-item-icons-candidate\\maven\\com\\atom\\lib\\atomlib-1.21.1-neoforge\\0.1.0-beta\\atomlib-1.21.1-neoforge-0.1.0-beta.jar",
+      "sha256": "66d60cb9a1e7274de3e33ec7888581e500f25331955752fff85a0b1463230090",
+      "sources_jar_sha256": "78bbb94d69d928ce0766b67426145341e9cb71c256cb24063a54e5b9eb370265",
+      "shared_java_files_byte_matched": 105
+    }
+  },
+  "source_zip": {
+    "path": "D:\\AtomLib\\build\\modal-item-icons-candidate\\source.zip",
+    "sha256": "5f7009e9b383545fe7bd17e728ad41c8d97c7fc62268a949f175a37f75a9c00d"
+  },
+  "input_zip": {
+    "path": "D:\\AtomLib\\build\\modal-item-icons-candidate\\input.zip",
+    "sha256": "d00b82a1c460aa89ff43a9e9208e65a3b17f6c618531b922daa303f7eb9f6e1d"
+  },
+  "root_junit": {
+    "core": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "runtime": {
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "ui": {
+      "tests": 97,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "root_run_note": "UI executed after mutations restored; core/runtime were UP-TO-DATE, not force rerun.",
+  "hidden_gl_junit": {
+    "1.20.1-forge": {
+      "tests": 38,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "1.21.1-fabric": {
+      "tests": 38,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "1.21.1-neoforge": {
+      "tests": 38,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "trial": {
+    "javaexec_scenarios": 9,
+    "junit": false,
+    "jar": "D:\\AtomLib-CreatorTrial\\build\\libs\\creator-trial-0.1.0-trial.jar",
+    "jar_sha256": "0d5582d38154ea3076ab7c3f364d0fe6b44617ce2a21c4602c511f2bc2bee592",
+    "lock": "D:\\AtomLib-CreatorTrial\\input-lock.json",
+    "lock_sha256": "8159538ee7562946162a50b0c8692c17462c9a6e8841bd1a19e86e61f2ec74db",
+    "resolved_compile_runtime_original_binary_verified": true,
+    "screen_client_compiled": true,
+    "native_stack_factory_bytecode_verified": true,
+    "own_classes": 6,
+    "bundled_library_native_fonts": false,
+    "log": "D:\\AtomLib-CreatorTrial\\evidence\\modal-item-icons-candidate\\consumer-second.log"
+  },
+  "performance_pure_gl": {
+    "1.20.1-forge": {
+      "scope": "PURE_GL_SYNTHETIC_NOT_MINECRAFT",
+      "raw": "D:\\AtomLib\\build\\modal-item-icons-evidence\\1.20.1-forge\\item-icons\\pure-gl-timing.json",
+      "raw_sha256": "0d7fc49dac1697201712b15134c10bdac44adbaddbb6a9fd806fd14408c9e110",
+      "samples_cold": 1,
+      "samples_warm": 32,
+      "cpu": "Intel Core i7-14650HX",
+      "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU/PCIe/SSE2",
+      "driver_gl": "3.3.0 NVIDIA 617.42",
+      "cold_cpu_ms": 14.2828,
+      "warm_cpu_median_ms": 9.4289,
+      "warm_cpu_p95_ms": 10.2679,
+      "warm_gpu_clear_only_median_us": 3.616,
+      "allocations": 1,
+      "note": "CPU is prepare+close; GPU query is synthetic clear patterns only. Performance not accepted."
+    },
+    "1.21.1-fabric": {
+      "scope": "PURE_GL_SYNTHETIC_NOT_MINECRAFT",
+      "raw": "D:\\AtomLib\\build\\modal-item-icons-evidence\\1.21.1-fabric\\item-icons\\pure-gl-timing.json",
+      "raw_sha256": "b719b03382e08dadf990fe791f7f2a47db37ae3d1100e1c8570134e5b53b0f0f",
+      "samples_cold": 1,
+      "samples_warm": 32,
+      "cpu": "Intel Core i7-14650HX",
+      "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU/PCIe/SSE2",
+      "driver_gl": "3.3.0 NVIDIA 617.42",
+      "cold_cpu_ms": 16.0518,
+      "warm_cpu_median_ms": 10.4056,
+      "warm_cpu_p95_ms": 11.1946,
+      "warm_gpu_clear_only_median_us": 3.568,
+      "allocations": 1,
+      "note": "CPU is prepare+close; GPU query is synthetic clear patterns only. Performance not accepted."
+    },
+    "1.21.1-neoforge": {
+      "scope": "PURE_GL_SYNTHETIC_NOT_MINECRAFT",
+      "raw": "D:\\AtomLib\\build\\modal-item-icons-evidence\\1.21.1-neoforge\\item-icons\\pure-gl-timing.json",
+      "raw_sha256": "0cbc88e5111fd39b7b415c7f16d4473b6586f8a382fbd12c5b9c66340df9e5fc",
+      "samples_cold": 1,
+      "samples_warm": 32,
+      "cpu": "Intel Core i7-14650HX",
+      "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU/PCIe/SSE2",
+      "driver_gl": "3.3.0 NVIDIA 617.42",
+      "cold_cpu_ms": 15.447,
+      "warm_cpu_median_ms": 9.78375,
+      "warm_cpu_p95_ms": 10.5031,
+      "warm_gpu_clear_only_median_us": 3.616,
+      "allocations": 1,
+      "note": "CPU is prepare+close; GPU query is synthetic clear patterns only. Performance not accepted."
+    }
+  },
+  "pngs_pure_gl": {
+    "D:\\AtomLib\\build\\modal-item-icons-evidence\\1.20.1-forge\\item-icons\\pipeline-pattern-not-minecraft.png": "c306ab5f77a6bac6cad809cdfbc1981aa9cc83e9b4d63d6ea20788501b3948a8",
+    "D:\\AtomLib\\build\\modal-item-icons-evidence\\1.21.1-fabric\\item-icons\\pipeline-pattern-not-minecraft.png": "c306ab5f77a6bac6cad809cdfbc1981aa9cc83e9b4d63d6ea20788501b3948a8",
+    "D:\\AtomLib\\build\\modal-item-icons-evidence\\1.21.1-neoforge\\item-icons\\pipeline-pattern-not-minecraft.png": "c306ab5f77a6bac6cad809cdfbc1981aa9cc83e9b4d63d6ea20788501b3948a8"
+  },
+  "pngs_cpu_blank_slots": {
+    "D:\\AtomLib-CreatorTrial\\evidence\\modal-item-icons-candidate\\output\\modal-1000x700-1.0.png": "aae627950f07f3fc1ecb3f549b50eae7b3f8bba06c64fece89237efb84e52bf0",
+    "D:\\AtomLib-CreatorTrial\\evidence\\modal-item-icons-candidate\\output\\modal-1000x700-1.5.png": "a07fb385c9383ce77e9a3ea5ac2c3c3c9c560e33718df948b9e4171f0037c360",
+    "D:\\AtomLib-CreatorTrial\\evidence\\modal-item-icons-candidate\\output\\modal-1000x700-2.0.png": "cc00aa427caa3dbe1c2c3739951951554e0f4389e4bf28d29a511c6c01e99b3c",
+    "D:\\AtomLib-CreatorTrial\\evidence\\modal-item-icons-candidate\\output\\modal-380x320-1.0.png": "22f047875aad02dbd8939de097ab3b76f8e0390deeb703d2f037319223ea47e2",
+    "D:\\AtomLib-CreatorTrial\\evidence\\modal-item-icons-candidate\\output\\modal-380x320-1.5.png": "fecb39d836f494d7e0702be281b7f3faa0dc3fdedfb3913c4101146a6f1f7df4",
+    "D:\\AtomLib-CreatorTrial\\evidence\\modal-item-icons-candidate\\output\\modal-380x320-2.0.png": "2153eb00bb2558784e1d82b991e1e880b221dee9109b386114a689c78e75be16"
+  },
+  "protected_files_checked": 627,
+  "protected_files_changed": 0,
+  "creatortrial_m1_evidence_files_unchanged": 19,
+  "independent_review": {
+    "report": "D:/AtomLib/docs/evidence/modal-item-icons/review.md",
+    "ui_tests_actually_rerun": 97,
+    "fabric_item_tests_actually_rerun": 7,
+    "consumer_javaexec_scenarios_actually_rerun": 9,
+    "sources_compared_per_target": 111,
+    "source_mismatches": 0,
+    "protected_files_checked": 627,
+    "protected_files_changed": 0,
+    "new_confirmed_findings": 0,
+    "minecraft": "NOT_RUN",
+    "performance": "NOT_ACCEPTED",
+    "all_three_hidden_gl_suites": "Agent evidence inspected; only Fabric item tests independently rerun"
+  },
+  "minecraft_actual_models": "NOT_RUN",
+  "minecraft_input_f8_reload_shutdown": "NOT_RUN",
+  "minecraft_performance": "NOT_RUN",
+  "custom_mod_renderers_iris_arm64_other_gpus": "NOT_RUN",
+  "logs": {
+    "root": "D:/AtomLib/build/modal-item-icons-m2-baseline/root-final.log",
+    "platforms_six_consumers": "D:/AtomLib/build/modal-item-icons-m2-baseline/packaging-final.log",
+    "hidden_gl": "D:/AtomLib/build/modal-item-icons-m2-baseline/<target>-hidden-final-confirmed.log",
+    "pbo_runtime_red": "D:/AtomLib/build/modal-item-icons-m2-baseline/native-pbo-red.log",
+    "slot_mutation_red": "D:/AtomLib/build/modal-item-icons-m2-baseline/slot-clip-mutation-red.log",
+    "origin_mutation_red": "D:/AtomLib/build/modal-item-icons-m2-baseline/origin-mutation-red.log",
+    "raw_mapping_compile_red": "D:/AtomLib-CreatorTrial/evidence/modal-item-icons-candidate/consumer-first.log"
+  },
+  "api_adjustments": [
+    "fromNativeStack(String,Object,int) checks/copies native ItemStack for raw intermediary binary + named development consumer; native typed constructor retained.",
+    "ItemRenderState internally snapshots private vanilla state/caches; actual MC state restoration remains NOT_RUN."
+  ],
+  "actions": {
+    "launch_game": false,
+    "download_game_assets": false,
+    "commit": false,
+    "push": false,
+    "release": false,
+    "deploy": false,
+    "version_bump": false
+  },
+  "change_list": "D:\\AtomLib\\build\\modal-item-icons-m2-baseline\\changes.json",
+  "baseline_existing_files_changed": 17,
+  "baseline_files_missing": 0,
+  "commands": [
+    {
+      "cwd": "D:/AtomLib",
+      "JAVA_HOME": "C:/Program Files/Java/jdk-17.0.18",
+      "command": "./gradlew.bat :core:test :runtime:test :ui:test --offline --no-daemon -PatomlibTestFont=D:/AtomLib/runtime/src/main/resources/com/atom/lib/fonts/bundled-default.otf --console=plain"
+    },
+    {
+      "cwd": "D:/AtomLib/platforms/1.20.1-forge",
+      "JAVA_HOME": "C:/Program Files/Java/jdk-17.0.18",
+      "command": "./gradlew.bat hiddenGlTest --offline --no-daemon --console=plain -PatomlibRenderEvidence=D:/AtomLib/build/modal-item-icons-evidence/1.20.1-forge"
+    },
+    {
+      "cwd": "D:/AtomLib/platforms/1.21.1-fabric",
+      "JAVA_HOME": "C:/Program Files/Java/jdk-21.0.11",
+      "command": "./gradlew.bat hiddenGlTest --offline --no-daemon --console=plain -PatomlibRenderEvidence=D:/AtomLib/build/modal-item-icons-evidence/1.21.1-fabric"
+    },
+    {
+      "cwd": "D:/AtomLib/platforms/1.21.1-neoforge",
+      "JAVA_HOME": "C:/Program Files/Java/jdk-21.0.11",
+      "command": "./gradlew.bat hiddenGlTest --offline --no-daemon --console=plain -PatomlibRenderEvidence=D:/AtomLib/build/modal-item-icons-evidence/1.21.1-neoforge"
+    },
+    {
+      "cwd": "D:/AtomLib",
+      "command": "python build/modal-item-icons-m2-baseline/run-packaging-offline.py",
+      "note": "Existing run_packaging all --jobs 1, test-font explicit, Maven modal-item-icons-candidate; wrapper subprocess appends --offline."
+    },
+    {
+      "cwd": "D:/AtomLib-CreatorTrial",
+      "JAVA_HOME": "C:/Program Files/Java/jdk-21.0.11",
+      "command": "./gradlew.bat build trialChecks --offline --no-daemon --console=plain"
+    }
+  ]
+}

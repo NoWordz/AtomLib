@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atom.lib.controls.AppearanceIndependentReviewTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-01T14:38:56" hostname="E33EPUS" time="0.42">
+  <properties/>
+  <testcase name="minimumSizeScrollbarThumbCanReachTheContentEndAtTheTrackEnd()" classname="com.atom.lib.controls.AppearanceIndependentReviewTest" time="0.083"/>
+  <testcase name="unrelatedMouseButtonReleaseDoesNotEndTheLeftScrollbarGesture()" classname="com.atom.lib.controls.AppearanceIndependentReviewTest" time="0.23"/>
+  <testcase name="escapeCancelsScrollbarCaptureAndConsumesItsRemainingPointerTail()" classname="com.atom.lib.controls.AppearanceIndependentReviewTest" time="0.105"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

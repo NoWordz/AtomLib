@@ -18,6 +18,7 @@ class BundledDefaultFontTest {
                     registry.registerDefaults());
             try (Font regular = registry.openFont(FontRegistry.DEFAULT_REGULAR, 16, "中文");
                  Font bold = registry.openFont(FontRegistry.DEFAULT_BOLD, 16, "中文")) {
+                try(var face=regular.getTypeface()){assertEquals(400,face.getFontStyle().getWeight());}
                 assertTrue(regular.measureTextWidth("中文abc") > 0);
                 assertTrue(bold.measureTextWidth("中文") > 0);
             }

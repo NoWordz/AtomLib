@@ -1,5 +1,7 @@
 # Runtime：宿主资源、字体与纯 CPU 绘制
 
+> 本地候选字体更正：registerDefaults 的常规体选择真实 wght400，AC 的独立 BODY 角色选500，粗体700；旧 register(id,source)仍保留来源实例。新增 FontOptions、bundledRegular/bundledBold 与 TextBreakPolicy.CJK_UI，原字节／OFL／TextRequest 不变。轴校验、原子 reload、抗锯齿与极窄退化范围见 [controls 字体合同](controls.md)。这不代表公开 beta3 字节已更新。
+
 本轮实现 T3 的纯 runtime 资源生命周期与 CPU Canvas 作用域，以及 T4 的宿主字体、统一纯文本布局、位图与 SVG 存储接口。**这不代表完整 T3/T4 已验收**：没有 MC GL 桥、加载器启动、GPU 状态恢复或通用资产迁移。所有新增实现独立编写，使用 Apache-2.0；没有读取、复制 Tuui ARR 反编译实现。方向 F（2026-10-31）起库内附带子集化 Noto Sans SC 默认字体（见下），此外仍不复制任何字体文件。
 
 ## 稳定接口与接入

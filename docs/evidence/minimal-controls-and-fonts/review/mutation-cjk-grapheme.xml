@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atom.lib.runtime.CjkUiLineBreakTest" tests="1" skipped="0" failures="1" errors="0" timestamp="2026-11-01T09:12:31" hostname="E33EPUS" time="0.094">
+  <properties/>
+  <testcase name="punctuationBacktracksWithoutLossAndRespectsExplicitNewlines()" classname="com.atom.lib.runtime.CjkUiLineBreakTest" time="0.094">
+    <failure message="org.opentest4j.AssertionFailedError: 。这里包 ==&gt; expected: &lt;false&gt; but was: &lt;true&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: 。这里包 ==&gt; expected: &lt;false&gt; but was: &lt;true&gt;
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at app//org.junit.jupiter.api.AssertFalse.failNotFalse(AssertFalse.java:63)
+	at app//org.junit.jupiter.api.AssertFalse.assertFalse(AssertFalse.java:36)
+	at app//org.junit.jupiter.api.Assertions.assertFalse(Assertions.java:239)
+	at app//com.atom.lib.runtime.CjkUiLineBreakTest.punctuationBacktracksWithoutLossAndRespectsExplicitNewlines(CjkUiLineBreakTest.java:19)
+	at java.base@17.0.18/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+</failure>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

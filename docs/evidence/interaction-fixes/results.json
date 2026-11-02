@@ -1,0 +1,151 @@
+{
+  "tests": {
+    "tests": 25,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": {
+    "TEST-dev.atomlib.usability.AppearancePageTest.xml": {
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "TEST-dev.atomlib.usability.AppearanceReplicationTest.xml": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "TEST-dev.atomlib.usability.EntrypointPackagingTest.xml": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "TEST-dev.atomlib.usability.InteractionSliceTest.xml": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "TEST-dev.atomlib.usability.TerraGameLifecycleReviewTest.xml": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "artifact": {
+    "path": "D:\\AtomLib-Usability\\build\\interaction-fixes-inputs\\90ebec2894d4ca2143ff3281637658e8ca43acf45372d58ab8a64f7b88db2158\\libs\\atomlib-usability-0.1.0-partial.jar",
+    "sha256": "de77be39d1c992a952c51efad7c8ca5a2ebbd4779a90007e8611fe0df89f5bbd"
+  },
+  "input": {
+    "schema_version": 1,
+    "group": "com.atom.lib",
+    "artifact": "atomlib-1.21.1-fabric",
+    "version": "0.1.0-beta",
+    "target": "1.21.1-fabric",
+    "sha256": "90ebec2894d4ca2143ff3281637658e8ca43acf45372d58ab8a64f7b88db2158"
+  },
+  "mixin_jar_checks": "PASS",
+  "sample_boundary_checks": "PASS",
+  "f8_guard": "source-reviewed; not runtime-tested",
+  "images_same_as_previous": 23,
+  "images_changed": [
+    "changed-contentscale.png",
+    "changed-scale.png"
+  ],
+  "previous_candidate_and_lock_protected": 91,
+  "protected_changed": [],
+  "game_interaction": "NOT_COMPLETED; user stopped Computer Use and requested fixes only",
+  "gl_tests": "NOT_RERUN; raw GL source unchanged",
+  "root_tests": [
+    {
+      "module": "_core",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "_runtime",
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "_ui",
+      "tests": 77,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "packaging": {
+    "platforms": 3,
+    "maven_consumers": 6,
+    "status": "PASS"
+  },
+  "review": {
+    "model": "gpt-6.1-terra",
+    "reasoning_effort": "xhigh",
+    "status": "PASS_NO_NEW_P1_P2",
+    "scope": "Independent static final review of modal fit/painting geometry and sample mixin/F8; no builds or gameplay by reviewer"
+  },
+  "source_files": {
+    "D:\\AtomLib\\ui\\src\\main\\java\\com\\atom\\lib\\design\\atomchat\\SettingsShell.java": "c81df45137b7feabf03b4d9ed8fa63aa8bdd180fcbd288a98464643fd296b137",
+    "D:\\AtomLib\\ui\\src\\main\\java\\com\\atom\\lib\\controls\\UiSession.java": "dee81ec57b61a89bbbef2b98b0600a66d138317e4121cb5ef3112662b0af12e7",
+    "D:\\AtomLib\\ui\\src\\main\\java\\com\\atom\\lib\\layout\\PresentationFrame.java": "39e7b85001d8dede7b560dc5f92966e5e299a1f910bcb7f243380451c0d7fae9",
+    "D:\\AtomLib\\ui\\src\\test\\java\\com\\atom\\lib\\controls\\TerraModalViewportReviewTest.java": "0658f2d2d93fab1e24da27c0ef34ccfa41efc2ae155a94c59ebe347aae24a037",
+    "D:\\AtomLib-Usability\\src\\main\\java\\dev\\atomlib\\usability\\mixin\\UsabilityKeyMixin.java": "8f4068671262094d8276af88efa5d3d66828beced16fbc545b12a28bcf9d2eac",
+    "D:\\AtomLib-Usability\\src\\main\\resources\\atomlib-usability.mixins.json": "42b48d47d3ac0f53de160e279de078e9be271f7da25108def418c76de39191b0",
+    "D:\\AtomLib-Usability\\src\\test\\java\\dev\\atomlib\\usability\\EntrypointPackagingTest.java": "f9357fd48b969b7fe3c1b40390355bd296257e967559a63ee440faa4db91dd14",
+    "D:\\AtomLib-Usability\\src\\test\\java\\dev\\atomlib\\usability\\TerraGameLifecycleReviewTest.java": "9a1eac6dc8422955153bf9ba82d6a01f00a127ad23cee3f67012839ad82bf8b1"
+  },
+  "sources_jars_reviewed_files": "All three published sources jars byte-match the three reviewed library production files",
+  "image_differences": {
+    "changed-scale.png": {
+      "size": [
+        560,
+        920
+      ],
+      "pixels_changed": 914
+    },
+    "changed-contentscale.png": {
+      "size": [
+        560,
+        920
+      ],
+      "pixels_changed": 442
+    }
+  },
+  "not_executed": [
+    "Final candidate gameplay/input",
+    "GL rerun",
+    "Lib performance profiling",
+    "ARM64",
+    "Modpack compatibility",
+    "Commit/push/release/deploy"
+  ],
+  "platform_artifacts": {
+    "1.20.1-forge": {
+      "path": "D:\\AtomLib\\build\\interaction-fixes-candidate\\maven\\com\\atom\\lib\\atomlib-1.20.1-forge\\0.1.0-beta\\atomlib-1.20.1-forge-0.1.0-beta.jar",
+      "sha256": "a11488b6f17069d0cb8e61dba075dbe9ade1fdaf8f213253ef325298c89dbe56"
+    },
+    "1.21.1-fabric": {
+      "path": "D:\\AtomLib\\build\\interaction-fixes-candidate\\maven\\com\\atom\\lib\\atomlib-1.21.1-fabric\\0.1.0-beta\\atomlib-1.21.1-fabric-0.1.0-beta.jar",
+      "sha256": "90ebec2894d4ca2143ff3281637658e8ca43acf45372d58ab8a64f7b88db2158"
+    },
+    "1.21.1-neoforge": {
+      "path": "D:\\AtomLib\\build\\interaction-fixes-candidate\\maven\\com\\atom\\lib\\atomlib-1.21.1-neoforge\\0.1.0-beta\\atomlib-1.21.1-neoforge-0.1.0-beta.jar",
+      "sha256": "59f75edb12dbdc061f18265328a3e53e9b33f0a98148a440f77d4726f9efab07"
+    }
+  },
+  "input_archive": {
+    "path": "D:\\AtomLib\\build\\interaction-fixes-candidate\\input.zip",
+    "sha256": "3c19abaaf18a1c8883a262be81781c687ebd729bf266eb498ce47c0cbaec3171"
+  }
+}

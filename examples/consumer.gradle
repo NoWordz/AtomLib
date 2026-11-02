@@ -13,7 +13,7 @@ sourceSets.main.java.srcDir('../src/main/java')
 repositories {
     // Exclusive repository prevents a remote or mavenLocal copy masking errors.
     exclusiveContent {
-        forRepository { maven { name = 'AtomLibTest'; url = new File(repoRoot, 'build/test-maven').toURI(); metadataSources { gradleMetadata(); mavenPom() } } }
+        forRepository { maven { name = 'AtomLibTest'; url = (findProperty('atomlibTestMavenRepo') ? file(property('atomlibTestMavenRepo')) : new File(repoRoot, 'build/test-maven')).toURI(); metadataSources { gradleMetadata(); mavenPom() } } }
         filter { includeGroup 'com.atom.lib' }
     }
     mavenCentral()

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atom.lib.controls.ModalInputSequenceTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-01T09:07:05" hostname="E33EPUS" time="0.686">
+  <properties/>
+  <testcase name="openingInsideReleaseCallbackHasNoCancelAndClosingOwnsAllEventTails()" classname="com.atom.lib.controls.ModalInputSequenceTest" time="0.106"/>
+  <testcase name="escapeBeforeFirstPaintIsIsolatedAndNoCallbackRepeatsAfterException()" classname="com.atom.lib.controls.ModalInputSequenceTest" time="0.096"/>
+  <testcase name="openingFromSliderPressAndKeyPreviewCancelsAndConsumesItsTail()" classname="com.atom.lib.controls.ModalInputSequenceTest" time="0.183"/>
+  <testcase name="heldEnterFromBeforeDisplayMustNotBecomeANewConfirmation()" classname="com.atom.lib.controls.ModalInputSequenceTest" time="0.094"/>
+  <testcase name="openingDuringHeldPointerCancelsBaseAndEatsInitiatingRelease()" classname="com.atom.lib.controls.ModalInputSequenceTest" time="0.095"/>
+  <testcase name="defaultEnterCancelsAndFreshTabEnterConfirmsExactlyOnce()" classname="com.atom.lib.controls.ModalInputSequenceTest" time="0.107"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

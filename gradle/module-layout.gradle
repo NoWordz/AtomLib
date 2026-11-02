@@ -195,7 +195,7 @@ if (!project.hasProperty('atomlibTargetKey')) {
                 }
             }
         }
-        repositories { maven { name = 'Test'; url = new File(atomlibRepoRoot, 'build/test-maven').toURI() } }
+        repositories { maven { name = 'Test'; url = (rootProject.findProperty('atomlibTestMavenRepo') ? new File(rootProject.property('atomlibTestMavenRepo').toString()) : new File(atomlibRepoRoot, 'build/test-maven')).toURI() } }
     }
     // Preserve Gradle's classifier selectors and api/runtime variants, remove
     // only merged project dependencies, and point the primary file at dist.

@@ -1,5 +1,7 @@
 # 三平台打包与 Maven 消费约定
 
+本地外观候选另存 `build/appearance-candidate/maven`，用 `tools/run_packaging.py all --maven ...` 构建；不得覆盖 `build/test-maven` 或 `build/controls-candidate/maven`。三平台主包要求各一份 `assets/atomlib/shaders/backdrop/{fullscreen.vert,kawase.frag,composite.frag}`，字节与当前自有源资产一致；缺失/重复/损坏均拒绝，消费者不可夹带 shader。实际编译/链接和像素合同由三端 hiddenGlTest 覆盖，不能用字节门冒充 shader 执行。真实 jar 负控入口 `tools/verify_appearance_artifacts.py --maven ... --output ...`；输入 zip 指定 `tools/package_maven_input.py --maven ... --output ...`。最终候选、样例原始 jar 认证锁、源码快照及输出图身份见本轮报告。
+
 本文维护稳定打包约定。当前完成度与未解决问题见 `docs/STATUS.md`；验证记录见 `docs/verification-2026-10-30.md`。构建通过不等于加载器实机验收。
 
 ## 工程与坐标
@@ -30,7 +32,7 @@
 6. 同版本 lwjgl-yoga 的 natives-windows。
 7. 同版本 lwjgl-yoga 的 natives-windows-arm64。
 
-不带字体、AC 类或 lwjgl-core；组件层与 devtools 已删除，不在发行内容中。MC 自带的 lwjgl-core 保持原版本。平台 Maven 的 compile API 导出 shared/types/Yoga Java 包；四份 native 以 runtime 依赖导出，保证消费者开发类路径可用。排除外部依赖的隐式传递，避免带入 lwjgl-core。
+主包顶层必须各含一份 `com/atom/lib/fonts/bundled-default.otf` 与 `bundled-default-bold.otf`，附 Noto Sans SC 的 OFL 声明；其余字体仍由递归路径／魔数检查拒绝。不带 AC 类或 lwjgl-core；组件层与 devtools 已删除，不在发行内容中。MC 自带的 lwjgl-core 保持原版本。平台 Maven 的 compile API 导出 shared/types/Yoga Java 包；四份 native 以 runtime 依赖导出，保证消费者开发类路径可用。排除外部依赖的隐式传递，避免带入 lwjgl-core。
 
 Forge/NF 使用 JarJar，Fabric 使用 Loom include。Forge 的 ContainedJarIdentifier 只有 group/artifact，不能区分 Yoga classifier：最终 metadata 为两个 classifier 增加独立 artifact 选择身份，并保留版本与正确路径。
 
@@ -57,8 +59,10 @@ python tools/package_maven_input.py
 
 Common 入口不能在字段、签名或初始化中引用 client/native。Forge/NF 使用 side=CLIENT
 依赖；Fabric 由客户端 bootstrap 检查版本，不能通过全端 depends 强迫专服安装。
-这些静态约束不代替缺库客户端、专服误装及实际加载验证。客户端退出时还需在 GL context
-销毁前释放 bridge；当前尚未完成的平台生命周期接线见 STATUS。
+这些静态约束不代替缺库客户端、专服误装及实际加载验证。三平台已接入客户端退出时的
+`releaseIfOpen()`，在 GL context 销毁前释放已有 bridge；真实游戏退出验收仍未覆盖，见 STATUS。
 
-CI 接收明确固定的输入 URL/归档 SHA，并核对 AC 锁内每个 jar 的 SHA；未配置输入应明确失败。
-当前 Windows-only 玩家支持范围不因 CI 主机系统而改变。Linux CI 的测试 native 配置尚待修正。
+AC 的 `versions/atomlib.json` 是输入 URL、归档 SHA 与三端 jar SHA 的单一事实源，
+下载器默认读取它；无有效锁或摘要不匹配时明确失败。Lib CI 的 source-native 在 Windows
+运行，三目标 hidden-gl 在 Linux/Xvfb 使用宿主测试 native；这些测试依赖不进玩家包。
+当前 Windows-only 玩家支持范围不因 CI 主机系统而改变。

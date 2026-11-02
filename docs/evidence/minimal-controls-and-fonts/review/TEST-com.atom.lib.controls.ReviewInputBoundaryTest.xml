@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atom.lib.controls.ReviewInputBoundaryTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-01T09:07:05" hostname="E33EPUS" time="0.545">
+  <properties/>
+  <testcase name="densityCancellationEatsAllHeldAdjustmentRepeatsUntilEachRelease()" classname="com.atom.lib.controls.ReviewInputBoundaryTest" time="0.088"/>
+  <testcase name="backdropPressReleasedInsideCardDoesNotCancelButANewBackdropClickDoes()" classname="com.atom.lib.controls.ReviewInputBoundaryTest" time="0.092"/>
+  <testcase name="cardPressReleasedOnBackdropDoesNotCreateABackdropGesture()" classname="com.atom.lib.controls.ReviewInputBoundaryTest" time="0.092"/>
+  <testcase name="cardTitleIconBodyAndPaddingOnlyConsumeTheirGestures()" classname="com.atom.lib.controls.ReviewInputBoundaryTest" time="0.091"/>
+  <testcase name="actionButtonsStillResolveTheirOwnCompleteMouseGestures()" classname="com.atom.lib.controls.ReviewInputBoundaryTest" time="0.181"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atom.lib.controls.ToggleTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-01T09:07:07" hostname="E33EPUS" time="0.254">
+  <properties/>
+  <testcase name="movingFocusWhileEnterIsHeldRequiresANewKeyGesture()" classname="com.atom.lib.controls.ToggleTest" time="0.084"/>
+  <testcase name="draggedOutsideDisabledAndFocusLostNeverActivate()" classname="com.atom.lib.controls.ToggleTest" time="0.086"/>
+  <testcase name="completeMouseAndKeyboardGesturesActivateOnce()" classname="com.atom.lib.controls.ToggleTest" time="0.084"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

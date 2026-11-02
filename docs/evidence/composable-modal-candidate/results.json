@@ -1,0 +1,95 @@
+{
+  "status": "M1_CPU_REVIEWED",
+  "artifacts": {
+    "1.20.1-forge": {
+      "binary": "D:\\AtomLib\\build\\composable-modal-candidate\\maven\\com\\atom\\lib\\atomlib-1.20.1-forge\\0.1.0-beta\\atomlib-1.20.1-forge-0.1.0-beta.jar",
+      "sha256": "ec355674d643c6f413e5e2da4b31bf632f717adfa6ea55b9eb21f4d8e58eb27c",
+      "sources": "D:\\AtomLib\\build\\composable-modal-candidate\\maven\\com\\atom\\lib\\atomlib-1.20.1-forge\\0.1.0-beta\\atomlib-1.20.1-forge-0.1.0-beta-sources.jar",
+      "sources_sha256": "f2d54452625db577f991f0c68ccbed28e1842aebaffd7c06a189d9e8a82ffdf2",
+      "eight_sources_match_workspace": true
+    },
+    "1.21.1-fabric": {
+      "binary": "D:\\AtomLib\\build\\composable-modal-candidate\\maven\\com\\atom\\lib\\atomlib-1.21.1-fabric\\0.1.0-beta\\atomlib-1.21.1-fabric-0.1.0-beta.jar",
+      "sha256": "6d14c731b884f4f4a1fe8701fe9e63e62934dbb3932727f0659f14c34b5c12ec",
+      "sources": "D:\\AtomLib\\build\\composable-modal-candidate\\maven\\com\\atom\\lib\\atomlib-1.21.1-fabric\\0.1.0-beta\\atomlib-1.21.1-fabric-0.1.0-beta-sources.jar",
+      "sources_sha256": "bef328e46395560a164c03769cb8aad05b06cedabf8586bc3d93061662107bbf",
+      "eight_sources_match_workspace": true
+    },
+    "1.21.1-neoforge": {
+      "binary": "D:\\AtomLib\\build\\composable-modal-candidate\\maven\\com\\atom\\lib\\atomlib-1.21.1-neoforge\\0.1.0-beta\\atomlib-1.21.1-neoforge-0.1.0-beta.jar",
+      "sha256": "2c8f5cb30fa58383b559813bc6a30d54f389dcd6fb4a7096873c74a2c2d834bf",
+      "sources": "D:\\AtomLib\\build\\composable-modal-candidate\\maven\\com\\atom\\lib\\atomlib-1.21.1-neoforge\\0.1.0-beta\\atomlib-1.21.1-neoforge-0.1.0-beta-sources.jar",
+      "sources_sha256": "3b81692fb10366202c455d6e7e236838739eec161c5c6d9cf20989de302f2e53",
+      "eight_sources_match_workspace": true
+    }
+  },
+  "source_zip_sha256": "056b85612f970355aa9562998d140570041751cf724ef5caafc417b13341363d",
+  "input_zip_sha256": "0d658b4c7f28dee733363f4a179710aa17b1506c2e287444cf3d58d867d82320",
+  "root_junit": {
+    "core": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "runtime": {
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "ui": {
+      "tests": 94,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "trial_javaexec_scenarios": 8,
+  "trial_binary_sha256": "7367cca1847a4c758984e1cb53a6f6932593444ab83beef5622b6897f58a5a9d",
+  "trial_lock_sha256": "68f92a341f631435a6688875ac652d9eaa59e596f56549300a3509c1118d898e",
+  "packaging_log": "D:/AtomLib/build/modal-item-icons-execution-baseline/packaging-final3.log",
+  "trial_log": "D:/AtomLib-CreatorTrial/evidence/composable-modal-candidate/trial-final3.log",
+  "m1_pngs": {
+    "D:\\AtomLib-CreatorTrial\\evidence\\composable-modal-candidate\\output\\modal-1000x700-1.0.png": "50b1eb12d53d5f418b5f86278b631ebdcf8bde25a214be29e8c4244252e31129",
+    "D:\\AtomLib-CreatorTrial\\evidence\\composable-modal-candidate\\output\\modal-1000x700-1.5.png": "b61825df50b2f1ce407346e3e96220a12740966211a55d0677cfd8905d37ff10",
+    "D:\\AtomLib-CreatorTrial\\evidence\\composable-modal-candidate\\output\\modal-1000x700-2.0.png": "b6d4586d92d19c692d0c159a08b29e8af7165b8f0dbd732c571728e97e673fa4",
+    "D:\\AtomLib-CreatorTrial\\evidence\\composable-modal-candidate\\output\\modal-380x320-1.0.png": "dd6d6179a1122ab035002f97b04ad4c9f9e43b629cc819b7ff1ebac16a399ebe",
+    "D:\\AtomLib-CreatorTrial\\evidence\\composable-modal-candidate\\output\\modal-380x320-1.5.png": "9094dde916b61d5f489610b4512a5893ed588028da077eafeeb140eb104ecfb9",
+    "D:\\AtomLib-CreatorTrial\\evidence\\composable-modal-candidate\\output\\modal-380x320-2.0.png": "6363ada6b42a2819add014aa53a62713ab0f35091c36e2cd8471e5f379f510ba"
+  },
+  "baseline_manifest": "D:/AtomLib/build/modal-item-icons-execution-baseline/manifest.json",
+  "baseline_previous_files_changed": 16,
+  "baseline_missing_files": 0,
+  "red_green": {
+    "callback_owner_red": "callback-red.log",
+    "reserved_id_red": "collision-red.log",
+    "resize_red": "resize-red.log",
+    "paint_cancellation_red": "paint-cancel-red.log",
+    "root_green": "root-final5.log",
+    "wheel_mutation_red": "wheel-negative.log"
+  },
+  "source_snapshot_eight_files_match_each_platform": true,
+  "game": "NOT_RUN",
+  "item_icons": "NOT_IMPLEMENTED",
+  "performance": "NOT_RUN",
+  "hidden_gl": "NOT_RUN",
+  "scope_notes": [
+    "No game launch; CPU raster screenshots do not show item icons.",
+    "Historical Loom sources processing incident remains disclosed.",
+    "Legacy base slider continuous resize behavior preserved.",
+    "ModalLayout is package-private in controls rather than internal package."
+  ],
+  "root_run_note": "core and runtime tasks were UP-TO-DATE; UI tests executed; counts taken from Gradle XML.",
+  "packaging_run_note": "run-packaging-offline.py invokes the existing tool and appends --offline to each wrapper subprocess; tool command headers are recorded before that injection.",
+  "independent_review": {
+    "report": "D:/AtomLib/docs/evidence/composable-modal-candidate/review.md",
+    "ui_tests_actually_rerun": 94,
+    "trial_scenarios_actually_rerun": 8,
+    "shared_sources_compared_per_target": 90,
+    "new_findings": 0,
+    "game": "NOT_RUN",
+    "item_icons": "NOT_IMPLEMENTED",
+    "screen_entrypoint": "NOT_IMPLEMENTED"
+  }
+}

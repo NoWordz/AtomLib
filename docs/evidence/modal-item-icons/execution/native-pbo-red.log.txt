@@ -1,0 +1,58 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :core:compileJava UP-TO-DATE
+> Task :runtime:compileJava UP-TO-DATE
+> Task :ui:generateYogaDirty UP-TO-DATE
+> Task :ui:compileJava UP-TO-DATE
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :compileHiddenGlTestJava
+> Task :processHiddenGlTestResources NO-SOURCE
+> Task :hiddenGlTestClasses
+> Task :core:processResources NO-SOURCE
+> Task :core:classes UP-TO-DATE
+> Task :core:jar UP-TO-DATE
+> Task :runtime:processResources UP-TO-DATE
+> Task :runtime:classes UP-TO-DATE
+> Task :runtime:jar UP-TO-DATE
+> Task :ui:processResources NO-SOURCE
+> Task :ui:classes UP-TO-DATE
+> Task :ui:jar UP-TO-DATE
+
+> Task :hiddenGlTest FAILED
+
+ItemIconHiddenGlTest > failureRestoresFramebufferAndPollutedPixelTransfersAndCanRetry() FAILED
+    org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <java.lang.IllegalStateException> but was: <org.opentest4j.AssertionFailedError>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)
+        at app//org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)
+        at app//org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3115)
+        at app//com.atom.lib.client.render.item.ItemIconHiddenGlTest.failureRestoresFramebufferAndPollutedPixelTransfersAndCanRetry(ItemIconHiddenGlTest.java:50)
+
+        Caused by:
+        org.opentest4j.AssertionFailedError: native pass sees no host PBO ==> expected: <0> but was: <2>
+            at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+            at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+            at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+            at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+            at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:563)
+            at app//com.atom.lib.client.render.item.ItemIconHiddenGlTest.lambda$failureRestoresFramebufferAndPollutedPixelTransfersAndCanRetry$5(ItemIconHiddenGlTest.java:50)
+            at app//com.atom.lib.client.render.item.ItemIconAtlas.prepare(ItemIconAtlas.java:39)
+            at app//com.atom.lib.client.render.item.ItemIconHiddenGlTest.lambda$failureRestoresFramebufferAndPollutedPixelTransfersAndCanRetry$6(ItemIconHiddenGlTest.java:50)
+            at app//org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
+            ... 3 more
+
+1 test completed, 1 failed
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':hiddenGlTest'.
+> There were failing tests. See the report at: file:///D:/AtomLib/platforms/1.20.1-forge/build/reports/tests/hiddenGlTest/index.html
+
+* Try:
+> Run with --scan to get full insights.
+
+BUILD FAILED in 17s
+12 actionable tasks: 2 executed, 10 up-to-date

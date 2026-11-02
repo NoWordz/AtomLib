@@ -2,14 +2,22 @@
 """Build a deterministic AtomLib test-Maven archive for AC CI."""
 from __future__ import annotations
 
-import hashlib, zipfile
+import argparse, hashlib, zipfile
 from pathlib import Path
 
 root = Path(__file__).resolve().parent.parent
 version = next(line.split("=", 1)[1].strip() for line in (root / "gradle.properties").read_text().splitlines()
                if line.startswith("atomlib_version="))
-source = root / "build/test-maven"
-output = root / "build" / f"atomlib-input-{version}.zip"
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--maven', type=Path, default=root / 'build/test-maven')
+parser.add_argument('--output', type=Path, default=root / 'build' / f'atomlib-input-{version}.zip')
+args = parser.parse_args()
+source = args.maven.resolve()
+output = args.output.resolve()
+if not source.is_dir() or not any(source.rglob('*.jar')):
+    parser.error(f'Maven input has no jars: {source}')
+if output.is_relative_to(source):
+    parser.error('Output must be outside the input Maven tree')
 output.parent.mkdir(parents=True, exist_ok=True)
 with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
     for path in sorted(p for p in source.rglob("*") if p.is_file()):

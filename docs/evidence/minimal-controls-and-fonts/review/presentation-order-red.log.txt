@@ -1,0 +1,47 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :core:compileJava UP-TO-DATE
+> Task :core:processResources NO-SOURCE
+> Task :core:classes UP-TO-DATE
+> Task :core:jar UP-TO-DATE
+> Task :runtime:compileJava UP-TO-DATE
+> Task :runtime:processResources UP-TO-DATE
+> Task :runtime:classes UP-TO-DATE
+> Task :runtime:jar UP-TO-DATE
+> Task :ui:generateYogaDirty UP-TO-DATE
+> Task :ui:compileJava UP-TO-DATE
+> Task :ui:processResources NO-SOURCE
+> Task :ui:classes UP-TO-DATE
+
+> Task :ui:compileTestJava
+注: D:\AtomLib\ui\src\test\java\com\atom\lib\controls\IndependentReviewTest.java使用或覆盖了已过时的 API。
+注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+
+> Task :ui:processTestResources NO-SOURCE
+> Task :ui:testClasses
+
+> Task :ui:test FAILED
+
+IndependentReviewTest > presentationLayerOrderOwnsBothPaintingAndHitTesting() FAILED
+    org.opentest4j.AssertionFailedError: Drawing must follow PresentationFrame layer order ==> array lengths differ, expected: <7763> but was: <7769>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertArrayEquals.assertArraysHaveSameLength(AssertArrayEquals.java:428)
+        at app//org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:205)
+        at app//org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:63)
+        at app//org.junit.jupiter.api.Assertions.assertArrayEquals(Assertions.java:1238)
+        at app//com.atom.lib.controls.IndependentReviewTest.presentationLayerOrderOwnsBothPaintingAndHitTesting(IndependentReviewTest.java:40)
+
+1 test completed, 1 failed
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':ui:test'.
+> There were failing tests. See the report at: file:///D:/AtomLib/build/standalone/_ui/reports/tests/test/index.html
+
+* Try:
+> Run with --scan to get full insights.
+
+BUILD FAILED in 9s
+9 actionable tasks: 2 executed, 7 up-to-date

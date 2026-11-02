@@ -36,6 +36,8 @@ public final class Design {
     public static DesignHost host() {
         return host;
     }
+    /** Pure immutable shipped defaults, independent of the legacy global host. */
+    public static DesignHost defaultHost() { return Defaults.INSTANCE; }
 
     /** Whether a colour is light enough to need dark content on top of it. */
     public static boolean isLight(int argb) {

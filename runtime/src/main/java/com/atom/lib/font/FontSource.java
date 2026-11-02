@@ -15,6 +15,8 @@ import java.util.Objects;
 @FunctionalInterface
 public interface FontSource {
     byte[] read() throws IOException;
+    static FontSource bundledRegular(){return resource("/com/atom/lib/fonts/bundled-default.otf");}
+    static FontSource bundledBold(){return resource("/com/atom/lib/fonts/bundled-default-bold.otf");}
     static FontSource file(Path path) {
         Objects.requireNonNull(path);
         return () -> Files.readAllBytes(path);

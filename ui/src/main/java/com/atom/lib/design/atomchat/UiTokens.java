@@ -108,7 +108,9 @@ public final class UiTokens {
      * at both ends of the axis.
      */
     public static int cardFill() {
-        DesignHost config = Design.host();
+        return cardFill(Design.host());
+    }
+    public static int cardFill(DesignHost config) {
         float t = Math.max(0.0F, Math.min(1.0F, config.cardTint()));
         int rgb = config.cardColor() & 0x00FFFFFF;
         // The slider is the card opacity and it means it: 0% = no fill at all,
@@ -254,7 +256,9 @@ public final class UiTokens {
      * alike.
      */
     public static int cardCutout() {
-        DesignHost config = Design.host();
+        return cardCutout(Design.host());
+    }
+    public static int cardCutout(DesignHost config) {
         float t = Math.max(0.0F, Math.min(1.0F, config.cardTint()));
         int cardRgb = config.cardColor() & 0x00FFFFFF;
         int panelRgb = config.panelBackgroundColor() & 0x00FFFFFF;

@@ -16,7 +16,8 @@ public final class FontRegistry implements AutoCloseable {
     private static final System.Logger LOG = System.getLogger(FontRegistry.class.getName());
 
     private final RuntimeHandle runtime;
-    private final Map<FontId, FontSource> sources = new LinkedHashMap<>();
+    private record Source(FontSource source, FontOptions options) {}
+    private final Map<FontId, Source> sources = new LinkedHashMap<>();
     private Map<FontId, Typeface> faces = new LinkedHashMap<>();
     private List<FontId> fallbacks = List.of();
     private long generation;
@@ -29,10 +30,14 @@ public final class FontRegistry implements AutoCloseable {
     }
     public synchronized long generation() { requireOpen(); return generation; }
     public synchronized void register(FontId id, FontSource source) {
+        register(id,source,FontOptions.sourceDefault());
+    }
+    public synchronized void register(FontId id, FontSource source, FontOptions options) {
         requireOpen(); Objects.requireNonNull(id); Objects.requireNonNull(source);
-        Typeface replacement = load(source);
+        Objects.requireNonNull(options);
+        Typeface replacement = load(source, options);
         Typeface old = faces.put(id, replacement);
-        sources.put(id, source);
+        sources.put(id, new Source(source, options));
         generation++;
         if (old != null) old.close();
     }
@@ -69,7 +74,7 @@ public final class FontRegistry implements AutoCloseable {
     }
     private void registerDefault(FontId id, String resource, List<FontId> into) {
         try {
-            register(id, FontSource.resource(resource));
+            register(id, FontSource.resource(resource), id.equals(DEFAULT_REGULAR)?FontOptions.weight(400):FontOptions.sourceDefault());
             into.add(id);
         } catch (RuntimeException failure) {
             LOG.log(System.Logger.Level.WARNING,
@@ -96,12 +101,14 @@ public final class FontRegistry implements AutoCloseable {
         // path). Every Font this registry hands out shapes and measures
         // through the same unrounded advances.
         font.setSubpixel(true);
+        font.setEdging(FontEdging.ANTI_ALIAS);
+        font.setHinting(FontHinting.NORMAL);
         return font;
     }
     public synchronized void reload() {
         requireOpen();
         Map<FontId, Typeface> replacements = new LinkedHashMap<>();
-        try { for (var entry : sources.entrySet()) replacements.put(entry.getKey(), load(entry.getValue())); }
+        try { for (var entry : sources.entrySet()) replacements.put(entry.getKey(), load(entry.getValue().source(), entry.getValue().options())); }
         catch (RuntimeException | Error failure) {
             replacements.values().forEach(Typeface::close);
             throw failure;
@@ -123,11 +130,24 @@ public final class FontRegistry implements AutoCloseable {
         return text.codePoints().filter(c -> c != 0x200d && c != 0xfe0f && c != 0xfe0e)
                 .allMatch(c -> face.getUTF32Glyph(c) != 0);
     }
-    private static Typeface load(FontSource source) {
+    private static Typeface load(FontSource source, FontOptions options) {
         try (Data data = Data.makeFromBytes(Objects.requireNonNull(source.read()))) {
             Typeface face = FontMgr.getDefault().makeFromData(data);
             if (face == null) throw new IllegalArgumentException("Invalid font data");
-            return face;
+            if(options.weight()==null)return face;
+            try {
+                var axes=face.getVariationAxes();
+                var axis=axes==null?Optional.<FontVariationAxis>empty():Arrays.stream(axes).filter(a->a.getTag().equals("wght")).findFirst();
+                float weight=options.weight();
+                if(axis.isEmpty()){
+                    if(face.getFontStyle().getWeight()!=weight)throw new IllegalArgumentException("Static font does not support weight "+weight);
+                    return face;
+                }
+                if(weight<axis.get().getMinValue()||weight>axis.get().getMaxValue())throw new IllegalArgumentException("Weight outside font axis range: "+weight);
+                Typeface clone=face.makeClone(new FontVariation("wght",weight));
+                if(clone==null)throw new IllegalArgumentException("Cannot instantiate font weight");
+                face.close();return clone;
+            }catch(RuntimeException|Error failure){face.close();throw failure;}
         } catch (IOException e) { throw new IllegalArgumentException("Cannot read host font", e); }
     }
 }

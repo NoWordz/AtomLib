@@ -1,0 +1,119 @@
+[
+  {
+    "name": "late-density-cancel",
+    "negativeControlRejected": true,
+    "restoredByteIdentical": true,
+    "sha256": "3bc9afdb80c90bb1537b9f3d27c5fb98669e650f8e9ef894b55cee4c2a8f2f1d",
+    "tests": 8,
+    "failures": 2,
+    "errors": 0
+  },
+  {
+    "name": "release-reentry",
+    "negativeControlRejected": true,
+    "restoredByteIdentical": true,
+    "sha256": "db84f0420109dbbf1c64270dab50301bbbf6d6f02e63991c0c9ab736b71af819",
+    "tests": 1,
+    "failures": 1,
+    "errors": 0
+  },
+  {
+    "name": "default-weight",
+    "negativeControlRejected": true,
+    "restoredByteIdentical": true,
+    "sha256": "4491353a7a2623f480b5a51c718f66410ec37c69ac36413b3c4fccb87a133e4c",
+    "tests": 2,
+    "failures": 1,
+    "errors": 0
+  },
+  {
+    "name": "cjk-grapheme",
+    "negativeControlRejected": true,
+    "restoredByteIdentical": true,
+    "sha256": "0dc2a15669c54145a645bbc581ee23e018e2fecab0a64e699b39c9e51effc814",
+    "tests": 1,
+    "failures": 1,
+    "errors": 0
+  },
+  {
+    "name": "missing-text",
+    "negativeControlRejected": true,
+    "restoredByteIdentical": true,
+    "sha256": "8ab78a75fa3787b6b50a654fc5fa5e0809c146f7ad261b4944480c8ff531266c",
+    "tests": 2,
+    "failures": 1,
+    "errors": 0
+  },
+  {
+    "name": "missing-track",
+    "negativeControlRejected": true,
+    "restoredByteIdentical": true,
+    "sha256": "8ab78a75fa3787b6b50a654fc5fa5e0809c146f7ad261b4944480c8ff531266c",
+    "tests": 2,
+    "failures": 1,
+    "errors": 0
+  },
+  {
+    "name": "missing-knob",
+    "negativeControlRejected": true,
+    "restoredByteIdentical": true,
+    "sha256": "8ab78a75fa3787b6b50a654fc5fa5e0809c146f7ad261b4944480c8ff531266c",
+    "tests": 2,
+    "failures": 1,
+    "errors": 0
+  },
+  {
+    "name": "modal-wheel-pass",
+    "negativeControlRejected": true,
+    "restoredByteIdentical": true,
+    "sha256": "3bc9afdb80c90bb1537b9f3d27c5fb98669e650f8e9ef894b55cee4c2a8f2f1d",
+    "tests": 6,
+    "failures": 1,
+    "errors": 0
+  },
+  {
+    "name": "modal-body-backdrop",
+    "negativeControlRejected": true,
+    "restoredByteIdentical": true,
+    "sha256": "3bc9afdb80c90bb1537b9f3d27c5fb98669e650f8e9ef894b55cee4c2a8f2f1d",
+    "tests": 3,
+    "failures": 1,
+    "errors": 0
+  },
+  {
+    "name": "cancelled-held-repeat",
+    "negativeControlRejected": true,
+    "restoredByteIdentical": true,
+    "sha256": "3bc9afdb80c90bb1537b9f3d27c5fb98669e650f8e9ef894b55cee4c2a8f2f1d",
+    "tests": 3,
+    "failures": 1,
+    "errors": 0
+  },
+  {
+    "name": "registration-paint-order",
+    "negativeControlRejected": true,
+    "restoredByteIdentical": true,
+    "sha256": "3bc9afdb80c90bb1537b9f3d27c5fb98669e650f8e9ef894b55cee4c2a8f2f1d",
+    "tests": 3,
+    "failures": 1,
+    "errors": 0
+  },
+  {
+    "name": "modal-ac-sizing",
+    "negativeControlRejected": true,
+    "restoredByteIdentical": true,
+    "sha256": "3bc9afdb80c90bb1537b9f3d27c5fb98669e650f8e9ef894b55cee4c2a8f2f1d",
+    "tests": 1,
+    "failures": 1,
+    "errors": 0
+  },
+  {
+    "name": "focuslost-stale-keys",
+    "negativeControlRejected": true,
+    "restoredByteIdentical": true,
+    "sha256": "15d61db338ca6154b25a837dceccae8ccd14bb48aae0ace64444b5c95ddf42bb",
+    "tests": 2,
+    "failures": 2,
+    "errors": 0
+  }
+]

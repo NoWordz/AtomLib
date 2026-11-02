@@ -43,9 +43,11 @@ metadata. Fabric consumers check a pinned client requirement and present a
 clear missing-dependency message. Dedicated servers do not initialize AtomLib's
 native runtime.
 
-Fonts are host resources. AtomLib never bundles a TTF/OTF/TTC/WOFF file. The
-host registers bytes with `FontRegistry` and passes the selected body `FontId`
-to `TextService` and the host's own layout code.
+AtomLib bundles two subsetted Noto Sans SC faces for default text rendering.
+Call `FontRegistry.registerDefaults()` to load them; host-supplied fonts keep
+priority and can extend coverage. Pass the selected body `FontId` to
+`TextService` and the host's own layout code. See the
+[default font charset and limits](docs/quickstart.md#2-open-the-runtime-once).
 
 ## Build
 

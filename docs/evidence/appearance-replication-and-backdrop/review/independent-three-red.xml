@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atom.lib.controls.AppearanceIndependentReviewTest" tests="3" skipped="0" failures="3" errors="0" timestamp="2026-11-01T14:36:15" hostname="E33EPUS" time="0.539">
+  <properties/>
+  <testcase name="minimumSizeScrollbarThumbCanReachTheContentEndAtTheTrackEnd()" classname="com.atom.lib.controls.AppearanceIndependentReviewTest" time="0.124">
+    <failure message="org.opentest4j.AssertionFailedError: Moving the thumb to the track bottom must expose the final 100 units ==&gt; expected: &lt;9900.0&gt; but was: &lt;7600.0&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: Moving the thumb to the track bottom must expose the final 100 units ==&gt; expected: &lt;9900.0&gt; but was: &lt;7600.0&gt;
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:86)
+	at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1024)
+	at app//com.atom.lib.controls.AppearanceIndependentReviewTest.minimumSizeScrollbarThumbCanReachTheContentEndAtTheTrackEnd(AppearanceIndependentReviewTest.java:27)
+	at java.base@17.0.18/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+</failure>
+  </testcase>
+  <testcase name="unrelatedMouseButtonReleaseDoesNotEndTheLeftScrollbarGesture()" classname="com.atom.lib.controls.AppearanceIndependentReviewTest" time="0.288">
+    <failure message="org.opentest4j.AssertionFailedError: Right-button release cannot release a left-button-owned thumb drag ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: Right-button release cannot release a left-button-owned thumb drag ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at app//org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at app//org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at app//org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:214)
+	at app//com.atom.lib.controls.AppearanceIndependentReviewTest.unrelatedMouseButtonReleaseDoesNotEndTheLeftScrollbarGesture(AppearanceIndependentReviewTest.java:53)
+	at java.base@17.0.18/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+</failure>
+  </testcase>
+  <testcase name="escapeCancelsScrollbarCaptureAndConsumesItsRemainingPointerTail()" classname="com.atom.lib.controls.AppearanceIndependentReviewTest" time="0.126">
+    <failure message="org.opentest4j.AssertionFailedError: Escape must cancel the active thumb gesture before the host can close the screen ==&gt; expected: &lt;CONSUMED&gt; but was: &lt;PASS&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: Escape must cancel the active thumb gesture before the host can close the screen ==&gt; expected: &lt;CONSUMED&gt; but was: &lt;PASS&gt;
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+	at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+	at app//com.atom.lib.controls.AppearanceIndependentReviewTest.escapeCancelsScrollbarCaptureAndConsumesItsRemainingPointerTail(AppearanceIndependentReviewTest.java:78)
+	at java.base@17.0.18/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+</failure>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

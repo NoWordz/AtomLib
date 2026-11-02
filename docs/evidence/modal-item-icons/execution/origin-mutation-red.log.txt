@@ -1,0 +1,47 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :core:compileJava UP-TO-DATE
+> Task :runtime:compileJava UP-TO-DATE
+> Task :ui:generateYogaDirty UP-TO-DATE
+> Task :ui:compileJava UP-TO-DATE
+> Task :compileJava
+> Task :processResources UP-TO-DATE
+> Task :classes
+> Task :compileHiddenGlTestJava UP-TO-DATE
+> Task :processHiddenGlTestResources NO-SOURCE
+> Task :hiddenGlTestClasses UP-TO-DATE
+> Task :core:processResources NO-SOURCE
+> Task :core:classes UP-TO-DATE
+> Task :core:jar UP-TO-DATE
+> Task :runtime:processResources UP-TO-DATE
+> Task :runtime:classes UP-TO-DATE
+> Task :runtime:jar UP-TO-DATE
+> Task :ui:processResources NO-SOURCE
+> Task :ui:classes UP-TO-DATE
+> Task :ui:jar UP-TO-DATE
+
+> Task :hiddenGlTest FAILED
+
+ItemIconHiddenGlTest > orientationTransparentEdgeAndExpiryAreRealGpuSamples() FAILED
+    org.opentest4j.AssertionFailedError: top is red ==> array contents differ at index [0], expected: <255> but was: <0>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertArrayEquals.failArraysNotEqual(AssertArrayEquals.java:440)
+        at app//org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:241)
+        at app//org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:87)
+        at app//org.junit.jupiter.api.Assertions.assertArrayEquals(Assertions.java:1290)
+        at app//com.atom.lib.client.render.item.ItemIconHiddenGlTest.orientationTransparentEdgeAndExpiryAreRealGpuSamples(ItemIconHiddenGlTest.java:26)
+
+1 test completed, 1 failed
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':hiddenGlTest'.
+> There were failing tests. See the report at: file:///D:/AtomLib/platforms/1.20.1-forge/build/reports/tests/hiddenGlTest/index.html
+
+* Try:
+> Run with --scan to get full insights.
+
+BUILD FAILED in 18s
+12 actionable tasks: 2 executed, 10 up-to-date

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atom.lib.controls.IndependentReviewTest" tests="3" skipped="0" failures="1" errors="0" timestamp="2026-11-01T09:13:34" hostname="E33EPUS" time="0.484">
+  <properties/>
+  <testcase name="escapeCancelsTheHeldAdjustmentUntilItsRelease()" classname="com.atom.lib.controls.IndependentReviewTest" time="0.262"/>
+  <testcase name="presentationLayerOrderOwnsBothPaintingAndHitTesting()" classname="com.atom.lib.controls.IndependentReviewTest" time="0.115">
+    <failure message="org.opentest4j.AssertionFailedError: Drawing must follow PresentationFrame layer order ==&gt; array lengths differ, expected: &lt;7763&gt; but was: &lt;7769&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: Drawing must follow PresentationFrame layer order ==&gt; array lengths differ, expected: &lt;7763&gt; but was: &lt;7769&gt;
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at app//org.junit.jupiter.api.AssertArrayEquals.assertArraysHaveSameLength(AssertArrayEquals.java:428)
+	at app//org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:205)
+	at app//org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:63)
+	at app//org.junit.jupiter.api.Assertions.assertArrayEquals(Assertions.java:1238)
+	at app//com.atom.lib.controls.IndependentReviewTest.presentationLayerOrderOwnsBothPaintingAndHitTesting(IndependentReviewTest.java:40)
+	at java.base@17.0.18/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+</failure>
+  </testcase>
+  <testcase name="clickingDialogBodyDoesNotActAsBackdropCancellation()" classname="com.atom.lib.controls.IndependentReviewTest" time="0.106"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

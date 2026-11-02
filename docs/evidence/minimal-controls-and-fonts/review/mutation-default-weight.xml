@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atom.lib.runtime.BundledDefaultFontTest" tests="2" skipped="0" failures="1" errors="0" timestamp="2026-11-01T09:12:23" hostname="E33EPUS" time="0.098">
+  <properties/>
+  <testcase name="registerDefaultsLoadsBothFacesAndRendersCjk()" classname="com.atom.lib.runtime.BundledDefaultFontTest" time="0.069">
+    <failure message="org.opentest4j.AssertionFailedError: expected: &lt;400&gt; but was: &lt;100&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: expected: &lt;400&gt; but was: &lt;100&gt;
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+	at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:145)
+	at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:531)
+	at app//com.atom.lib.runtime.BundledDefaultFontTest.registerDefaultsLoadsBothFacesAndRendersCjk(BundledDefaultFontTest.java:21)
+	at java.base@17.0.18/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+</failure>
+  </testcase>
+  <testcase name="registerDefaultsIsIdempotentAndKeepsWorking()" classname="com.atom.lib.runtime.BundledDefaultFontTest" time="0.028"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -15,7 +15,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL33C.*;
 
 /** Each test owns its real hidden core GL context and resources. No skip path. */
-abstract class HiddenGlFixture {
+public abstract class HiddenGlFixture {
     private long window;
     private static GLFWErrorCallback errors;
     final List<Runnable> disposers = new ArrayList<>();
@@ -58,7 +58,7 @@ abstract class HiddenGlFixture {
         }
     }
 
-    FramebufferTarget framebuffer(int width, int height) {
+    protected FramebufferTarget framebuffer(int width, int height) {
         int texture=glGenTextures();
         glBindTexture(GL_TEXTURE_2D,texture);
         glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,(ByteBuffer)null);
@@ -78,7 +78,7 @@ abstract class HiddenGlFixture {
         return new FramebufferTarget(new Object(),fbo,texture,width,height);
     }
 
-    int[] pixel(FramebufferTarget target, int x, int y) {
+    protected int[] pixel(FramebufferTarget target, int x, int y) {
         glBindFramebuffer(GL_READ_FRAMEBUFFER,target.framebuffer());
         glBindBuffer(GL_PIXEL_PACK_BUFFER,0);
         glPixelStorei(GL_PACK_ALIGNMENT,1);

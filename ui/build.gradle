@@ -43,7 +43,7 @@ final class YogaDirty {
 '''
         def output = bridgeDir.get().asFile
         new File(output, 'com/atom/lib/layout/internal').mkdirs()
-        new File(output, 'com/atom/lib/layout/internal/YogaDirty.java').text = source
+        new File(output, 'com/atom/lib/layout/internal/YogaDirty.java').setText(source, 'UTF-8')
     }
 }
 dependencies {

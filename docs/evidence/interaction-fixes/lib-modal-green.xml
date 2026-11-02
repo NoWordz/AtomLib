@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atom.lib.controls.TerraModalViewportReviewTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-01T15:25:51" hostname="E33EPUS" time="0.673">
+  <properties/>
+  <testcase name="fittedDialogStillHasAFullViewportDismissOverlay()" classname="com.atom.lib.controls.TerraModalViewportReviewTest" time="0.286"/>
+  <testcase name="[1] 360, 180" classname="com.atom.lib.controls.TerraModalViewportReviewTest" time="0.154"/>
+  <testcase name="[2] 200, 180" classname="com.atom.lib.controls.TerraModalViewportReviewTest" time="0.114"/>
+  <testcase name="normalViewportKeepsOriginalUnscaledModalLayout()" classname="com.atom.lib.controls.TerraModalViewportReviewTest" time="0.094"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

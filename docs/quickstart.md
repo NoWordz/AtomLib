@@ -1,5 +1,7 @@
 # Quickstart: a screen in about ten minutes
 
+> 本地控件候选接线另见 [controls](controls.md)及三端 `examples/a/<target>/.../ControlsRecipe.java`。完整 pointer/key-up/wheel/char/window-focus/removed 转发均为库优先，不能只抄 press/release 或再次乘像素比。公开 beta3 仍不包含新控件。
+
 This is the shortest path from an empty mod to a painted Skija screen. The
 compiled reference is examples/a (design package) and examples/b (raw Skija);
 this page is the wiring those examples assume.
@@ -121,7 +123,7 @@ callbacks the same; the only version difference is the scroll signature
     return input.drag(x, y, button, dx, dy) || super.mouseDragged(x, y, button, dx, dy);
 }
 @Override public boolean mouseReleased(double x, double y, int button) {
-    return super.mouseReleased(x, y, button) || input.release(x, y, button);
+    return input.release(x, y, button) || super.mouseReleased(x, y, button);
 }
 @Override public boolean mouseScrolled(double x, double y, double delta) { // 1.20.1
     return input.scroll(x, y, 0, delta) || super.mouseScrolled(x, y, delta);
@@ -161,3 +163,9 @@ Import com.atom.lib.design.atomchat for UiTokens, SkiaDraw, UiCards and
 AppIcons. Without a host the tokens use AtomChat's shipped defaults; call
 Design.host(DesignHost) to feed your own accent, corner radius, card tint and
 panel colours. See [design-package.md](design-package.md).
+
+
+可组合模态的稳定控件、滚动和关闭示例见 [controls.md](controls.md#可组合模态)。物品图标不包含在当前 M1 候选中。
+
+
+原版物品图标接线与生命周期见 [item-icons.md](item-icons.md)。先预留图像槽、产生当前帧布局，再在桥的 Skija pass 外准备并在本层采样。

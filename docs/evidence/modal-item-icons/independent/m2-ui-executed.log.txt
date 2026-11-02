@@ -1,0 +1,29 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :core:compileJava
+> Task :core:processResources NO-SOURCE
+> Task :core:classes
+> Task :core:jar
+
+> Task :runtime:compileJava
+注: D:\AtomLib\runtime\src\main\java\com\atom\lib\image\ImageStore.java使用或覆盖了已过时的 API。
+注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+
+> Task :runtime:processResources
+> Task :runtime:classes
+> Task :runtime:jar
+> Task :ui:generateYogaDirty
+> Task :ui:compileJava
+> Task :ui:processResources NO-SOURCE
+> Task :ui:classes
+
+> Task :ui:compileTestJava
+注: 某些输入文件使用或覆盖了已过时的 API。
+注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+
+> Task :ui:processTestResources NO-SOURCE
+> Task :ui:testClasses
+> Task :ui:test
+
+BUILD SUCCESSFUL in 29s
+9 actionable tasks: 9 executed

@@ -5,6 +5,15 @@ New AtomLib-authored material is licensed under the Apache License, Version 2.0.
 Third-party material and permitted AtomChat adaptations retain their own licenses.
 This NOTICE does not relicense AtomChat, Tuui, third-party libraries, or assets.
 
+AtomLib mod logo (2026-11-01):
+User-supplied branding image provided for use as the AtomLib mod logo.
+Original image and processing record: assets/branding/logo-original.png and logo.json.
+
+Original AtomLib backdrop shaders (2026-11-01):
+assets/atomlib/shaders/backdrop/fullscreen.vert, kawase.frag, composite.frag.
+New independent implementation under Apache-2.0; provenance: assets/original-backdrop.json.
+No old AC/Tuui renderer or shader asset is included by this notice.
+
 AtomChat source attribution (only the explicit allowlist in docs/provenance.md):
 Copyright (c) 2026 E33EPUS
 MIT License; full text: licenses/AtomChat-MIT.txt.

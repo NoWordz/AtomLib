@@ -17,11 +17,10 @@ REMOVED_LAYERS = (
     "interaction",
     "view",
     "style",
-    "input",
 )
 REMOVED_IMPORT = re.compile(
     r"^\s*import\s+(?:static\s+)?com\.atom\.lib\."
-    r"(?:component|overlay|shell|scroll|interaction|view|style|input)\.",
+    r"(?:component|overlay|shell|scroll|interaction|view|style)\.",
     re.MULTILINE,
 )
 DOCS = (

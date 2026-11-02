@@ -1,0 +1,9 @@
+PASS platforms\1.20.1-forge: D:\AtomLib\platforms\1.20.1-forge\build\packaging.log
+PASS platforms\1.21.1-fabric: D:\AtomLib\platforms\1.21.1-fabric\build\packaging.log
+PASS platforms\1.21.1-neoforge: D:\AtomLib\platforms\1.21.1-neoforge\build\packaging.log
+PASS examples\a\1.20.1-forge: D:\AtomLib\examples\a\1.20.1-forge\build\consumer.log
+PASS examples\a\1.21.1-fabric: D:\AtomLib\examples\a\1.21.1-fabric\build\consumer.log
+PASS examples\a\1.21.1-neoforge: D:\AtomLib\examples\a\1.21.1-neoforge\build\consumer.log
+PASS examples\b\1.20.1-forge: D:\AtomLib\examples\b\1.20.1-forge\build\consumer.log
+PASS examples\b\1.21.1-fabric: D:\AtomLib\examples\b\1.21.1-fabric\build\consumer.log
+PASS examples\b\1.21.1-neoforge: D:\AtomLib\examples\b\1.21.1-neoforge\build\consumer.log

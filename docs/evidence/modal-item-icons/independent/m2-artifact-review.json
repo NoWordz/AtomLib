@@ -1,0 +1,67 @@
+{
+  "1.20.1-forge": {
+    "binary_matches": true,
+    "sources_hash_matches": true,
+    "sources_compared": 111,
+    "source_mismatches": []
+  },
+  "1.21.1-fabric": {
+    "binary_matches": true,
+    "sources_hash_matches": true,
+    "sources_compared": 111,
+    "source_mismatches": []
+  },
+  "1.21.1-neoforge": {
+    "binary_matches": true,
+    "sources_hash_matches": true,
+    "sources_compared": 111,
+    "source_mismatches": []
+  },
+  "source_zip": true,
+  "input_zip": true,
+  "trial_binary": true,
+  "trial_lock": true,
+  "consumer_classes": [
+    "dev/creatortrial/TrialClient.class",
+    "dev/creatortrial/TrialPage.class",
+    "dev/creatortrial/TrialScreen.class",
+    "dev/creatortrial/TrialState$Item.class",
+    "dev/creatortrial/TrialState.class",
+    "dev/creatortrial/mixin/MinecraftClientMixin.class"
+  ],
+  "mixin_config": {
+    "required": true,
+    "minVersion": "0.8",
+    "package": "dev.creatortrial.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "client": [
+      "MinecraftClientMixin"
+    ],
+    "injectors": {
+      "defaultRequire": 1
+    },
+    "refmap": "creator-trial-refmap.json"
+  },
+  "test_counts": {
+    "ui": {
+      "tests": 97,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "fabric_item_gl": {
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "protected_manifest_shape": [
+    "D:\\AtomLib\\build\\composable-modal-candidate\\input.zip",
+    "D:\\AtomLib\\build\\composable-modal-candidate\\input.zip.sha256",
+    "D:\\AtomLib\\build\\composable-modal-candidate\\results.json",
+    "D:\\AtomLib\\build\\composable-modal-candidate\\source.zip"
+  ],
+  "protected_files_checked": 627,
+  "protected_files_changed": []
+}

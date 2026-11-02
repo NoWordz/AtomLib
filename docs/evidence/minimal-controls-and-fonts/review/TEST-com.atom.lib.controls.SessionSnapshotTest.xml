@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atom.lib.controls.SessionSnapshotTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-01T09:07:06" hostname="E33EPUS" time="0.29">
+  <properties/>
+  <testcase name="replacementIsInactiveUntilActuallyDisplayedAndFailedPaintDoesNotPublish()" classname="com.atom.lib.controls.SessionSnapshotTest" time="0.089"/>
+  <testcase name="twoSessionsWithSameIdsNeverShareFocusCapturePaletteOrClose()" classname="com.atom.lib.controls.SessionSnapshotTest" time="0.201"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

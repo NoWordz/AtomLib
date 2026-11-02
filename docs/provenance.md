@@ -1,5 +1,11 @@
 # AtomLib 来源门（T0）
 
+> 2026-11-01 完整外观候选：按用户批准的 appearance-replication-and-backdrop 方案，新增设置行、组卡片、设置壳、通用激活/choice/disclosure、单垂直滚动和 Raw GL 模糊服务。三份 `platforms/shared/src/main/resources/assets/atomlib/shaders/backdrop/` GLSL 为本实施者依据四邻点凸平均、圆角 SDF 和显式 RGB/alpha 合同新写，Apache-2.0。未读取 Tuui，未复制/翻译/拼接 I 类旧 AC renderer/GLSL 或整页；只读主代理参照规格/图片及现有准入 token/材料。不是人员隔离 clean-room。新登记另见 `assets/original-backdrop.json`；不改下文 T0 历史判断。字体源字节和第三方声明保留。
+
+> 2026-11-01 本地控件候选补充：用户批准按新[方案](superpowers/plans/2026-11-01-minimal-controls-and-fonts.md)独立实现 controls 状态机、UiSession、真实字重与中文禁则。新增实现依据明确输入／布局合同，未读取或复制 Tuui；未把排除的旧 helper 带入样例。AC 皮肤调用现存已准入 UiTokens／UiCards／SkiaDraw／AppIcons（含现有 warning path），保留这些文件与现有 MIT／第三方声明；新自有代码按 Apache-2.0。没有新增字体或改字体源字节。下文“组件已删除”对应公开 beta3；候选新增范围仅限 [controls](controls.md)。
+
+> 时间边界：上一段“未读取或复制 Tuui”限定原控件实施者及该实现阶段。控件源码完成后，主代理按用户新增要求只读查看 `D:/tmp/tuui` 的 BlurProgram／core blur shader 作模糊方案比较，没有复制、没有用于本轮控件实现；模糊未实施。用户新增模糊讨论文档只随源码快照保留。下方 T0 历史调查事实不改，也不扩大成“本轮所有参与者从未读取 Tuui”。
+
 > 2026-10-31 注：本文件记录 T0 准入时的历史候选与来源。组件、浮层、壳层、滚动、交互、视图宿主和 devtools 已从当前 AtomLib 删除；下列相关条目仅用于许可与来源追溯，不代表仍在发行物中。
 
 审计日期：2026-10-29。对象：`D:/AtomChat-Main` 的 `28fd6de0caf1133ffba97c63315d55bdf21aef48`。需求依据：`D:/AtomChat-Main/docs/superpowers/plans/2026-10-29-atomlib-extraction-and-yoga.md` 第 1、3、5 节与 T0，以及用户本次限定写范围。审计者：Codex。
@@ -10,7 +16,7 @@
 
 - AtomLib **新写自有代码 Apache-2.0**；允许迁移的 AC 代码保留 MIT 版权与许可，不因搬入新库自动变为 Apache。第三方内容保留各自许可。
 - 用户确认 Tuui 为 ARR：仅可学习设计思路；本次**没有打开或读取 Tuui 反编译目录、源码、资源或二进制**。调查只读取 AC 自己的源码与 Git 历史，以及下文官方许可／API 资料。
-- 不带字体，含测试字体与 Emoji 字体；宿主选字体，库提供字体服务。
+- 初始边界为不带字体（含测试字体与 Emoji 字体）；2026-10-31 方向 F 已改为附带两份默认字体，变更依据与准入范围见第 6.3 节。测试字体与 Emoji 字体仍不进入发行包。
 - 首版 native 仅 Windows x64／Windows ARM64；不以此文批准 Linux／macOS 分发，也不更改 AC 现有平台政策。
 - AC 版本、远端、代码、许可证保持原样。只写 `docs/provenance.md`、`assets/provenance.json`、`LICENSE`、`NOTICE`、`licenses/`。
 

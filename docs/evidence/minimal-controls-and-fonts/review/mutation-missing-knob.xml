@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atom.lib.controls.SliderRenderTest" tests="2" skipped="0" failures="1" errors="0" timestamp="2026-11-01T09:12:57" hostname="E33EPUS" time="0.448">
+  <properties/>
+  <testcase name="pressedSliderChangesPixelsAfterFocusIsAlreadyEstablished()" classname="com.atom.lib.controls.SliderRenderTest" time="0.29"/>
+  <testcase name="realTrackAndThumbPaintAccentAndFocusChangesPixels()" classname="com.atom.lib.controls.SliderRenderTest" time="0.158">
+    <failure message="org.opentest4j.AssertionFailedError: expected: &lt;-11890462&gt; but was: &lt;-11710636&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: expected: &lt;-11890462&gt; but was: &lt;-11710636&gt;
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+	at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:145)
+	at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:531)
+	at app//com.atom.lib.controls.SliderRenderTest.realTrackAndThumbPaintAccentAndFocusChangesPixels(SliderRenderTest.java:23)
+	at java.base@17.0.18/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base@17.0.18/java.util.ArrayList.forEach(ArrayList.java:1511)
+</failure>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

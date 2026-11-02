@@ -14,20 +14,28 @@ public final class TextService implements AutoCloseable {
     private record Key(TextRequest request, Constraints constraints, long generation) {}
     private record Piece(String text, int start, int end, boolean newline) {}
     private final FontRegistry fonts;
+    private final TextBreakPolicy breakPolicy;
     private final Object identity = new Object();
     private final LinkedHashMap<Key, TextLayout> cache = new LinkedHashMap<>(16, .75f, true);
     private final int capacity, characterBudget;
     private int cachedCharacters;
     private boolean closed;
 
-    public TextService(FontRegistry fonts) { this(fonts, 256, 262144); }
+    public TextService(FontRegistry fonts) { this(fonts, 256, 262144, TextBreakPolicy.GRAPHEME); }
+    public TextService(FontRegistry fonts, TextBreakPolicy policy) { this(fonts, 256, 262144, policy); }
     public TextService(FontRegistry fonts, int capacity, int characterBudget) {
+        this(fonts,capacity,characterBudget,TextBreakPolicy.GRAPHEME);
+    }
+    public TextService(FontRegistry fonts, int capacity, int characterBudget, TextBreakPolicy policy) {
         this.fonts = Objects.requireNonNull(fonts);
+        this.breakPolicy=Objects.requireNonNull(policy);
         if (capacity < 1 || characterBudget < 1) throw new IllegalArgumentException("Invalid cache limits");
         this.capacity = capacity; this.characterBudget = characterBudget;
     }
     public synchronized int cachedLayoutCount() { return cache.size(); }
     public synchronized int cachedCharacterCount() { return cachedCharacters; }
+    /** Measurement revisions may include this value without exposing registry ownership. */
+    public long fontGeneration() { return fonts.generation(); }
     public synchronized TextLayout layout(TextRequest request, Constraints constraints) {
         requireOpen(); Objects.requireNonNull(request); Objects.requireNonNull(constraints);
         synchronized (fonts) {
@@ -98,6 +106,13 @@ public final class TextService implements AutoCloseable {
                     else high = mid - 1;
                 }
                 if (start < paragraphEnd && end == start) end++;
+                if(breakPolicy==TextBreakPolicy.CJK_UI && end<paragraphEnd){
+                    int candidate=end;
+                    while(candidate>start+1 && (forbiddenStart(pieces.get(candidate).text)||forbiddenEnd(pieces.get(candidate-1).text)))candidate--;
+                    // If no fitting legal boundary exists, preserve the full
+                    // grapheme and width contract rather than lose content.
+                    if(candidate>start && !forbiddenStart(pieces.get(candidate).text)&&!forbiddenEnd(pieces.get(candidate-1).text))end=candidate;
+                }
                 boolean consumesNewline = end == paragraphEnd && paragraphEnd < pieces.size();
                 int next = end + (consumesNewline ? 1 : 0);
                 TextLayout.Line line = shape(request, pieces.subList(start, end), "", top, shaper);
@@ -179,5 +194,7 @@ public final class TextService implements AutoCloseable {
         return new TextLayout.Line(start, end, top, top + ascent, Math.max(1, ascent + descent + leading), x, runs, carets);
     }
     private void requireOpen() { if (closed) throw new IllegalStateException("Text service closed"); }
+    private static boolean forbiddenStart(String s){return !s.isEmpty()&&"。，、；：！？）】》」』〕〉”’".indexOf(s.codePointAt(0))>=0;}
+    private static boolean forbiddenEnd(String s){return !s.isEmpty()&&"（【《「『〔〈“‘".indexOf(s.codePointAt(0))>=0;}
     @Override public synchronized void close() { closed = true; cache.clear(); cachedCharacters = 0; }
 }

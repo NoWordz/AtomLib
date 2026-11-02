@@ -1,0 +1,983 @@
+{
+  "schema_version": 2,
+  "date": "2026-11-01",
+  "status": "REVIEWED_PENDING_GAME_VISUAL",
+  "published": {
+    "libHead": "08370f9bb6c4a7811e3b5394499b72f63a6c6769",
+    "acHead": "f6dbaa58b2bf1db8cbd9cad26cf98b6445c1eb67",
+    "versionUnchanged": true
+  },
+  "rootTests": {
+    "core": {
+      "total": 21,
+      "suites": {
+        "com.atom.lib.geometry.CropMathTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.geometry.GeometryContractTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.input.PointerCaptureTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.input.ReleaseReentryTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.input.ScreenInputAdapterTest": {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.layout.LayoutStyleTest": {
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.motion.MotionClockTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "runtime": {
+      "total": 30,
+      "suites": {
+        "com.atom.lib.runtime.BackdropBlurTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.runtime.BundledDefaultFontTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.runtime.CjkUiLineBreakTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.runtime.FontIsolationTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.runtime.FontWeightTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.runtime.ImageReloadTest": {
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.runtime.RenderScopeTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.runtime.ResourceScopeTest": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.runtime.RuntimeLoadingTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.runtime.TextLayoutTest": {
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "ui": {
+      "total": 57,
+      "suites": {
+        "com.atom.lib.controls.ConfirmationDialogRenderTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.ConfirmationDialogTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.ControlMaterialIsolationTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.FontRenderEvidenceTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.IndependentReviewTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.internal.FocusStateTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.ModalInputSequenceTest": {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.ModalSkinLayoutTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.ReviewInputBoundaryTest": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.SessionSnapshotTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.SliderRenderTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.SliderTest": {
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.ToggleRenderTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.ToggleTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.UiSessionTest": {
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.WindowFocusBoundaryTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.layout.internal.YogaNativesTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.layout.PresentationFrameTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.layout.YogaLayoutEngineTest": {
+          "tests": 9,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    }
+  },
+  "hiddenGl": {
+    "1.20.1-forge": {
+      "total": 23,
+      "suites": {
+        "com.atom.lib.client.render.GlStateScopeTest": {
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.client.render.SkijaRenderBridgeTest": {
+          "tests": 9,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.ControlsHiddenGlTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.layout.LayoutStyleExpansionHiddenGlTest": {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.layout.YogaRescaleHiddenGlTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "1.21.1-fabric": {
+      "total": 23,
+      "suites": {
+        "com.atom.lib.client.render.GlStateScopeTest": {
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.client.render.SkijaRenderBridgeTest": {
+          "tests": 9,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.ControlsHiddenGlTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.layout.LayoutStyleExpansionHiddenGlTest": {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.layout.YogaRescaleHiddenGlTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "1.21.1-neoforge": {
+      "total": 23,
+      "suites": {
+        "com.atom.lib.client.render.GlStateScopeTest": {
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.client.render.SkijaRenderBridgeTest": {
+          "tests": 9,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.controls.ControlsHiddenGlTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.layout.LayoutStyleExpansionHiddenGlTest": {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.atom.lib.layout.YogaRescaleHiddenGlTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    }
+  },
+  "consumerBuilds": {
+    "platforms": [
+      "1.20.1-forge",
+      "1.21.1-fabric",
+      "1.21.1-neoforge"
+    ],
+    "examples": [
+      "a/1.20.1-forge",
+      "a/1.21.1-fabric",
+      "a/1.21.1-neoforge",
+      "b/1.20.1-forge",
+      "b/1.21.1-fabric",
+      "b/1.21.1-neoforge"
+    ],
+    "allPassed": true
+  },
+  "mutations": [
+    {
+      "name": "late-density-cancel",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sha256": "3bc9afdb80c90bb1537b9f3d27c5fb98669e650f8e9ef894b55cee4c2a8f2f1d",
+      "tests": 8,
+      "failures": 2,
+      "errors": 0
+    },
+    {
+      "name": "release-reentry",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sha256": "db84f0420109dbbf1c64270dab50301bbbf6d6f02e63991c0c9ab736b71af819",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "name": "default-weight",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sha256": "4491353a7a2623f480b5a51c718f66410ec37c69ac36413b3c4fccb87a133e4c",
+      "tests": 2,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "name": "cjk-grapheme",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sha256": "0dc2a15669c54145a645bbc581ee23e018e2fecab0a64e699b39c9e51effc814",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "name": "missing-text",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sha256": "8ab78a75fa3787b6b50a654fc5fa5e0809c146f7ad261b4944480c8ff531266c",
+      "tests": 2,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "name": "missing-track",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sha256": "8ab78a75fa3787b6b50a654fc5fa5e0809c146f7ad261b4944480c8ff531266c",
+      "tests": 2,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "name": "missing-knob",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sha256": "8ab78a75fa3787b6b50a654fc5fa5e0809c146f7ad261b4944480c8ff531266c",
+      "tests": 2,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "name": "modal-wheel-pass",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sha256": "3bc9afdb80c90bb1537b9f3d27c5fb98669e650f8e9ef894b55cee4c2a8f2f1d",
+      "tests": 6,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "name": "modal-body-backdrop",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sha256": "3bc9afdb80c90bb1537b9f3d27c5fb98669e650f8e9ef894b55cee4c2a8f2f1d",
+      "tests": 3,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "name": "cancelled-held-repeat",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sha256": "3bc9afdb80c90bb1537b9f3d27c5fb98669e650f8e9ef894b55cee4c2a8f2f1d",
+      "tests": 3,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "name": "registration-paint-order",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sha256": "3bc9afdb80c90bb1537b9f3d27c5fb98669e650f8e9ef894b55cee4c2a8f2f1d",
+      "tests": 3,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "name": "modal-ac-sizing",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sha256": "3bc9afdb80c90bb1537b9f3d27c5fb98669e650f8e9ef894b55cee4c2a8f2f1d",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "name": "focuslost-stale-keys",
+      "negativeControlRejected": true,
+      "restoredByteIdentical": true,
+      "sha256": "15d61db338ca6154b25a837dceccae8ccd14bb48aae0ace64444b5c95ddf42bb",
+      "tests": 2,
+      "failures": 2,
+      "errors": 0
+    }
+  ],
+  "sample": {
+    "path": "D:\\AtomLib-Usability\\evidence\\controls-candidate\\result.json",
+    "overall": "PENDING_GAME_AND_VISUAL",
+    "font": "PASS",
+    "staticMaterials": "PASS",
+    "slider": "PASS",
+    "toggle": "PASS",
+    "dialog": "PASS",
+    "cpuIntegration": "PASS",
+    "glIntegration": "SEE_LIB_PLATFORM_EVIDENCE",
+    "gameIntegration": "NOT_RUN",
+    "visualAcceptance": "PENDING_USER",
+    "input": {
+      "schema_version": 1,
+      "group": "com.atom.lib",
+      "artifact": "atomlib-1.21.1-fabric",
+      "version": "0.1.0-beta",
+      "target": "1.21.1-fabric",
+      "sha256": "ddbdd0684fabf9d724d941dda396f3e2864cded6d5724481b27e290d92658af4"
+    },
+    "tests": {
+      "AppearancePageTest": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "InteractionSliceTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "independence": {
+      "projects": 1,
+      "includedBuilds": 0,
+      "sourceRoots": [
+        "D:\\AtomLib-Usability\\src\\main\\resources",
+        "D:\\AtomLib-Usability\\src\\main\\java"
+      ],
+      "compiledPlatform": [
+        {
+          "coordinate": "net_fabricmc_yarn_1_21_1_1_21_1_build_3_v2.com.atom.lib:atomlib-1.21.1-fabric:0.1.0-beta",
+          "file": "D:\\AtomLib-Usability\\.gradle\\loom-cache\\remapped_mods\\net_fabricmc_yarn_1_21_1_1_21_1_build_3_v2\\com\\atom\\lib\\atomlib-1.21.1-fabric\\0.1.0-beta\\atomlib-1.21.1-fabric-0.1.0-beta.jar"
+        }
+      ],
+      "jarClasses": [
+        "dev/atomlib/usability/AppearancePage$1.class",
+        "dev/atomlib/usability/AppearancePage$PageFrame.class",
+        "dev/atomlib/usability/AppearancePage.class",
+        "dev/atomlib/usability/MaterialsScreen.class",
+        "dev/atomlib/usability/UsabilityClient.class",
+        "dev/atomlib/usability/UsabilityKeyMixin.class"
+      ],
+      "bundledLibraryClasses": 0,
+      "bundledFonts": 0,
+      "bundledNestedJars": 0
+    },
+    "artifact": {
+      "path": "D:\\AtomLib-Usability\\build\\inputs\\ddbdd0684fabf9d724d941dda396f3e2864cded6d5724481b27e290d92658af4\\libs\\atomlib-usability-0.1.0-partial.jar",
+      "bytes": 15443,
+      "sha256": "d7e2ec6886f7028489b8ab8f943c339ba14657d62dc62af4bb0b087632bdb366"
+    },
+    "outputs": [
+      {
+        "path": "D:\\AtomLib-Usability\\evidence\\controls-candidate\\output\\controls-480-density-1.0.png",
+        "sha256": "54085f42763e3d73495673eb9ea3151ecb452c7b19907b7af9ac5910f8d63e36",
+        "width": 480,
+        "height": 860,
+        "pixelsPerUnit": 1.0,
+        "bodySize": 15,
+        "bodyWeight": 500,
+        "headingWeight": 700,
+        "edging": "ANTI_ALIAS",
+        "hinting": "NORMAL",
+        "subpixel": true
+      },
+      {
+        "path": "D:\\AtomLib-Usability\\evidence\\controls-candidate\\output\\controls-480-density-1.0-dialog.png",
+        "sha256": "2ed8a65136acabea9213842950dcf3a60c835964df7631019cf4e7c7b37d5650",
+        "width": 480,
+        "height": 860,
+        "pixelsPerUnit": 1.0,
+        "bodySize": 15,
+        "bodyWeight": 500,
+        "headingWeight": 700,
+        "edging": "ANTI_ALIAS",
+        "hinting": "NORMAL",
+        "subpixel": true
+      },
+      {
+        "path": "D:\\AtomLib-Usability\\evidence\\controls-candidate\\output\\controls-480-density-1.5.png",
+        "sha256": "a56d77c95878420343af379ab4e33468721bbd5053a7df2160eb5a90f8af698b",
+        "width": 480,
+        "height": 860,
+        "pixelsPerUnit": 1.5,
+        "bodySize": 15,
+        "bodyWeight": 500,
+        "headingWeight": 700,
+        "edging": "ANTI_ALIAS",
+        "hinting": "NORMAL",
+        "subpixel": true
+      },
+      {
+        "path": "D:\\AtomLib-Usability\\evidence\\controls-candidate\\output\\controls-480-density-1.5-dialog.png",
+        "sha256": "8529a0c648edf24e85e68d652028f75ad060cf134192b3f46cc659db927f2640",
+        "width": 480,
+        "height": 860,
+        "pixelsPerUnit": 1.5,
+        "bodySize": 15,
+        "bodyWeight": 500,
+        "headingWeight": 700,
+        "edging": "ANTI_ALIAS",
+        "hinting": "NORMAL",
+        "subpixel": true
+      },
+      {
+        "path": "D:\\AtomLib-Usability\\evidence\\controls-candidate\\output\\controls-480-density-2.0.png",
+        "sha256": "fedd7885682c7c27a0e989094020587823a1d1e3d40554044ac372b421740246",
+        "width": 480,
+        "height": 860,
+        "pixelsPerUnit": 2.0,
+        "bodySize": 15,
+        "bodyWeight": 500,
+        "headingWeight": 700,
+        "edging": "ANTI_ALIAS",
+        "hinting": "NORMAL",
+        "subpixel": true
+      },
+      {
+        "path": "D:\\AtomLib-Usability\\evidence\\controls-candidate\\output\\controls-480-density-2.0-dialog.png",
+        "sha256": "3358de6934f9383377909287eb42510744c75b20baea5e84f2503779ecd99ac9",
+        "width": 480,
+        "height": 860,
+        "pixelsPerUnit": 2.0,
+        "bodySize": 15,
+        "bodyWeight": 500,
+        "headingWeight": 700,
+        "edging": "ANTI_ALIAS",
+        "hinting": "NORMAL",
+        "subpixel": true
+      },
+      {
+        "path": "D:\\AtomLib-Usability\\evidence\\controls-candidate\\output\\controls-280-density-1.0.png",
+        "sha256": "d7080b313428cdc6972c2024993a30daff2fd01a64be579a72f9a4bdc733e558",
+        "width": 280,
+        "height": 860,
+        "pixelsPerUnit": 1.0,
+        "bodySize": 15,
+        "bodyWeight": 500,
+        "headingWeight": 700,
+        "edging": "ANTI_ALIAS",
+        "hinting": "NORMAL",
+        "subpixel": true
+      },
+      {
+        "path": "D:\\AtomLib-Usability\\evidence\\controls-candidate\\output\\controls-280-density-1.0-dialog.png",
+        "sha256": "0d2fbec61c9656eed494b278d3b46cb8ee0f618c82fbcc591fa6895cb103a174",
+        "width": 280,
+        "height": 860,
+        "pixelsPerUnit": 1.0,
+        "bodySize": 15,
+        "bodyWeight": 500,
+        "headingWeight": 700,
+        "edging": "ANTI_ALIAS",
+        "hinting": "NORMAL",
+        "subpixel": true
+      },
+      {
+        "path": "D:\\AtomLib-Usability\\evidence\\controls-candidate\\output\\controls-280-density-1.5.png",
+        "sha256": "a8b2518970e375a90d22f3b59024bc0b7ba1e0ca873ab9d80474a2e656cf4bda",
+        "width": 280,
+        "height": 860,
+        "pixelsPerUnit": 1.5,
+        "bodySize": 15,
+        "bodyWeight": 500,
+        "headingWeight": 700,
+        "edging": "ANTI_ALIAS",
+        "hinting": "NORMAL",
+        "subpixel": true
+      },
+      {
+        "path": "D:\\AtomLib-Usability\\evidence\\controls-candidate\\output\\controls-280-density-1.5-dialog.png",
+        "sha256": "bcce86a4958b1819583ca799c82fd7b35d04a439384ef3f45d442efed3d62c4e",
+        "width": 280,
+        "height": 860,
+        "pixelsPerUnit": 1.5,
+        "bodySize": 15,
+        "bodyWeight": 500,
+        "headingWeight": 700,
+        "edging": "ANTI_ALIAS",
+        "hinting": "NORMAL",
+        "subpixel": true
+      },
+      {
+        "path": "D:\\AtomLib-Usability\\evidence\\controls-candidate\\output\\controls-280-density-2.0.png",
+        "sha256": "41943e6599c0424546e135ea7dc0370c074b7e98ca30b8b144d2c858386075e6",
+        "width": 280,
+        "height": 860,
+        "pixelsPerUnit": 2.0,
+        "bodySize": 15,
+        "bodyWeight": 500,
+        "headingWeight": 700,
+        "edging": "ANTI_ALIAS",
+        "hinting": "NORMAL",
+        "subpixel": true
+      },
+      {
+        "path": "D:\\AtomLib-Usability\\evidence\\controls-candidate\\output\\controls-280-density-2.0-dialog.png",
+        "sha256": "6361c7f2aec38cec472130bf2e64d64dd56cd34614bb614e2f6551dacfd65038",
+        "width": 280,
+        "height": 860,
+        "pixelsPerUnit": 2.0,
+        "bodySize": 15,
+        "bodyWeight": 500,
+        "headingWeight": 700,
+        "edging": "ANTI_ALIAS",
+        "hinting": "NORMAL",
+        "subpixel": true
+      }
+    ],
+    "mutations": [
+      {
+        "name": "input-byte-mismatch",
+        "failureKind": "configuration-authentication",
+        "negativeControlRejected": true,
+        "restoredByteIdentical": true,
+        "originalSha256": "ddbdd0684fabf9d724d941dda396f3e2864cded6d5724481b27e290d92658af4"
+      },
+      {
+        "name": "missing-release",
+        "failureKind": "behavior-assertion",
+        "negativeControlRejected": true,
+        "restoredByteIdentical": true,
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "restoredSha256": "24a73b19eeafe509fbeb2bf64ddc9a7d4a8e4178407d3259ebf41d170b464add"
+      }
+    ],
+    "entrypoint": "F8 via compiled Fabric Keyboard mixin; R opens lib confirmation; no game launched",
+    "notExecuted": [
+      "Minecraft game/client",
+      "ARM64 hardware",
+      "user visual acceptance",
+      "commit/push/release/deploy"
+    ]
+  },
+  "candidate": {
+    "1.20.1-forge": {
+      "path": "D:\\AtomLib\\build\\controls-candidate\\maven\\com\\atom\\lib\\atomlib-1.20.1-forge\\0.1.0-beta\\atomlib-1.20.1-forge-0.1.0-beta.jar",
+      "bytes": 27075455,
+      "sha256": "55e368c1446f511a36590d9e1bebe9919d8f4bf1713842dec556f28e30598892"
+    },
+    "1.21.1-fabric": {
+      "path": "D:\\AtomLib\\build\\controls-candidate\\maven\\com\\atom\\lib\\atomlib-1.21.1-fabric\\0.1.0-beta\\atomlib-1.21.1-fabric-0.1.0-beta.jar",
+      "bytes": 27085876,
+      "sha256": "ddbdd0684fabf9d724d941dda396f3e2864cded6d5724481b27e290d92658af4"
+    },
+    "1.21.1-neoforge": {
+      "path": "D:\\AtomLib\\build\\controls-candidate\\maven\\com\\atom\\lib\\atomlib-1.21.1-neoforge\\0.1.0-beta\\atomlib-1.21.1-neoforge-0.1.0-beta.jar",
+      "bytes": 27081534,
+      "sha256": "a5cf096eba52fb36cead3a56ea1dcfb650fa4d942a7893dcf4014d9caeb57101"
+    }
+  },
+  "inputZip": {
+    "path": "D:\\AtomLib\\build\\controls-candidate\\atomlib-controls-input.zip",
+    "sha256": "cdb0667f1034014903b80ca7db6020c5f6f8b2601a1e0065025e31ac6951d7dc",
+    "bytes": 100398754
+  },
+  "independentReview": {
+    "status": "ACCEPTED_BY_MAIN",
+    "findings": [
+      "Dialog card clicks acted as backdrop cancellation",
+      "Cancelled held adjustment restarted on key repeat",
+      "Control registration order overrode presentation paint order"
+    ],
+    "additionalFixes": [
+      "ControlSkin owns modal outer layout; session has no AC dependency",
+      "Window deactivation clears physical input tracking after cancellation"
+    ],
+    "assertionsUnmodified": true,
+    "mainReportedIndependentChecks": [
+      "33 artifact verifier",
+      "2 consumer verifier",
+      "candidate packaging",
+      "3 UI examples"
+    ],
+    "evidence": "D:\\AtomLib\\docs\\evidence\\minimal-controls-and-fonts\\review",
+    "redGreen": {
+      "originalFindings": {
+        "tests": 2,
+        "failures": 2,
+        "errors": 0
+      },
+      "presentation": {
+        "tests": 1,
+        "failures": 1,
+        "errors": 0
+      },
+      "boundaries": {
+        "tests": 6,
+        "failures": 5,
+        "errors": 0
+      },
+      "focusReset": {
+        "tests": 11,
+        "failures": 2,
+        "errors": 0
+      },
+      "localGreen": {
+        "tests": 42,
+        "failures": 0,
+        "errors": 0
+      }
+    }
+  },
+  "acceptance": {
+    "font": "PASS",
+    "staticMaterials": "PASS",
+    "slider": "PASS",
+    "toggle": "PASS",
+    "dialog": "PASS",
+    "cpuIntegration": "PASS",
+    "glIntegration": "PASS_WINDOWS_X64_HIDDEN",
+    "gameIntegration": "NOT_RUN",
+    "visualAcceptance": "PENDING_USER"
+  },
+  "protection": {
+    "historical205": {
+      "total": 205,
+      "unchanged": 204,
+      "externalDeleted": [
+        "D:\\AtomChat-Main\\shared\\src\\test\\java\\com\\atom\\chat\\notification\\BannerBackdropIrisAlphaProbe.java"
+      ],
+      "otherChanges": []
+    },
+    "finalProtectedInputs": {
+      "D:\\AtomLib\\docs\\skija-backdrop-vs-rawgl-blur.md": "fa9c0f40e4c25a60124845d4a46a42118a7762ded82b2e329d520276ccde8c1d",
+      "D:\\AtomLib\\ui\\src\\test\\java\\com\\atom\\lib\\controls\\IndependentReviewTest.java": "cde8b03ade7276f257a4a76b04ae0a9ceab63eeed53a87a4f3efc7b5a713f21e"
+    },
+    "acTrackedDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "acTrackedDiffUnchanged": false,
+    "acHeadNow": "3f509f2bd76940da5c2d8c22ae6308e21517534e",
+    "acExternalCommitHistory": [
+      "3f509f2b Record the banner flicker, Gnetum compat, and TrChat parsing rounds in the status",
+      "ed2bbfd6 Land the local audit fixes: unsigned-channel pixel diff, README build path, plan scope notes",
+      "df92290c Rename jars to atomchat-<platform>-<mc>-v<mod_version>",
+      "a9716f04 Reject prose sentences before the sender name in system-message parsing",
+      "6f49262e Draw the HUD banner frosted backdrop with raw GL and pin it out of Gnetum's cache"
+    ],
+    "acCurrentStatus": "",
+    "acExternalBaselineFileChanges": [
+      "docs/STATUS.md",
+      ".work/half-screen-preview/docked.png",
+      ".work/half-screen-preview/phone.png",
+      ".work/2026-10-28-ui/1.20.1-forge/command-completion.png",
+      ".work/2026-10-28-ui/1.20.1-forge/confirmation-narrow.png",
+      ".work/2026-10-28-ui/1.20.1-forge/confirmation.png",
+      ".work/2026-10-28-ui/1.20.1-forge/search-composer.png",
+      ".work/2026-10-28-ui/1.20.1-forge/theme-contact-sheet.png",
+      ".work/2026-10-28-ui/1.20.1-forge/tool-menu.png",
+      ".work/2026-10-28-ui/minecraft-junit/command-completion.png",
+      ".work/2026-10-28-ui/minecraft-junit/confirmation-narrow.png",
+      ".work/2026-10-28-ui/minecraft-junit/confirmation.png",
+      ".work/2026-10-28-ui/minecraft-junit/search-composer.png",
+      ".work/2026-10-28-ui/minecraft-junit/theme-contact-sheet.png",
+      ".work/2026-10-28-ui/minecraft-junit/tool-menu.png",
+      ".work/2026-10-29-icons/1.20.1-forge/assignments.json",
+      ".work/2026-10-29-icons/1.20.1-forge/headings-dark.png",
+      ".work/2026-10-29-icons/1.20.1-forge/headings-light.png",
+      ".work/2026-10-29-icons/minecraft-junit/assignments.json",
+      ".work/2026-10-29-icons/minecraft-junit/headings-dark.png",
+      ".work/2026-10-29-icons/minecraft-junit/headings-light.png",
+      "layers/mapping/official/src/main/java/com/atom/chat/notification/NotificationBanner.java",
+      "layers/mapping/official/src/main/java/com/atom/chat/notification/NotificationHudOverlay.java",
+      "platforms/1.20.1-forge/build.gradle",
+      "platforms/1.21.1-fabric/build.gradle",
+      "platforms/1.21.1-neoforge/build.gradle",
+      "platforms/1.20.1-forge/logs/2026-10-31-1.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-10.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-11.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-12.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-13.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-14.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-15.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-2.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-3.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-4.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-5.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-6.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-7.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-8.log.gz",
+      "platforms/1.20.1-forge/logs/2026-10-31-9.log.gz",
+      "platforms/1.20.1-forge/logs/debug-1.log.gz",
+      "platforms/1.20.1-forge/logs/debug-2.log.gz",
+      "platforms/1.20.1-forge/logs/debug-3.log.gz",
+      "platforms/1.20.1-forge/logs/debug-4.log.gz",
+      "platforms/1.20.1-forge/logs/debug-5.log.gz",
+      "platforms/1.20.1-forge/logs/debug.log",
+      "platforms/1.20.1-forge/logs/latest.log",
+      "platforms/1.21.1-fabric/logs/2026-11-01-1.log.gz",
+      "platforms/1.21.1-fabric/logs/2026-11-01-2.log.gz",
+      "platforms/1.21.1-fabric/logs/latest.log",
+      "platforms/1.21.1-fabric/src/main/java/com/atom/chat/notification/NotificationBanner.java",
+      "platforms/1.21.1-fabric/src/main/java/com/atom/chat/notification/NotificationHudOverlay.java",
+      "platforms/1.21.1-fabric/src/test/java/com/atom/chat/settings/SettingsHomeReplicationTest.java",
+      "shared/src/main/java/com/atom/chat/chat/MessagePresentation.java",
+      "shared/src/test/java/com/atom/chat/chat/MessagePresentationTest.java",
+      "shared/src/test/java/com/atom/chat/notification/BannerBackdropIrisAlphaProbe.java",
+      "shared/src/test/java/com/atom/chat/notification/NotificationRenderWiringTest.java"
+    ],
+    "acBaselineFilesUnchanged": 1678,
+    "acWrittenByThisTask": false,
+    "acInputLockUnchanged": true,
+    "historicalSampleEvidenceUnchanged": 53,
+    "defaultMavenFilesUnchanged": 90,
+    "libUnchangedAuditFiles": [
+      "README.md",
+      "tools/test_verify_artifacts.py",
+      "tools/verify_artifacts.py",
+      "docs/evidence/settings-home-replication/report.md",
+      "docs/packaging.md",
+      "gradle.properties"
+    ],
+    "fontBytesUnchanged": true
+  },
+  "changes": [
+    "README.md",
+    "core/src/main/java/com/atom/lib/input/InputDispatcher.java",
+    "docs/STATUS.md",
+    "docs/ai-guide.md",
+    "docs/api-contracts.md",
+    "docs/design-package.md",
+    "docs/evidence/settings-home-replication/report.md",
+    "docs/next-directions.md",
+    "docs/packaging.md",
+    "docs/provenance.md",
+    "docs/quickstart.md",
+    "docs/runtime.md",
+    "examples/consumer.gradle",
+    "gradle/module-layout.gradle",
+    "platforms/shared/src/test/java/com/atom/lib/client/render/HiddenGlFixture.java",
+    "runtime/src/main/java/com/atom/lib/font/FontRegistry.java",
+    "runtime/src/main/java/com/atom/lib/font/FontSource.java",
+    "runtime/src/main/java/com/atom/lib/text/TextService.java",
+    "runtime/src/test/java/com/atom/lib/runtime/BundledDefaultFontTest.java",
+    "tools/package_maven_input.py",
+    "tools/run_packaging.py",
+    "tools/test_verify_artifacts.py",
+    "tools/verify_artifacts.py",
+    "tools/verify_ui_examples.py",
+    "ui/build.gradle",
+    "ui/src/main/java/com/atom/lib/design/atomchat/Design.java",
+    "ui/src/main/java/com/atom/lib/design/atomchat/UiCards.java",
+    "ui/src/main/java/com/atom/lib/design/atomchat/UiTokens.java",
+    "core/src/test/java/com/atom/lib/input/ReleaseReentryTest.java",
+    "docs/controls.md",
+    "docs/evidence/minimal-controls-and-fonts/",
+    "docs/evidence/settings-home-replication/unsigned-channel-fix/",
+    "docs/skija-backdrop-vs-rawgl-blur.md",
+    "docs/superpowers/",
+    "examples/a/1.20.1-forge/src/main/java/com/atom/example/a/ControlsRecipe.java",
+    "examples/a/1.21.1-fabric/src/main/java/com/atom/example/a/ControlsRecipe.java",
+    "examples/a/1.21.1-neoforge/src/main/java/com/atom/example/a/ControlsRecipe.java",
+    "platforms/shared/src/test/java/com/atom/lib/controls/",
+    "runtime/src/main/java/com/atom/lib/font/FontOptions.java",
+    "runtime/src/main/java/com/atom/lib/text/TextBreakPolicy.java",
+    "runtime/src/test/java/com/atom/lib/runtime/CjkUiLineBreakTest.java",
+    "runtime/src/test/java/com/atom/lib/runtime/FontWeightTest.java",
+    "tools/test_candidate_packaging.py",
+    "tools/verify_controls_mutations.py",
+    "ui/src/main/java/com/atom/lib/controls/",
+    "ui/src/main/java/com/atom/lib/design/atomchat/AtomChatControlSkin.java",
+    "ui/src/main/java/com/atom/lib/design/atomchat/AtomChatControlStyle.java",
+    "ui/src/main/java/com/atom/lib/design/atomchat/AtomChatFonts.java",
+    "ui/src/test/java/com/atom/lib/controls/"
+  ],
+  "notExecuted": [
+    "commit",
+    "push",
+    "release",
+    "deploy",
+    "Minecraft game launch",
+    "ARM64 hardware",
+    "dedicated server",
+    "real multi-mod coexistence",
+    "user visual acceptance"
+  ],
+  "scopeNotes": [
+    "Maintainer authored library and follow-up consumer; dependency isolation is verified, this is not a new blinded creator study.",
+    "CPU/GL evidence does not constitute game or user visual acceptance.",
+    "Full baseline git diffs predate edits; filesystem source snapshot was captured during early P0, not an atomic pre-edit snapshot.",
+    "No unrelated Lib implementation WIP was identified; candidate includes the earlier authorized audit fixes and current implementation.",
+    "AC advanced through external commits while this task remained read-only. BannerBackdropIrisAlphaProbe.java is no longer at its baseline path; do not claim the AC tree was byte-identical or restore external changes.",
+    "User blur discussion document is preserved byte-identically and included in the source snapshot; no blur implementation. Main separately read Tuui BlurProgram/shaders for mechanism discussion, without copying; this does not change the independent implementation provenance of the controls/font work."
+  ]
+}

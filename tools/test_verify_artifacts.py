@@ -61,6 +61,8 @@ def fixture(loader='forge', version='0.1.0-beta', yoga='3.3.1'):
     entries.append(('com/atom/lib/platform/AtomLibMod.class', clazz()))
     entries.append(('com/atom/lib/fonts/bundled-default.otf', b'\x00\x01\x00\x00subsetted Noto Sans SC'))
     entries.append(('com/atom/lib/fonts/bundled-default-bold.otf', b'OTTOsubsetted Noto Sans SC bold'))
+    for resource in (Path(__file__).resolve().parents[1]/'platforms/shared/src/main/resources/assets/atomlib/shaders/backdrop').iterdir():
+        entries.append(('assets/atomlib/shaders/backdrop/'+resource.name,resource.read_bytes()))
     return entries
 
 
@@ -76,6 +78,15 @@ def mutate_nested(entries, suffix, change):
 
 
 class ArtifactTests(unittest.TestCase):
+    def test_missing_and_corrupt_required_shader_resources(self):
+        original=fixture()
+        names=[name for name,_ in original if name.startswith('assets/atomlib/shaders/backdrop/')]
+        self.assertEqual(3,len(names))
+        for name in names:
+            with self.subTest(resource=name,mutation='missing'):
+                self.reject([(n,b) for n,b in original if n!=name],'required shader')
+            with self.subTest(resource=name,mutation='corrupt'):
+                self.reject([(n,b if n!=name else b'broken shader') for n,b in original],'shader bytes')
     def check_entries(self, entries, loader='forge', yoga='3.3.1'):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/'atomlib.jar'; p.write_bytes(jar(entries))
@@ -140,6 +151,31 @@ class ArtifactTests(unittest.TestCase):
             with self.subTest(path=path):
                 entries=[(n,magic+b'x' if n==path else d) for n,d in fixture()]
                 self.reject(entries,'font')
+
+    def test_missing_shipped_default_fonts(self):
+        regular = 'com/atom/lib/fonts/bundled-default.otf'
+        bold = 'com/atom/lib/fonts/bundled-default-bold.otf'
+        for loader, yoga in [('forge', '3.3.1'), ('fabric', '3.3.3'), ('neoforge', '3.3.3')]:
+            for removed in [(regular,), (bold,), (regular, bold)]:
+                with self.subTest(loader=loader, removed=removed):
+                    entries = [(n, d) for n, d in fixture(loader, yoga=yoga) if n not in removed]
+                    errors = self.check_entries(entries, loader, yoga)
+                    for path in removed:
+                        self.assertTrue(any('missing or duplicate default font' in e and path in e for e in errors), errors)
+
+    def test_duplicate_shipped_default_font(self):
+        for path, data in fixture():
+            if path in ('com/atom/lib/fonts/bundled-default.otf', 'com/atom/lib/fonts/bundled-default-bold.otf'):
+                with self.subTest(path=path):
+                    self.reject(fixture() + [(path, data)], 'duplicate')
+
+    def test_consumer_without_fonts(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / 'consumer.jar'
+            p.write_bytes(jar([('example/Consumer.class', clazz())]))
+            for loader in ['forge', 'fabric', 'neoforge']:
+                with self.subTest(loader=loader):
+                    self.assertEqual([], verify_artifact(p, loader=loader, consumer=True))
 
     def test_shipped_default_font_outside_dist_top_level(self):
         self.reject(mutate_nested(fixture(),'types-0.2.0.jar',lambda es:es+[('com/atom/lib/fonts/bundled-default.otf',b'OTTOcopy')]),'font')
