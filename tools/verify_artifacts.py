@@ -272,7 +272,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('jar', type=Path)
     parser.add_argument('--loader', choices=['forge','fabric','neoforge'], required=True)
-    parser.add_argument('--version', default='0.1.0-beta')
+    parser.add_argument('--version', default='0.2.0')
     parser.add_argument('--skija', default='0.143.18')
     parser.add_argument('--types', default='0.2.0')
     parser.add_argument('--yoga', required=True)

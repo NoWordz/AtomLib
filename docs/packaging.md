@@ -12,9 +12,9 @@
 | `platforms/1.21.1-fabric` | 21 / 8.8 | Loom 1.7.4 / Fabric Loader 0.16.9 | 3.3.3 |
 | `platforms/1.21.1-neoforge` | 21 / 9.2.1 | NeoForge 21.1.235 / MDG 2.0.141 | 3.3.3 |
 
-- 三端统一版本 `0.1.0-beta`；平台元组在 `versions/targets.json`，Skija/types 版本读取主代理维护的 `versions/dependencies.properties`。
-- 本地坐标为 `com.atom.lib:atomlib-<目标>:0.1.0-beta`，发布目录为 `D:/AtomLib/build/test-maven`。没有配置外部仓库发布、商店发布或部署。
-- 三个工程分别复用 core/runtime/ui 的源码工程，公共字节码 Java 17。输出隔离到各平台 `build/modules/<模块>`。玩家 jar 只合入 core/runtime/ui。被删除的组件层与 devtools 不再进入依赖或合包输入。
+- 三端当前工作区版本为 `0.2.0`；公开发行仍为 `0.1.0-beta` beta3。平台元组在 `versions/targets.json`，Skija/types 版本读取 `versions/dependencies.properties`。
+- 本地坐标为 `com.atom.lib:atomlib-<目标>:0.2.0`，默认本地 Maven 输出目录为 `D:/AtomLib/build/test-maven`。没有配置外部仓库发布、商店发布或部署。
+- 三个工程分别复用 core/runtime/ui 的源码工程，公共字节码 Java 17。输出隔离到各平台 `build/modules/<模块>`。玩家 jar 合入 core/runtime/ui，其中包含本地候选的可选 controls；独立 devtools 不进入合包输入。
 - 两个示例位于 `examples/a`、`examples/b`，各有三个独立 settings/wrapper 工程。只声明对应 AtomLib 平台坐标；共享的示例源码只在各自 example 目录。没有 includeBuild、源码 project 依赖、mavenLocal 或 AC 源码引用。
 - Wrapper 从 AC 对应工程复制，保留脚本许可头，每个副本附 `gradle/WRAPPER-NOTICE.txt`，声明上游 Gradle Apache-2.0 来源。
 
@@ -32,7 +32,7 @@
 6. 同版本 lwjgl-yoga 的 natives-windows。
 7. 同版本 lwjgl-yoga 的 natives-windows-arm64。
 
-主包顶层必须各含一份 `com/atom/lib/fonts/bundled-default.otf` 与 `bundled-default-bold.otf`，附 Noto Sans SC 的 OFL 声明；其余字体仍由递归路径／魔数检查拒绝。不带 AC 类或 lwjgl-core；组件层与 devtools 已删除，不在发行内容中。MC 自带的 lwjgl-core 保持原版本。平台 Maven 的 compile API 导出 shared/types/Yoga Java 包；四份 native 以 runtime 依赖导出，保证消费者开发类路径可用。排除外部依赖的隐式传递，避免带入 lwjgl-core。
+主包顶层必须各含一份 `com/atom/lib/fonts/bundled-default.otf` 与 `bundled-default-bold.otf`，附 Noto Sans SC 的 OFL 声明；其余字体仍由递归路径／魔数检查拒绝。不带 AC 类或 lwjgl-core；独立 devtools 不在发行内容中。MC 自带的 lwjgl-core 保持原版本。平台 Maven 的 compile API 导出 shared/types/Yoga Java 包；四份 native 以 runtime 依赖导出，保证消费者开发类路径可用。排除外部依赖的隐式传递，避免带入 lwjgl-core。
 
 Forge/NF 使用 JarJar，Fabric 使用 Loom include。Forge 的 ContainedJarIdentifier 只有 group/artifact，不能区分 Yoga classifier：最终 metadata 为两个 classifier 增加独立 artifact 选择身份，并保留版本与正确路径。
 

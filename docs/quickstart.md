@@ -1,6 +1,6 @@
 # Quickstart: a screen in about ten minutes
 
-> 本地控件候选接线另见 [controls](controls.md)及三端 `examples/a/<target>/.../ControlsRecipe.java`。完整 pointer/key-up/wheel/char/window-focus/removed 转发均为库优先，不能只抄 press/release 或再次乘像素比。公开 beta3 仍不包含新控件。
+> 下文的 `0.2.0` 坐标指本地构建；该版本尚未发布。公开 beta3 仍为 `0.1.0-beta`，不包含新控件。本地控件接线另见 [controls](controls.md)及三端 `examples/a/<target>/.../ControlsRecipe.java`。完整 pointer/key-up/wheel/char/window-focus/removed 转发均为库优先，不能只抄 press/release 或再次乘像素比。
 
 This is the shortest path from an empty mod to a painted Skija screen. The
 compiled reference is examples/a (design package) and examples/b (raw Skija);
@@ -22,7 +22,7 @@ Declare it in development against the same coordinate:
 repositories { maven { url = uri('/absolute/path/to/AtomLib/build/test-maven') } }
 dependencies {
     // Fabric: modImplementation; Forge and NeoForge: implementation
-    implementation 'com.atom.lib:atomlib-1.20.1-forge:0.1.0-beta'
+    implementation 'com.atom.lib:atomlib-1.20.1-forge:0.2.0'
 }
 ~~~
 

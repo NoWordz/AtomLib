@@ -1,5 +1,8 @@
 # Getting started
 
+The `0.2.0` coordinate below refers to a local build; the latest public release
+is still `0.1.0-beta` beta3.
+
 Add the AtomLib platform JAR to the host's `mods/` folder, then declare its
 published coordinate in development. Maven publication is not configured in
 this repository; `build/test-maven` is the explicit local input used by tests.
@@ -9,7 +12,7 @@ repositories { maven { url = uri('/absolute/path/to/AtomLib/build/test-maven') }
              mavenCentral() }
 dependencies {
     // Fabric: modImplementation; Forge/NeoForge: implementation
-    implementation 'com.atom.lib:atomlib-1.20.1-forge:0.1.0-beta'
+    implementation 'com.atom.lib:atomlib-1.20.1-forge:0.2.0'
 }
 ```
 
@@ -52,7 +55,8 @@ run vanilla content in `vanillaPass` between Skija passes. In CPU previews use
 The two integration examples in `examples/a` and `examples/b` show the two
 supported paths. Example A uses the optional design package (`UiTokens`,
 `SkiaDraw`, `UiCards`). Example B builds a Yoga layout and paints it with a raw
-Skija `Canvas`. There is no component or shell layer to install or configure.
+Skija `Canvas`. The optional local controls and settings shell are documented
+separately in [controls.md](controls.md).
 
 The common Java bytecode targets 17. Forge runs on 17; Fabric and NeoForge run
 on 21. Hosts must keep Minecraft's existing LWJGL version and must not compile
