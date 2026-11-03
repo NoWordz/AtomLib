@@ -63,7 +63,7 @@ Use JDK 17 for common module tests, JDK 17 for Forge and JDK 21 for Fabric/NeoFo
 python tools/run_packaging.py all --jobs 1
 ```
 
-See the [wiki](docs/wiki/Home.md), [examples](examples/), [release checklist](docs/releasing.md) and [project status](docs/STATUS.md).
+See the [wiki](https://github.com/NoWordz/AtomLib/wiki) ([source](docs/wiki/Home.md)), [examples](examples/), [release checklist](docs/releasing.md) and [project status](docs/STATUS.md).
 
 ## License
 

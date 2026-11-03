@@ -5,7 +5,7 @@
 - 当前源码版本 `0.3.0`，上轮提交 `eca7ed9` 和 `d9c1da1` 已推送；默认分支已由 `codex/atomlib-extraction` 重命名为 `main`。当前提交以 Git 查询为准。公开发行仍是 `0.1.0-beta` beta3，0.3.0 尚未发布，也没有公开 Maven 仓库。
 - `eca7ed9` 的 GitHub Actions 已通过：公共模块、Windows 原生测试、三端 hidden GL 和打包。上轮本地强制重跑 core 24 / runtime 48 / ui 137，全部通过；三端 JAR 与 AtomChat 0.5.0 的关键 API 预检各 8 项通过。不同验证的范围不能互相替代。
 - 三套实例仍为 AtomChat 0.5.0 与本地 AtomLib 0.3.0 候选；AtomLib 旧包与部署哈希见 `D:/AtomChat-Backups/2026-11-03-atomlib-host/20261103-173741-616635/deployment.json`。本轮未启动游戏；真实 GUI 缩放、图标、长期 GPU 生命周期、Windows ARM64 和第三方渲染模组组合尚待验证。
-- 面向宿主的文档源位于 [docs/wiki](wiki/Home.md)。下方为历史检查点，其中提交、推送与部署陈述只描述当时状态。
+- 面向宿主的文档源位于 [docs/wiki](wiki/Home.md)，已同步到 [GitHub Wiki](https://github.com/NoWordz/AtomLib/wiki)（Wiki 提交 `b81395e`）。本轮清理了 10 个已确认的临时文件；之前自动审批阻止的 111 个缓存文件未触碰。下方为历史检查点，其中提交、推送与部署陈述只描述当时状态。
 
 ## 宿主按钮与英文换行（2026-11-03）
 
