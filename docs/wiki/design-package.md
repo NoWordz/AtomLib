@@ -4,7 +4,7 @@
 
 `com.atom.lib.design.atomdefault.AtomDefault` 提供独立皮肤入口：`skin()` 使用现有默认外观；`skin(AtomDefault.presets().get(i))` 创建使用指定配色的新实例。每个宿主持有自己的 `ControlContext`、皮肤与 `TextService`；切换颜色时在该皮肤上调用 `updateStyle(palette.controlStyle(radius, halfScreen, cardTint))`。原 `AtomChatControlSkin(AtomChatControlStyle)` 与 `design.atomchat` API 保留，旧全局 `Design.host` / `Design.rippleSink` 仍有全局状态，不应作为多宿主隔离入口；旧入口弃用期限尚未确定。
 
-十二个 `AtomDefaultPalette` 为不可变值，包含强调、面板、主次文字、卡片、边框色与面板透明度、是否模糊的建议值。配色源自 AtomChat，许可证及文件版本见 [来源基线](atomdefault-baseline-2026-11-02.md)。聊天气泡色、胶囊、业务配置与动作未映射；圆角不跟随预设变化。面板透明度、边框色与模糊票据目前只提供给宿主，皮肤不会自动应用或捕获背景；宿主须明确处理。默认皮肤工厂没有选择任意一套预设。预设皮肤的模态底色跟随面板色，固定旧构造器仍使用旧模态色；其余组件和效果尚未全部主题化。
+十二个 `AtomDefaultPalette` 为不可变值，包含强调、面板、主次文字、卡片、边框色与面板透明度、是否模糊的建议值。配色源自 AtomChat，许可证及文件版本见 [来源基线](../atomdefault-baseline-2026-11-02.md)。聊天气泡色、胶囊、业务配置与动作未映射；圆角不跟随预设变化。面板透明度、边框色与模糊票据目前只提供给宿主，皮肤不会自动应用或捕获背景；宿主须明确处理。默认皮肤工厂没有选择任意一套预设。预设皮肤的模态底色跟随面板色，固定旧构造器仍使用旧模态色；其余组件和效果尚未全部主题化。
 
 明暗控件离屏图及隔离测试只是实现证据；字体角色、ripple 的跨宿主完整行为、模态各状态、实际游戏和用户观感仍待验证。
 

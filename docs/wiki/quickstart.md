@@ -1,6 +1,6 @@
-# Quickstart: a screen in about ten minutes
+# Quickstart: build a client screen
 
-> 下文的 `0.2.0` 坐标指本地构建；该版本尚未发布。公开 beta3 仍为 `0.1.0-beta`，不包含新控件。本地控件接线另见 [controls](controls.md)及三端 `examples/a/<target>/.../ControlsRecipe.java`。完整 pointer/key-up/wheel/char/window-focus/removed 转发均为库优先，不能只抄 press/release 或再次乘像素比。
+> 下文的 `0.3.0` 坐标指本地构建；该版本尚未发布。公开 beta3 仍为 `0.1.0-beta`，不包含新控件。本地控件接线另见 [controls](controls.md)及三端 `examples/a/<target>/.../ControlsRecipe.java`。完整 pointer/key-up/wheel/char/window-focus/removed 转发均为库优先，不能只抄 press/release 或再次乘像素比。
 
 This is the shortest path from an empty mod to a painted Skija screen. The
 compiled reference is examples/a (design package) and examples/b (raw Skija);
@@ -12,9 +12,9 @@ Put one platform jar in mods/ next to your own mod:
 
 | Minecraft | Loader | Jar |
 |---|---|---|
-| 1.20.1 | Forge | atomlib-1.20.1-forge-VERSION.jar |
-| 1.21.1 | Fabric | atomlib-1.21.1-fabric-VERSION.jar |
-| 1.21.1 | NeoForge | atomlib-1.21.1-neoforge-VERSION.jar |
+| 1.20.1 | Forge | atomlib-Forge-1.20.1-vVERSION.jar |
+| 1.21.1 | Fabric | atomlib-Fabric-1.21.1-vVERSION.jar |
+| 1.21.1 | NeoForge | atomlib-NeoForge-1.21.1-vVERSION.jar |
 
 Declare it in development against the same coordinate:
 
@@ -22,7 +22,7 @@ Declare it in development against the same coordinate:
 repositories { maven { url = uri('/absolute/path/to/AtomLib/build/test-maven') } }
 dependencies {
     // Fabric: modImplementation; Forge and NeoForge: implementation
-    implementation 'com.atom.lib:atomlib-1.20.1-forge:0.2.0'
+    implementation 'com.atom.lib:atomlib-1.20.1-forge:0.3.0'
 }
 ~~~
 
@@ -50,7 +50,7 @@ FontId body = new FontId("myui.body");
 fonts.register(body, FontSource.file(Path.of("C:/Windows/Fonts/msyh.ttc")));
 // or: fonts.register(body, FontSource.bytes(myBundledTtfBytes));
 fonts.registerDefaults(); // appended behind your own fallbacks
-fonts.setFallbacks(List.of(/* ids that cover CJK and symbols */));
+// Set host fallback IDs before registerDefaults() so bundled defaults remain available.
 ~~~
 
 Emoji, Hangul words and GBK extensions are deliberately not in the default
@@ -98,7 +98,9 @@ no Minecraft types and is identical on every loader.
 
 ~~~java
 HitTester hit = (x, y) -> {
-    for (NodeId id : frame.paintOrder()) {
+    var order = frame.paintOrder();
+    for (int i = order.size() - 1; i >= 0; i--) {
+        NodeId id = order.get(i);
         if (frame.box(id).hit().contains(x, y) && isInteractive(id)) return id;
     }
     return null;
@@ -165,7 +167,7 @@ Design.host(DesignHost) to feed your own accent, corner radius, card tint and
 panel colours. See [design-package.md](design-package.md).
 
 
-可组合模态的稳定控件、滚动和关闭示例见 [controls.md](controls.md#可组合模态)。物品图标不包含在当前 M1 候选中。
+可组合模态的稳定控件、滚动和关闭示例见 [controls.md](controls.md#可组合模态)。当前源码候选也包含原版物品图标适配；真实游戏验证仍待完成。
 
 
 原版物品图标接线与生命周期见 [item-icons.md](item-icons.md)。先预留图像槽、产生当前帧布局，再在桥的 Skija pass 外准备并在本层采样。

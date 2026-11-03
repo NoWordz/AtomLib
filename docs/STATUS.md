@@ -1,5 +1,21 @@
 # AtomLib status
 
+## 宿主按钮与英文换行（2026-11-03）
+
+现有 `AtomChatControlSkin` 与 `AtomDefault.skin()` 已能用共享文字角色统一按钮字号，并通过 Yoga 居中无图标按钮的文本布局框。新增宿主式离屏用例覆盖中英文按钮布局框、背景光栅和点击，未验证实际字形墨迹的视觉居中；字号定制仍需自定义 `ControlSkin`。详见 [控件说明](wiki/controls.md)。
+
+新增可选 `TextBreakPolicy.WORD`，优先按空白断行，长单词按 grapheme 拆分；默认策略不变，亦不等同 Unicode 完整断行或 CJK_UI 禁则。Terra 执行 runtime 48、ui 137 项通过；主代理复跑两个定向用例（runtime 命中缓存、ui 实际执行），并核对三端新 JAR 的制品检查通过。AtomChat 对三端新 JAR 的 API 预检各 8 项通过，无跳过；不是完整游戏运行兼容证明。
+
+三实例已替换本轮 0.3.0 同版本库包并与 AtomChat 0.5.0 配对，旧库及新旧哈希见 `D:/AtomChat-Backups/2026-11-03-atomlib-host/20261103-173741-616635/deployment.json`。源码与 0.3.0 版本调整未提交、推送或发布；未启动游戏，真实 guiScale、绘制和输入仍待验证。下节部署记录保留此前 0.3.0 构建历史，不是当前包哈希。
+
+## 0.3.0 本地候选与三实例部署（2026-11-03）
+
+按用户要求将工作区版本升至 `0.3.0`，三端安装包采用 `atomlib-<Loader>-<Minecraft>-v0.3.0.jar`，Maven 坐标仍为 `com.atom.lib:atomlib-<目标>:0.3.0`；三端元数据简介为 `Skija & Yoga for Minecraft.`。构建、制品检查及 Maven 与安装包哈希一致性验证通过；隔离副本中的六个 Maven 示例消费检查均通过，示例没有 JUnit 测试。制品检查器 34 项、消费者检查器 2 项及示例守卫 3 项通过。
+
+AtomChat 以现有 beta3 锁编译，并在三端对实际 0.3.0 JAR 运行关键 API 预检；三端全量测试分别为 Forge 1610、Fabric 1625、NeoForge 1610，各有 4 项跳过，零失败或错误。三端制品检查通过。已将 AtomChat 与 AtomLib 配对部署到 1.20.1-main、1.21.1-CCB、Mechanomania-航空学，备份与哈希记录位于 `D:/AtomChat-Backups/2026-11-03-atomlib-030/20261103-170157-794/deployment.json`。Forge 实例原先没有可见 AtomLib JAR，本次补装。未启动 Minecraft；guiScale、视觉、输入、真实 FPS 和运行兼容性仍待验收。
+
+公开发行仍是 `0.1.0-beta` beta3；0.3.0 是本地候选，未推送或发布。下方保留较早历史记录，其版本及提交状态不代表当前状态。
+
 ## 库侧离线收束（2026-11-03，已做范围限定的独立复核）
 
 图片预处理支持宿主显式从 ImageStore 接入，旧入口不变；覆盖真实 GPU 图片回退和超预算源图。修复已展示滚动帧二次缩放丢失滚动快照，离屏验证绘制、点击、滚轮和逆变换；详细合同与限定见[证据](evidence/atomdefault-image-20261103/report.md)。
@@ -26,7 +42,7 @@ Terra 的图片预处理和像素密度阶段因服务端 429 限流中断，工
 
 AtomDefault 开关采用皮肤配置的实例弹簧，颜色进度保持 0–1；旧皮肤默认仍用原插值。页面入场通过可见项快照、显式帧时间和 `PresentationFrame` 的共同几何接入控件与设置页；支持中断、减少动效、滚动与裁剪。参数及实机手感待用户验收，页面内容和切换动作仍由宿主拥有。
 
-显式背景服务与三端入口支持可选的编码 RGB 加权亮度上限；旧入口默认不限制。GPU 读回覆盖明暗、颜色、源/目标 alpha 和其他 FBO；故意损坏 shader 的独立测试覆盖失败后不写目标和面板实底。`drawBlurredBackground` 显式关闭本次创建的 `ImageFilter`；共享阴影缓存提供协调方在渲染线程调用的 `releaseShadowFilters()`。接口与限制见 [controls](controls.md)、[backdrop](backdrop.md)。
+显式背景服务与三端入口支持可选的编码 RGB 加权亮度上限；旧入口默认不限制。GPU 读回覆盖明暗、颜色、源/目标 alpha 和其他 FBO；故意损坏 shader 的独立测试覆盖失败后不写目标和面板实底。`drawBlurredBackground` 显式关闭本次创建的 `ImageFilter`；共享阴影缓存提供协调方在渲染线程调用的 `releaseShadowFilters()`。接口与限制见 [controls](wiki/controls.md)、[backdrop](wiki/backdrop.md)。
 
 公共模块 24 / 30 / 126 项通过；三端各 44 项隐藏 GL 和 1 项 shader 故障回退通过，三端隔离 JAR 验包通过。旧版消费者和上一阶段编译的自定义皮肤各在三端新 JAR 上完成有限运行检查；旧公开 API 声明对照未发现缺失。命令、缓存命中、来源依据和摘要见[实施基线](atomdefault-baseline-2026-11-02.md)。
 
@@ -66,9 +82,9 @@ AtomDefault 开关采用皮肤配置的实例弹簧，颜色进度保持 0–1�
 
 ## 本地候选：完整调整页与库内背景磨砂（2026-11-01）
 
-按[已授权方案](superpowers/plans/2026-11-01-appearance-replication-and-backdrop.md)实现设置行、共用组卡片、页头/分段导航、Action/Choice/Disclosure、单垂直滚动、缩放同几何与 AC 确认皮肤；独立样例组合五滑条、两组折叠及可达重置按钮，真实内存业务变化影响页面。主题/显示导航明确禁用，未实现整套外观模块或聊天编辑器。
+按已授权方案（已完成，见 Git 历史）实现设置行、共用组卡片、页头/分段导航、Action/Choice/Disclosure、单垂直滚动、缩放同几何与 AC 确认皮肤；独立样例组合五滑条、两组折叠及可达重置按钮，真实内存业务变化影响页面。主题/显示导航明确禁用，未实现整套外观模块或聊天编辑器。
 
-背景磨砂及三份原创 GLSL 进入 Lib：每实例区域抓取/四轮滤波、显式源/目标、目标 alpha 写保护、圆角合成、状态/资源生命周期及三端薄入口。失败返回诊断，由库面板实底降级，不宣称普适 shader-mod 兼容。API 见 [controls](controls.md) 和 [backdrop](backdrop.md)。
+背景磨砂及三份原创 GLSL 进入 Lib：每实例区域抓取/四轮滤波、显式源/目标、目标 alpha 写保护、圆角合成、状态/资源生命周期及三端薄入口。失败返回诊断，由库面板实底降级，不宣称普适 shader-mod 兼容。API 见 [controls](wiki/controls.md) 和 [backdrop](wiki/backdrop.md)。
 
 候选仅在 `build/appearance-candidate/maven`；样例新锁 `evidence/appearance-candidate/input-lock.json`。公开 beta3、版本、AC 锁、前轮 Maven 和历史证据保留。实际测试、图像、摘要、保护项及未覆盖范围以[本轮报告](evidence/appearance-replication-and-backdrop/report.md)和 results.json 为准。未提交/推送/发布/部署/启动游戏；主代理独立审查和用户观感另列。
 
@@ -78,7 +94,7 @@ AtomDefault 开关采用皮肤配置的实例弹簧，颜色进度保持 0–1�
 
 ## 上一候选：真实字体与最小交互切片（2026-11-01）
 
-用户已批准[最小方案](superpowers/plans/2026-11-01-minimal-controls-and-fonts.md)，实现与本地验证完成；主代理独立审查已收束并接受修复，待游戏和用户观感验收。公开版本／asset／beta3锁不变，没有提交、推送、发布、部署或启动游戏。
+用户已批准最小方案（已完成，见 Git 历史），实现与本地验证完成；主代理独立审查已收束并接受修复，待游戏和用户观感验收。公开版本／asset／beta3锁不变，没有提交、推送、发布、部署或启动游戏。
 
 - 新增可选 `ui/controls`：Slider、Toggle、单ConfirmationDialog、UiSession及完整输入适配；宿主仍拥有页面结构、业务值与保存。无新模块、壳、路由、滚动或编辑器。
 - 默认常规体真实400、AC正文角色500、标题700；原字体字节不变。新增有限CJK_UI。prepare(viewport)先取消旧密度手势，再更新模型和Yoga；成功绘制后才发布命中快照。

@@ -134,7 +134,8 @@ if (!project.hasProperty('atomlibTargetKey')) {
     def dist = tasks.register('distributionJar', Jar) {
         dependsOn production
         if (atomlibTarget.loader == 'forge') dependsOn 'reobfJarJar'
-        archiveBaseName = "atomlib-${atomlibTargetKey}"
+        def loaderLabel = [forge: 'Forge', fabric: 'Fabric', neoforge: 'NeoForge'][atomlibTarget.loader]
+        archiveFileName = "atomlib-${loaderLabel}-${atomlibTarget.minecraft}-v${project.version}.jar"
         archiveClassifier = ''
         from({ zipTree(production.get().archiveFile.get().asFile) }) {
             exclude 'META-INF/MANIFEST.MF'

@@ -1,5 +1,11 @@
 # 可选控件与设置页面材料（本地候选）
 
+## 宿主按钮：统一字号和居中
+
+使用 `AtomChatControlSkin` 或 `AtomDefault.skin()` 时，普通、危险和分段按钮的文字角色统一为 `AtomChatFonts.BODY` 与 `UiTokens.FONT_BUTTON`；无图标按钮的标签布局框由 Yoga 在按钮内水平、垂直居中。先注册默认字体与 `AtomChatFonts`，再建立 `TextService`、皮肤和 `ControlContext`。宿主创建 `ActionButton`、提供固定或自适应的外层 `LayoutStyle`，并把按钮登记到 `UiSession`；布局后调用 `session.paint`，输入交给 session 或 `ControlScreenAdapter`。完整可运行的宿主组合、实际光栅绘制和点击见 `ui/src/test/java/com/atom/lib/host/CenteredButtonHostTest.java`。
+
+这里的居中针对文本布局框，字形墨迹会因字体和字符不同而不完全对称。带图标按钮布局为图标与文字一行，并非文字独立居中；披露行另有自己的布局。当前内置皮肤的按钮字号是固定角色 token，没有每个 `ActionButton` 的字号参数。需要自定义字号时可实现 `ControlSkin`，布局量测和绘制应使用同一 `TextRequest` 字号；这不影响其他宿主的实例皮肤。
+
 ## 可中断开关与页面入场（本地实施中）
 
 **组合边界：**`SettingsShell.paint` 把入场组的卡片和控件放在共同图层，仅应用一次透明度；透明与不透明背景、多组和失败后的输入快照有离屏用例。先调用旧 `SettingsGroup.paint`、再调用旧 `UiSession.paint` 的两次独立绘制不会自动形成组图层；该路径的历史探针展示了透明度叠加，当前 `GroupEntranceOpacityReviewTest` 则验证共同合成路径。用户自组屏幕时，新增 `UiSession.paint(..., decorations)` 重载可在展示帧对应节点提供装饰绘制，但装饰自身不得再次应用该入口透明度。
@@ -28,7 +34,7 @@ shell.paint(canvas, state, session, time, motionEnabled);
 
 最新修复候选位于 `build/interaction-fixes-candidate/maven`，上一轮候选保留。`SettingsShell` 在确认窗自然尺寸超过视口时，只对窗体做等比适配；遮罩仍覆盖完整视口。绘制、命中和裁剪使用同一 PresentationFrame，普通尺寸保持原布局。直接组合 `session.modalNode` 的宿主仍负责为其提供足够空间；本修复没有增加通用模态滚动系统。
 
-PresentationFrame 保留缩放前的量测几何供绘制使用，避免把显示坐标反算回逻辑坐标时，40u 文字槽变成 39.999996u 并触发重新换行。详见[修复记录](evidence/interaction-fixes/report.md)。
+PresentationFrame 保留缩放前的量测几何供绘制使用，避免把显示坐标反算回逻辑坐标时，40u 文字槽变成 39.999996u 并触发重新换行。详见[修复记录](../evidence/interaction-fixes/report.md)。
 
 再次对已有滚动视口的 `PresentationFrame` 调用 `scaled()` 时，滚动范围、内容高度和偏移与绘制/命中几何一起缩放；`forPainting()` 变换回画笔坐标，合成帧保留对应滚动快照。离屏测试覆盖二次缩放后的绘制像素、点击、滚轮以及成功绘制后发布；这不替代 Minecraft guiScale 实测。
 
@@ -45,11 +51,11 @@ PresentationFrame 保留缩放前的量测几何供绘制使用，避免把显�
 - 滚动条按实际 thumb 行程映射内容行程，最小24u手柄仍能拖到内容末尾。捕获属于左键，其他键的 release 不结束手势；Escape 先取消滚动条捕获并吞掉其指针尾事件，再允许后续 Escape 交给宿主关闭页面。
 - 确认窗保留默认取消、尾事件隔离和一次结果；AC 皮肤改为 warning/title 同行、暗色浮层、胶囊按钮。
 
-完整消费示例在 `D:/AtomLib-Usability/src/main/java/dev/atomlib/usability/AppearancePage.java`，无 Canvas 绘制、GL、通用皮肤或输入/滚动状态机。[背景磨砂](backdrop.md)有独立资源/线程合同。游戏及用户观感仍待验，本轮不是新创作者盲测。
+可编译的接线示例在 `examples/a/<target>/src/main/java/com/atom/example/a/ControlsRecipe.java`，无 Canvas 绘制、GL、通用皮肤或输入/滚动状态机。[背景磨砂](backdrop.md)有独立资源/线程合同。游戏及用户观感仍待验，本轮不是新创作者盲测。
 
 ## 上一轮最小候选合同
 
-2026-11-01 经用户批准实施。公开 beta3 的 API 与字节不变；本文描述隔离候选 `build/controls-candidate/maven`，尚未发布、升版或重钉 AC。完整方案见 [实施合同](superpowers/plans/2026-11-01-minimal-controls-and-fonts.md)。
+下文描述当前源码候选的控件合同；公开 beta3 不包含全部能力。
 
 ## 创建与状态归属
 
@@ -108,19 +114,6 @@ Slider 格式化函数必须纯且非 null；文字的实际内容、字重 gene
 默认 regular 从来源100改为明确400，是本地候选的有意外观变更。AC 字体角色另选500／700。openFont 明确 ANTI_ALIAS、NORMAL hinting、subpixel=true，量测与绘制用相同设置。
 
 旧 TextService 构造仍为 GRAPHEME。新 `CJK_UI`保留字形簇与显式换行，对方案中的中文起止标点回退寻找合适边界；极窄无合法边界时保留内容和原宽度合同。它不是完整 UAX／Bidi／IME 引擎。TextRequest 原字段及构造器不变。
-
-## 候选、范围与证据
-
-平台发布及六个消费者通过 `-PatomlibTestMavenRepo=<path>`解析指定仓；`run_packaging.py --maven`传递同一属性。默认 build/test-maven 不变。打包脚本 `--maven`与 `--output`选择输入输出，缺输入在写输出前失败。
-
-独立消费者 `D:/AtomLib-Usability`只消费 compiled Maven，显式执行 `tools/lock_candidate_input.py`生成 candidate-lock；日常 build 只读锁，配置阶段核对原始 jar 的 SHA-256。构建输出按摘要隔离；Loom1.7.4 没有缓存目录 setter，样例按认证摘要归档／轮换其 remapped_mods 目录，保留旧缓存，串行运行构建。
-
-候选锁仍为 `schema_version: 1`，字段为 `group/artifact/version/target/sha256`，SHA 针对原始平台 jar，接口修订必须显式重锁。本轮汇总 `results.json` 使用 `schema_version: 2`，新增独审结论、红绿／mutation 证据和逐层验收状态；样例原有各能力字段继续单列，overall 保持 `PENDING_GAME_AND_VISUAL`。schema 版本不是库发布版本，也不表示游戏验收通过。
-
-本轮证据位于 Lib `build/controls-candidate/`与样例 `evidence/controls-candidate/`。历史 beta3 `evidence/result.json`、六张静态 PNG 与六张 AC 参照不覆盖。CPU、GL、游戏、用户视觉状态分开报告。编译与离屏通过不代表游戏或观感通过。
-
-不包括滚动、文本编辑／IME、菜单、导航、页面壳、虚拟列表、任意模态栈或 AC 生产迁移。内容放不进视口时明确报布局不足，不截字、缩字号或由样例私补滚动。首版模态只淡入淡出。Windows玩家 native 范围不扩；ARM64硬件、专服、真实多mod共存与 Maven host仍未由这轮验收。
-
 
 ## 可组合模态
 

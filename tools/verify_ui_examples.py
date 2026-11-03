@@ -24,16 +24,16 @@ REMOVED_IMPORT = re.compile(
     re.MULTILINE,
 )
 DOCS = (
-    "quickstart.md",
+    "wiki/quickstart.md",
     "releasing.md",
-    "design-package.md",
+    "wiki/design-package.md",
     "next-directions.md",
-    "getting-started.md",
+    "wiki/getting-started.md",
     "api-contracts.md",
     "ai-guide.md",
     "STATUS.md",
     "packaging.md",
-    "design-package.md",
+    "wiki/design-package.md",
     "next-directions.md",
 )
 

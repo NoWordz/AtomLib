@@ -52,8 +52,8 @@ are already correct, so a store upload is a packaging step, not a code change.
 
 1. atomlib_version bumped in gradle.properties.
 2. run_packaging.py platforms, verify and consumers all pass.
-3. Jar contents checked: no component/overlay/shell classes, design package
-   present, pack.mcmeta present, natives nested under META-INF/jarjar.
+3. Jar contents checked: intended controls and design packages present,
+   pack.mcmeta present, and natives registered with the target loader.
 4. Each consumer mod updates the pinned SHA-256 of the jar it ships against
    (AtomChat keeps this in versions/atomlib.json).
 5. Consumers clear Loom's remapped_mods cache after a same-version republish.
@@ -62,6 +62,6 @@ are already correct, so a store upload is a packaging step, not a code change.
 
 ## What is not covered yet
 
-Remote CI has not been run, ARM64 hardware has not been tested, and dedicated
+CI has run for previous commits; current-commit results must be checked separately. ARM64 hardware has not been tested, and dedicated
 servers must never load the client/native path. Do not call a build "tested"
 beyond what these steps actually executed.

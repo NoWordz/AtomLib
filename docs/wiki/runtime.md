@@ -14,7 +14,7 @@
 
 仅直接可读取像素的 CPU 图片进入缓存；GPU 图、延迟解码图、像素画、小倍率、过大目标和首个中间图超过四倍保留像素预算时返回源图。缓存条数和保留像素均受限，分级线性缩小的最大单张临时图不超过四倍预算；它们同时存在时的峰值、源图及 native/驱动分配并不包含在 `pixels()` 中。派生图使用 N32 premultiplied 光栅表面，色彩空间、高动态范围和透明边缘的视觉质量不能由当前基础用例保证。弱引用源图被回收或显式关闭后，下一次缓存操作会扫描并关闭对应派生句柄，空闲期间不会后台清扫；`clear`/`close` 立即释放所有派生图，不关闭源图。源图必须由宿主负责保持存活，图像内容改变应清空缓存。像素画返回源图，最终绘制时仍由宿主选择最近邻等采样模式。
 
-真实游戏、GPU 上传成本、真实图片质量与设备内存预算仍待验证；见 [离屏证据](evidence/atomdefault-image-20261103/report.md)。
+真实游戏、GPU 上传成本、真实图片质量与设备内存预算仍待验证；见 [离屏证据](../evidence/atomdefault-image-20261103/report.md)。
 
 | 类型 | 契约 |
 | --- | --- |
@@ -66,7 +66,7 @@ try (RuntimeHandle runtime = AtomLibRuntime.open("example");
 
 - 使用 Skija `Shaper.makeShapeDontWrapOrReorder()` 对连续同字体 run 进行 shaping；测量和绘制采用相同文本、FontId、字号及代次。native Font、TextLine、Shaper、Paint 均在局部作用域释放，TextLayout 不持有 native 生命周期。
 - 使用 Java 17 正则 `Pattern` 的 `\X` extended grapheme 边界换行；覆盖中文无空格、组合符、代理对、ZWJ Emoji、区域旗帜序列，避免按 char 切碎这些簇。此能力受运行 JDK 的 Unicode 数据版本约束，不保证所有更新版本 Unicode 序列。
-- **这是 grapheme wrap，不是完整 UAX #14 断行算法，也没有完整 CJK 禁则。中文逗号、句号等标点可能被推到下一行行首；这属于断行品质限制，不是 glyph 被截断。** 目前也不优先按英文单词或语言词典断行。
+- 默认采用 grapheme wrap；可选 `TextBreakPolicy.WORD` 优先在空白后换行，保留空白和 UTF-16 偏移，超宽单词仍按 grapheme 拆分；`CJK_UI` 提供有限的中文标点避头尾规则。这些策略不是完整 UAX #14 或语言词典断行，WORD 不包含 CJK_UI 的标点规则。
 - 拒绝孤立 UTF-16 surrogate、RTL 强方向字符、显式双向排版控制字符和不支持的控制字符，避免返回虚假的命中/选区坐标；没有 bidi 段落引擎。没有富文本、IME、编辑状态、光标导航、完整脚本/语言段落处理或彩色 Emoji 外观保证。
 - 支持 CR、LF、CRLF 显式换行及尾随换行的空光标行。空文本没有行，natural size 为零；exactly 约束仍返回指定尺寸。
 - 支持宽高约束、maxLines 与末尾省略。不可再拆的单个 grapheme 或省略符可能宽于可用宽度，此时保留完整簇并由布局 viewport 裁剪；不声称零宽槽也能完整显示。高度不足一行时不绘制部分行。
@@ -91,39 +91,3 @@ ImageStore/SvgStore 同样使用自己的 namespace、generation 和 ResourceSco
 RenderSession 在构造线程上 paint，拒绝同线程上的递归 Skija pass，包括另一 session。异常与多余 save 会恢复到入口 save count，并清除递归标记；session 关闭不关闭借用 Canvas。CustomPainter 不得 close Canvas，也不得 restore 到回调入口以下。对恶意过度 restore 会在可检测时抛错，但原始 Canvas 已被弹出的外层矩阵/clip 无法凭空重建，因此不承诺恢复这种违反借用契约的调用。
 
 没有实现 MC framebuffer 身份/尺寸管理、GL state scope、Blaze3D 缓存同步、原版物品/tooltip round-trip、模糊、Iris/Bliss 或 Screen/HUD 接线；这些均需独立平台桥和游戏验证。没有运行游戏、部署、提交或发布。
-
-## 文件清单
-
-生产源码均位于 `runtime/src/main/java/com/atom/lib/`：
-
-- `AtomLibRuntime.java`、`RuntimeHandle.java`。
-- `resource/ResourceScope.java`。
-- `font/FontId.java`、`font/FontSource.java`、`font/FontRegistry.java`。
-- `text/TextRequest.java`、`text/TextLayout.java`、`text/TextService.java`。
-- `image/ImageFit.java`、`image/ImageStore.java`、`image/SvgStore.java`。
-- `render/CustomPainter.java`、`render/RenderSession.java`。
-
-测试位于 `runtime/src/test/java/com/atom/lib/runtime/`：
-
-- `ResourceScopeTest.java`（5 项）。
-- `FontIsolationTest.java`（3 项）。
-- `TextLayoutTest.java`（7 项）。
-- `ImageReloadTest.java`（4 项）。
-- `RenderScopeTest.java`（2 项）。
-- `RuntimeLoadingTest.java`（1 项），以及其独立 JVM helper `NativeLoadingProbe.java`。
-
-另仅新增本文 `docs/runtime.md`。本轮没有修改 root/build.gradle、runtime/build.gradle 或其他模块。
-
-## 实际验证
-
-2026-10-29，Windows x64，JDK 17.0.18，Skija 0.143.18/types 0.2.0。首次以尚不存在的接口编译测试观察红灯；尾随换行丢失空光标行、孤立 surrogate 输入边界均有断言失败观察与修正；同时修正并覆盖了零保留字符省略的源偏移。本次最终实际执行：
-
-```powershell
-& 'C:/Program Files/Java/jdk-17.0.18/bin/java.exe' -classpath 'D:/AtomLib/gradle/wrapper/gradle-wrapper.jar' org.gradle.wrapper.GradleWrapperMain :runtime:test '-PatomlibTestFont=D:/AtomChat-Main/platforms/1.20.1-forge/src/main/resources/assets/atomchat/font/bundled.otf' --console=plain
-```
-
-结果 **BUILD SUCCESSFUL：22 项，0 failures、0 errors、0 skipped**。最终执行中 runtime compileJava、compileTestJava、test 均实际执行；没有使用 --rerun-tasks 或全量重跑其他模块。root 的属性转发由主代理提供，库中不硬编码该字体路径。未传参数时字体测试明确失败，不用静默 skip 掩盖覆盖缺口。
-
-测试包含真实 Skija native/CPU Surface：文字实际墨迹与 viewport 外零溢出像素、位图 contain/cover/圆角和 SVG 着色像素、转移的 Image/SVGDOM 在过期/驱逐/重载/宿主关闭后的 isClosed、调用者 Font 隔离与重载后有效性、失败重载保留原字体、资源清理并发与异常、跨 session 递归及 Canvas save 栈恢复。独立 JVM 证明加载 runtime 类不触发 native、open 才加载、close 不卸载 native。
-
-JUnit XML：`build/standalone/_runtime/test-results/test/TEST-*.xml`。本轮未验证 Windows ARM64 实机、Linux、MC GL、加载器启动、双宿主游戏集成、完整字重/字体库覆盖、全部语言 shaping、资源包覆写或最终产物递归字体魔数扫描。Gallery 的中文行首标点现象按上述 grapheme-wrap 限制记录，不以其为完整文本品质验收通过。

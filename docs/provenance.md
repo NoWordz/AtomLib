@@ -4,7 +4,7 @@
 
 > 2026-11-01 完整外观候选：按用户批准的 appearance-replication-and-backdrop 方案，新增设置行、组卡片、设置壳、通用激活/choice/disclosure、单垂直滚动和 Raw GL 模糊服务。三份 `platforms/shared/src/main/resources/assets/atomlib/shaders/backdrop/` GLSL 为本实施者依据四邻点凸平均、圆角 SDF 和显式 RGB/alpha 合同新写，Apache-2.0。未读取 Tuui，未复制/翻译/拼接 I 类旧 AC renderer/GLSL 或整页；只读主代理参照规格/图片及现有准入 token/材料。不是人员隔离 clean-room。新登记另见 `assets/original-backdrop.json`；不改下文 T0 历史判断。字体源字节和第三方声明保留。
 
-> 2026-11-01 本地控件候选补充：用户批准按新[方案](superpowers/plans/2026-11-01-minimal-controls-and-fonts.md)独立实现 controls 状态机、UiSession、真实字重与中文禁则。新增实现依据明确输入／布局合同，未读取或复制 Tuui；未把排除的旧 helper 带入样例。AC 皮肤调用现存已准入 UiTokens／UiCards／SkiaDraw／AppIcons（含现有 warning path），保留这些文件与现有 MIT／第三方声明；新自有代码按 Apache-2.0。没有新增字体或改字体源字节。下文“组件已删除”对应公开 beta3；候选新增范围仅限 [controls](controls.md)。
+> 2026-11-01 本地控件候选补充：用户批准按已完成的最小控件方案（见 Git 历史）独立实现 controls 状态机、UiSession、真实字重与中文禁则。新增实现依据明确输入／布局合同，未读取或复制 Tuui；未把排除的旧 helper 带入样例。AC 皮肤调用现存已准入 UiTokens／UiCards／SkiaDraw／AppIcons（含现有 warning path），保留这些文件与现有 MIT／第三方声明；新自有代码按 Apache-2.0。没有新增字体或改字体源字节。下文“组件已删除”对应公开 beta3；候选新增范围仅限 [controls](wiki/controls.md)。
 
 > 时间边界：上一段“未读取或复制 Tuui”限定原控件实施者及该实现阶段。控件源码完成后，主代理按用户新增要求只读查看 `D:/tmp/tuui` 的 BlurProgram／core blur shader 作模糊方案比较，没有复制、没有用于本轮控件实现；模糊未实施。用户新增模糊讨论文档只随源码快照保留。下方 T0 历史调查事实不改，也不扩大成“本轮所有参与者从未读取 Tuui”。
 

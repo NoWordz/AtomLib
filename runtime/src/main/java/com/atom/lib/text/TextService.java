@@ -106,6 +106,15 @@ public final class TextService implements AutoCloseable {
                     else high = mid - 1;
                 }
                 if (start < paragraphEnd && end == start) end++;
+                if (breakPolicy == TextBreakPolicy.WORD && end < paragraphEnd
+                        && !wordSpace(pieces.get(end).text) && !wordSpace(pieces.get(end-1).text)) {
+                    int candidate = end;
+                    while (candidate > start && !wordSpace(pieces.get(candidate-1).text)) candidate--;
+                    // Do not turn leading whitespace into a line by itself.
+                    boolean hasContent = false;
+                    for (int i = start; i < candidate; i++) if (!wordSpace(pieces.get(i).text)) { hasContent = true; break; }
+                    if (hasContent) end = candidate;
+                }
                 if(breakPolicy==TextBreakPolicy.CJK_UI && end<paragraphEnd){
                     int candidate=end;
                     while(candidate>start+1 && (forbiddenStart(pieces.get(candidate).text)||forbiddenEnd(pieces.get(candidate-1).text)))candidate--;
@@ -194,6 +203,7 @@ public final class TextService implements AutoCloseable {
         return new TextLayout.Line(start, end, top, top + ascent, Math.max(1, ascent + descent + leading), x, runs, carets);
     }
     private void requireOpen() { if (closed) throw new IllegalStateException("Text service closed"); }
+    private static boolean wordSpace(String s) { return !s.isEmpty() && s.codePoints().allMatch(Character::isWhitespace); }
     private static boolean forbiddenStart(String s){return !s.isEmpty()&&"。，、；：！？）】》」』〕〉”’".indexOf(s.codePointAt(0))>=0;}
     private static boolean forbiddenEnd(String s){return !s.isEmpty()&&"（【《「『〔〈“‘".indexOf(s.codePointAt(0))>=0;}
     @Override public synchronized void close() { closed = true; cache.clear(); cachedCharacters = 0; }

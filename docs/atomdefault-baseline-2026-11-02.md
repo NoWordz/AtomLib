@@ -4,9 +4,9 @@
 
 本阶段在上述首轮修改之上继续，输出隔离到 `build/atomdefault-motion-20261102/`，没有写入先前的 `build/atomdefault-work/` 或历史同名候选。开关使用独立旋钮弹簧与有界颜色进度；首次显示、隐藏后恢复、连续反转、禁用动效、键盘事务及真实像素过冲均有测试。弹簧示例参数采用本机 animate 技能的通用物理示例（质量 1、刚度 100、阻尼 10，换算阻尼比 0.5），停摆阈值由皮肤显式提供为 0.5 秒；这是候选手感而非用户视觉验收，也未复制 Dango/UiStagger 的实现或数值。
 
-`PageEntrance` 接受显式帧时间、调用方提供的当时可见根和可调时长/错峰/距离；同帧幂等，重入切换立即替换快照，关闭动效结束入场。其缓动取 animate 技能所列 cubic-bezier `(0.23, 1, 0.32, 1)`；绘制、命中、焦点、裁剪和滚动条状态使用同一帧几何。`SettingsShell` 支持内容组/行的入场图层，允许动画时输入；层叠透明度与真实游戏观感仍待用户确认。使用合同与例子见 [controls.md](controls.md)。
+`PageEntrance` 接受显式帧时间、调用方提供的当时可见根和可调时长/错峰/距离；同帧幂等，重入切换立即替换快照，关闭动效结束入场。其缓动取 animate 技能所列 cubic-bezier `(0.23, 1, 0.32, 1)`；绘制、命中、焦点、裁剪和滚动条状态使用同一帧几何。`SettingsShell` 支持内容组/行的入场图层，允许动画时输入；层叠透明度与真实游戏观感仍待用户确认。使用合同与例子见 [controls.md](wiki/controls.md)。
 
-背景合成提供可选编码 RGB 加权亮度上限，限制发生在与目标混合之前；旧入口默认 1。三端隐藏 GL 读取亮/暗与彩色四轮模糊、源和目标 alpha、区域外以及第三 FBO；单独的无效 shader 资源夹具实际验证 `SKIPPED`、目标不写和 SettingsShell 不透明实底，隔离类加载器另验证缺失 shader。见 [backdrop.md](backdrop.md)。真实游戏、HDR、其他显卡/驱动和运动背景未验证；不得将本轮视为性能验收。
+背景合成提供可选编码 RGB 加权亮度上限，限制发生在与目标混合之前；旧入口默认 1。三端隐藏 GL 读取亮/暗与彩色四轮模糊、源和目标 alpha、区域外以及第三 FBO；单独的无效 shader 资源夹具实际验证 `SKIPPED`、目标不写和 SettingsShell 不透明实底，隔离类加载器另验证缺失 shader。见 [backdrop.md](wiki/backdrop.md)。真实游戏、HDR、其他显卡/驱动和运动背景未验证；不得将本轮视为性能验收。
 
 用户指出的 `SkiaDraw.drawBlurredBackground` 问题已复现并修正：关掉 Paint 后 Java `ImageFilter` 仍保持自己的原生引用，旧实现连续 8 次绘制留下 8 个 Java 句柄；新实现按 Paint、filter 顺序关闭，真实引用计数、画布像素和 GPU 重绘通过。`releaseShadowFilters()` 明确释放共享滤镜缓存、可重复调用并可重新绘制；仅当协调方确认所有宿主停止使用共享缓存后调用，不能由单个屏幕擅自全局关闭。长时间 GPU 资源统计与进程退出顺序仍待实机验证。
 
@@ -32,7 +32,7 @@ AtomChat 当前未提交的 `docs/STATUS.md` 另记载三端 beta3 与 0.2.0 公
 
 ## 本次代码与验证
 
-新入口和用法见 [design-package.md](design-package.md)。明暗对照图在 `build/atomdefault-work/previews/minimal-controls.png`、`raven-controls.png`，只包含离屏滑条和开关；透明背景显示随查看器而异，不能代替用户视觉验收。`ControlVisual.position` 目前严格限制在 0..1，旧皮肤的颜色和几何也消费同一值：直接把过冲弹簧接入会违反现有合同。因此本次只验证已有帧时钟，不擅自宣称弹性开关已实现。页面绘制、命中、焦点与裁剪的转场合同、页/行中断及滚动行为仍须设计与验证。
+新入口和用法见 [design-package.md](wiki/design-package.md)。明暗对照图在 `build/atomdefault-work/previews/minimal-controls.png`、`raven-controls.png`，只包含离屏滑条和开关；透明背景显示随查看器而异，不能代替用户视觉验收。`ControlVisual.position` 目前严格限制在 0..1，旧皮肤的颜色和几何也消费同一值：直接把过冲弹簧接入会违反现有合同。因此本次只验证已有帧时钟，不擅自宣称弹性开关已实现。页面绘制、命中、焦点与裁剪的转场合同、页/行中断及滚动行为仍须设计与验证。
 
 公共模块实际执行 `./gradlew.bat --no-daemon --project-cache-dir build/atomdefault-work/project-cache -I build/atomdefault-work/isolate.gradle :core:test :runtime:test :ui:test -PatomlibTestFont=D:/AtomLib/runtime/src/main/resources/com/atom/lib/fonts/bundled-default.otf`：core 24、runtime 30、ui 106 项，0 失败/错误/跳过。最后一次调用 core/runtime 为 UP-TO-DATE；此前本次完整运行实际执行。首次漏传字体参数造成 runtime 10 项失败，补参数后通过。新增配色入口、浅色模态、滤镜淘汰均先复现预期失败再修正；帧行为测试是对现有行为的刻画。
 

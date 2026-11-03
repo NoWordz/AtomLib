@@ -1,86 +1,72 @@
-# AtomLib
+<p align="center"><img src="platforms/1.21.1-fabric/src/main/resources/atomlib.png" width="160" alt="AtomLib logo"></p>
 
-Skija and Yoga for Minecraft UI, by E33EPUS and NoWordz.
-Apache-2.0. Repository: https://github.com/NoWordz/AtomLib.
+<h1 align="center">AtomLib</h1>
 
-AtomLib is an independent Minecraft UI foundation built on Skija and Yoga. It
-provides a single render bridge, font loading, a Yoga layout engine, optional
-controls and an AtomChat design package. Hosts own their page structure, screen
-lifecycle and business state. The local controls are a limited candidate;
-see `docs/STATUS.md` for its verification boundaries.
+<p align="center"><em>Skija &amp; Yoga for Minecraft.</em></p>
 
-The local project version is `0.2.0`; the latest public release remains
-`v0.1.0-beta-beta3`. Version 0.2.0 has not been released. It is not published
-to Maven or a mod store. AtomLib-authored code is Apache-2.0; allowlisted AtomChat adaptations
-remain MIT and third-party licenses are retained under `licenses/`.
+## What it is
 
-## Platforms
+AtomLib is a client-side UI library for Minecraft mods. It combines [Skija](https://github.com/HumbleUI/Skija) drawing with [Yoga](https://www.yogalayout.dev/) layout, then provides the Minecraft render bridge, text services and optional controls needed by a host mod. The host still owns its screens, data and behavior. [AtomChat](https://github.com/NoWordz/AtomChat-Mod) is one consumer.
 
-| Minecraft | Loader | JVM | Gradle | Yoga |
-|---|---|---|---|---|
-| 1.20.1 | Forge 47.4.10 | 17 | 8.8 | LWJGL 3.3.1 |
-| 1.21.1 | Fabric Loader 0.16.9 / Loom 1.7.4 | 21 | 8.8 | LWJGL 3.3.3 |
-| 1.21.1 | NeoForge 21.1.235 / MDG 2.0.141 | 21 | 9.2.1 | LWJGL 3.3.3 |
+The repository currently contains a **0.3.0 development candidate**. The latest public release is [0.1.0-beta beta3](https://github.com/NoWordz/AtomLib/releases/tag/v0.1.0-beta-beta3); it does not include every feature described here. There is no public Maven repository yet.
 
-Each loader has one distributable JAR. It contains AtomLib's Java modules,
-Skija, HumbleUI types, the matching Yoga Java API and Windows x64/ARM64 native
-packages. Minecraft's own LWJGL, fonts and business state stay with the host.
-Linux and macOS clients are outside the first release's native support scope.
+## Features
 
-## Modules
+- **Rendering bridge** — draw Skija into the Minecraft client and coordinate with vanilla rendering on the render thread.
+- **Layout and input** — build Yoga box trees; use the same presentation frame for drawing, clipping and hit testing.
+- **Text and images** — load host fonts or bundled Noto Sans SC subsets; measure and draw text, manage images and optionally preprocess oversized images.
+- **Controls** — compose buttons, sliders, toggles, choices, scrolling and dialogs with host-owned state and actions.
+- **Optional appearance** — use instance-owned AtomDefault skins and presets, or supply a custom skin; the older AtomChat design API remains available.
+- **Motion and materials** — frame-clocked transitions, springs and an optional backdrop blur service.
+- **Minecraft items** — prepare native item icons for control slots; real-game and compatibility testing remains incomplete.
 
-| Module | Contents |
-|---|---|
-| `core` | geometry, layout tree/snapshot contracts, input records and dispatch, frame clock and springs |
-| `runtime` | Skija native/runtime scopes, host fonts and text, images, CPU render sessions, backdrop blur |
-| `ui` | the Yoga layout engine, presentation frames and the optional `com.atom.lib.design.atomchat` package |
-| `platforms` | per-loader Minecraft render bridges and distribution JARs |
+## Compatibility
+
+| Minecraft | Loader | Java | Bundled client natives |
+| --- | --- | --- | --- |
+| 1.20.1 | Forge 47.4.10 | 17 | Windows x64, Windows ARM64 |
+| 1.21.1 | Fabric Loader 0.16.9 | 21 | Windows x64, Windows ARM64 |
+| 1.21.1 | NeoForge 21.1.235 | 21 | Windows x64, Windows ARM64 |
+
+These are the project's build targets, not a promise that every loader version or hardware combination has been tested. Windows ARM64 is packaged but not validated in-game. Linux and macOS client natives are not included. AtomLib is a client dependency; a dedicated server does not need to initialize its rendering runtime.
 
 ## Install
 
-Install the matching AtomLib platform JAR in `mods/` alongside the mod that
-consumes it. Forge and NeoForge declare the client-only dependency in their
-metadata. Fabric consumers check a pinned client requirement and present a
-clear missing-dependency message. Dedicated servers do not initialize AtomLib's
-native runtime.
+1. Choose an AtomLib JAR matching your Minecraft version and loader, and install it alongside the consuming mod in `mods/`.
+2. Use a compatible version of the consuming mod. An accepted version number alone does not guarantee API compatibility.
+3. For development, build a local Maven input and declare the matching target coordinate. The [getting started guide](docs/wiki/getting-started.md) and [quickstart](docs/wiki/quickstart.md) show the setup.
 
-AtomLib bundles two subsetted Noto Sans SC faces for default text rendering.
-Call `FontRegistry.registerDefaults()` to load them; host-supplied fonts keep
-priority and can extend coverage. Pass the selected body `FontId` to
-`TextService` and the host's own layout code. See the
-[default font charset and limits](docs/quickstart.md#2-open-the-runtime-once).
+## Architecture
 
-## Build
+| Part | Responsibility |
+| --- | --- |
+| `core` | Geometry, layout contracts, input records and motion primitives |
+| `runtime` | Skija resources, text, fonts and image services |
+| `ui` | Yoga layout, presentation frames, optional controls and skins |
+| `platforms` | Forge, Fabric and NeoForge client bridges and distribution JARs |
 
-Use the JDK documented in the table above. On Windows:
+The host owns the screen, business state and lifecycle; AtomLib supplies reusable rendering and interaction tools. See the [architecture guide](docs/wiki/architecture.md) and [host controls guide](docs/wiki/controls.md).
+
+## Known limitations
+
+- This is an early development candidate, not a stable API commitment. Independent host adoption, long-running GPU lifecycle, GUI scales, ARM64 and shader/mod combinations need further real-game testing.
+- Text is plain left-to-right UI text, not a complete bidirectional, IME or rich-text engine. Word and limited CJK line-breaking policies have separate boundaries.
+- Yoga integration does not expose absolute positioning or relative offsets; use host drawing or supported layout composition where needed.
+- Item icons and backdrop blur have explicit render-state and lifetime contracts. Their hidden-GL or offline tests are not proof of compatibility with every Minecraft renderer.
+
+## Building from source
+
+Use JDK 17 for common module tests, JDK 17 for Forge and JDK 21 for Fabric/NeoForge. Dependencies must be available to Gradle; `--offline` works only after they are cached.
 
 ```powershell
-$env:JAVA_HOME='C:/Program Files/Java/jdk-17.0.18'
-.\gradlew.bat :core:test :runtime:test :ui:test --no-daemon
+.\gradlew.bat :core:test :runtime:test :ui:test --no-daemon "-PatomlibTestFont=C:/path/to/font.ttf"
 python tools/run_packaging.py all --jobs 1
 ```
 
-The local Maven repository is `build/test-maven`; the six standalone example
-consumers compile only against published platform coordinates.
+See the [wiki](docs/wiki/Home.md), [examples](examples/), [release checklist](docs/releasing.md) and [project status](docs/STATUS.md).
 
-See [quickstart.md](docs/quickstart.md) for the shortest path from an empty
-mod to a painted screen, [getting-started.md](docs/getting-started.md) for the
-runtime details, [api-contracts.md](docs/api-contracts.md),
-[ai-guide.md](docs/ai-guide.md), and docs/STATUS.md for the implemented scope
-and known limits. [releasing.md](docs/releasing.md) covers versions and the
-release checklist. Possible directions beyond the current scope are listed in [next-directions.md](docs/next-directions.md).
+## License
 
-## Examples
+AtomLib-authored code is [Apache-2.0](LICENSE). Allowlisted AtomChat adaptations retain MIT terms; see [NOTICE](NOTICE), [licenses](licenses/) and [provenance](docs/provenance.md) for third-party attribution.
 
-`examples/a` shows the optional design package: `UiTokens`, `SkiaDraw` and
-`UiCards` compose AtomChat's card surface without a widget framework.
-`examples/b` shows the minimal path: build a layout tree, run it through Yoga
-and paint the resulting geometry with a native Skija `Canvas`.
-
-## Optional design package
-
-`com.atom.lib.design.atomchat` carries AtomChat's own look — tokens, drawing
-primitives, card surfaces and icon paths — for mods that want to match it.
-It is a separate import, not a requirement: the render bridge and Yoga layout
-work without it. These are drawing helpers and tokens, not widgets. See
-[design-package.md](docs/design-package.md).
+Copyright © 2026 E33EPUS & NoWordz

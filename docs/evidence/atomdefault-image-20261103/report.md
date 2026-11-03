@@ -4,7 +4,7 @@
 
 主代理独立复核最终源码：在 `build/atomdefault-independent-review-20261103` 使用 JDK 21、离线 `:core:test :runtime:test :ui:test --rerun-tasks`（明确传入项目默认字体夹具）重跑 207 项，无失败/跳过，13 项 Gradle 任务实际执行。独立核对三个交付 JAR 摘要并运行 `verify_artifacts.py`，再比较 beta3 与实施前 0.2.0 的公开/受保护声明，三端无缺失；三端 beta3 编译的有限旧消费者均运行通过。主代理另在独立输出发布到本地 Maven，并从不含原例子构建缓存的隔离源码副本运行六个 `verifyConsumer`，均通过；该 Maven 三端 JAR 摘要与本轮交付候选完全相同。六个消费者的编译与验包任务实际执行，NeoForge 工具链有缓存复用，消费者本身没有 JUnit 测试。这些结果不代表真实 Minecraft 或 AtomChat 已运行。三端完整 GL 47+1 由 Terra 执行；主代理独立执行范围另见 [STATUS](../../STATUS.md)。
 
-`ImageStore.draw` 新增显式选用缓存、设备密度与采样模式的重载；原入口不变。CPU 光栅用例覆盖普通图、像素画最近邻、`COVER` 裁剪和物理尺寸、同源不同尺寸键、透明边缘、延迟解码回退、线程归属、源/派生句柄、reload、弱引用及 4096×4096 源图 / 2200×2200 目标超过 4Mi 像素预算时返回可绘制源图。GPU 图像由真实 hidden GL snapshot 验证直接回退且仍可绘制。自动导入并不改变源图片生命周期，资源重载时应协调清理缓存；见 [runtime 合同](../../runtime.md)。
+`ImageStore.draw` 新增显式选用缓存、设备密度与采样模式的重载；原入口不变。CPU 光栅用例覆盖普通图、像素画最近邻、`COVER` 裁剪和物理尺寸、同源不同尺寸键、透明边缘、延迟解码回退、线程归属、源/派生句柄、reload、弱引用及 4096×4096 源图 / 2200×2200 目标超过 4Mi 像素预算时返回可绘制源图。GPU 图像由真实 hidden GL snapshot 验证直接回退且仍可绘制。自动导入并不改变源图片生命周期，资源重载时应协调清理缓存；见 [runtime 合同](../../wiki/runtime.md)。
 
 密度审查发现 `ScrollViewport.present(...).scaled(...)` 原来丢失滚动快照；测试先因找不到滚动成员失败。修正后范围、内容长度、偏移和成员随展示几何同步缩放，`forPainting` 与多层合成保留对应坐标；真实 raster 像素、点击和滚轮定向测试通过。一次测试夹具把控件高度设得不足引发既有文字几何保护，改成自然高度后通过。
 
@@ -24,7 +24,7 @@ Forge/JDK17、Fabric/JDK21、NeoForge/JDK21 在 `build/atomdefault-closure-20261
 
 ## 来源与合同
 
-工作区基线为 AtomLib `878ccc4cc5080b74546b0c3f892d647dce5598d0` 加本任务前两阶段未提交改动；AtomChat 只读，观察 HEAD `6452920ab60e46bfafd1a18191ed2e9725ce24ca`，有既存未提交依赖改动。`ImageDownsampler` 根据本方案中预算、借用、淘汰和弱引用的行为要求独立编写，调用已锁定的 Skija API；没有复制或翻译 AtomChat `ImageQuality`、Dango/UiStagger 表达，也没有沿用其 2×/3× 阈值。它是可选、实例持有的服务；旧 `ImageStore` 调用路径不变，后续新增重载可显式接入。仅允许直接可读取像素的 CPU 图参与，实际 `ImageStore` 常见延迟解码源可能因而回退。API 与限制见 [runtime](../../runtime.md)。
+工作区基线为 AtomLib `878ccc4cc5080b74546b0c3f892d647dce5598d0` 加本任务前两阶段未提交改动；AtomChat 只读，观察 HEAD `6452920ab60e46bfafd1a18191ed2e9725ce24ca`，有既存未提交依赖改动。`ImageDownsampler` 根据本方案中预算、借用、淘汰和弱引用的行为要求独立编写，调用已锁定的 Skija API；没有复制或翻译 AtomChat `ImageQuality`、Dango/UiStagger 表达，也没有沿用其 2×/3× 阈值。它是可选、实例持有的服务；旧 `ImageStore` 调用路径不变，后续新增重载可显式接入。仅允许直接可读取像素的 CPU 图参与，实际 `ImageStore` 常见延迟解码源可能因而回退。API 与限制见 [runtime](../../wiki/runtime.md)。
 
 先建立真实失败测试：选择/缓存/预算/弱引用与关闭 5 项在空实现抛出未实现错误；直接缩小棋盘格时实际像素 225，分级缩小后回到测试范围；延迟解码图先错误生成派生图，随后改成借用源图；跨线程清空先成功关闭派生图，随后明确拒绝。真实 native 句柄断言覆盖驱逐、源关闭、GC 后维护、clear、close 和来源不被关闭；无后台 GC 或 GPU 内存长期统计。
 

@@ -12,8 +12,8 @@
 | `platforms/1.21.1-fabric` | 21 / 8.8 | Loom 1.7.4 / Fabric Loader 0.16.9 | 3.3.3 |
 | `platforms/1.21.1-neoforge` | 21 / 9.2.1 | NeoForge 21.1.235 / MDG 2.0.141 | 3.3.3 |
 
-- 三端当前工作区版本为 `0.2.0`；公开发行仍为 `0.1.0-beta` beta3。平台元组在 `versions/targets.json`，Skija/types 版本读取 `versions/dependencies.properties`。
-- 本地坐标为 `com.atom.lib:atomlib-<目标>:0.2.0`，默认本地 Maven 输出目录为 `D:/AtomLib/build/test-maven`。没有配置外部仓库发布、商店发布或部署。
+- 三端当前工作区版本为 `0.3.0`；公开发行仍为 `0.1.0-beta` beta3。平台元组在 `versions/targets.json`，Skija/types 版本读取 `versions/dependencies.properties`。
+- 本地坐标为 `com.atom.lib:atomlib-<目标>:0.3.0`，默认本地 Maven 输出目录为 `D:/AtomLib/build/test-maven`。未配置外部仓库发布或商店发布。
 - 三个工程分别复用 core/runtime/ui 的源码工程，公共字节码 Java 17。输出隔离到各平台 `build/modules/<模块>`。玩家 jar 合入 core/runtime/ui，其中包含本地候选的可选 controls；独立 devtools 不进入合包输入。
 - 两个示例位于 `examples/a`、`examples/b`，各有三个独立 settings/wrapper 工程。只声明对应 AtomLib 平台坐标；共享的示例源码只在各自 example 目录。没有 includeBuild、源码 project 依赖、mavenLocal 或 AC 源码引用。
 - Wrapper 从 AC 对应工程复制，保留脚本许可头，每个副本附 `gradle/WRAPPER-NOTICE.txt`，声明上游 Gradle Apache-2.0 来源。

@@ -18,7 +18,7 @@
     "minecraft": "~1.21.1",
     "java": ">=21"
   },
-  "description": "Skija and Yoga for Minecraft UI. Draw, lay out and paint with an optional AtomChat-inspired design package.",
+  "description": "Skija & Yoga for Minecraft.",
   "authors": [
     "E33EPUS",
     "NoWordz"

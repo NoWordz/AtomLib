@@ -1,6 +1,6 @@
 # API contracts
 
-> 2026-11-01 本地候选新增可选 `ui/controls`：Slider、Toggle、单确认窗与 UiSession，合同见 [controls](controls.md)。下文 foundation 描述仍对应公开 beta3；选择候选控件时手势／焦点／模态归库，业务与页面结构归宿主，原始路径保持。release 在回调前已结束 capture，允许业务同步 open/close/setControls。
+> 2026-11-01 本地候选新增可选 `ui/controls`：Slider、Toggle、单确认窗与 UiSession，合同见 [controls](wiki/controls.md)。下文 foundation 描述仍对应公开 beta3；选择候选控件时手势／焦点／模态归库，业务与页面结构归宿主，原始路径保持。release 在回调前已结束 capture，允许业务同步 open/close/setControls。
 
 > 独审修订：ControlSkin.modalDialogStyle(Viewport)拥有模态外层规格，通用会话不依赖 AC。绘制和命中均按 PresentationFrame 层序。卡片内非按钮区域仅吞事件；普通取消隔离 held-key 尾序列，窗口失焦由适配器清空物理跟踪，详见控件合同。
 
