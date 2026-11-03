@@ -24,14 +24,18 @@ public final class MinecraftRenderBridge implements AutoCloseable {
     private BackdropRenderer backdrop(){SkijaRenderBridge.assertOutsideSkijaPass();if(backdrop==null)backdrop=new BackdropRenderer();return backdrop;}
     /** GUI-unit convenience; flush host batches before calling. Padding and physical rounding belong to Lib. */
     public BackdropOutcome drawBackdrop(Rect bounds,float pixelsPerUnit,BackdropStyle style,long frameId){
+        return drawBackdrop(bounds,pixelsPerUnit,style,frameId,1);
+    }
+    public BackdropOutcome drawBackdrop(Rect bounds,float pixelsPerUnit,BackdropStyle style,long frameId,float maxLuminance){
         RenderSystem.assertOnRenderThread();if(!Float.isFinite(pixelsPerUnit)||pixelsPerUnit<=0)throw new IllegalArgumentException("Invalid pixel density");
         float x=(float)Math.floor(bounds.x()*pixelsPerUnit),y=(float)Math.floor(bounds.y()*pixelsPerUnit);
         var physical=new Rect(x,y,(float)Math.ceil(bounds.right()*pixelsPerUnit)-x,(float)Math.ceil(bounds.bottom()*pixelsPerUnit)-y);
         var scaled=new BackdropStyle(style.blurRadius()*pixelsPerUnit,style.cornerRadius()*pixelsPerUnit,style.opacity(),style.fallbackColor());
-        var target=target();return backdrop().render(target,target,physical,scaled,frameId);
+        var target=target();return backdrop().render(target,target,physical,scaled,frameId,maxLuminance);
     }
     /** Explicit source and destination supports a host's own HUD/cache stage. */
     public BackdropOutcome drawBackdrop(FramebufferTarget source,FramebufferTarget destination,Rect physicalBounds,BackdropStyle style,long frameId){RenderSystem.assertOnRenderThread();return backdrop().render(source,destination,physicalBounds,style,frameId);}
+    public BackdropOutcome drawBackdrop(FramebufferTarget source,FramebufferTarget destination,Rect physicalBounds,BackdropStyle style,long frameId,float maxLuminance){RenderSystem.assertOnRenderThread();return backdrop().render(source,destination,physicalBounds,style,frameId,maxLuminance);}
     private MinecraftRenderBridge() { }
 
     public static MinecraftRenderBridge get() {

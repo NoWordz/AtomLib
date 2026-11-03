@@ -160,7 +160,19 @@ public final class UiSession implements AutoCloseable {
     public InputResult character(int codePoint){requireOpen();return modal==null&&composite==null?InputResult.PASS:InputResult.CONSUMED;}
     public void hover(float x,float y){requireOpen();if(composite!=null){if(composite.shown&&!composite.closing)composite.child.hover(x,y);return;}if(scroll!=null)scroll.hover(x,y);var id=topAt(x,y);for(var c:controls)c.hovered=c.id().equals(id);}
     public void paint(Canvas canvas,PresentationFrame frame,Viewport viewport,FrameTime time,boolean motionEnabled){
+        paintInternal(canvas,frame,viewport,time,motionEnabled,Map.of(),false);
+    }
+    /** Paints decorations in frame order inside the same entrance layer as their descendants. */
+    public void paint(Canvas canvas,PresentationFrame frame,Viewport viewport,FrameTime time,boolean motionEnabled,Map<NodeId,java.util.function.Consumer<Canvas>> decorations){
+        paintInternal(canvas,frame,viewport,time,motionEnabled,Map.copyOf(decorations),true);
+    }
+    private static NodeId entranceRoot(PresentationFrame frame,NodeId id){
+        if(!frame.hasEntrance(id))return null;
+        var parent=frame.box(id).parent();while(parent!=null&&frame.hasEntrance(parent)){id=parent;parent=frame.box(id).parent();}return id;
+    }
+    private void paintInternal(Canvas canvas,PresentationFrame frame,Viewport viewport,FrameTime time,boolean motionEnabled,Map<NodeId,java.util.function.Consumer<Canvas>> decorations,boolean groupEntrances){
         requireOpen();Objects.requireNonNull(canvas);Objects.requireNonNull(frame);Objects.requireNonNull(viewport);Objects.requireNonNull(time);
+        if(!frame.paintOrder().containsAll(decorations.keySet()))throw new IllegalArgumentException("Decoration missing from presentation frame");
         if(time.frameId()<lastFrame||time.nowNanos()<lastNow)throw new IllegalArgumentException("Nonmonotonic frame time");
         for(var c:controls)validate(c,frame,viewport);
         if(modal!=null)validate(modal.dialog,frame,viewport);
@@ -171,13 +183,24 @@ public final class UiSession implements AutoCloseable {
         lastFrame=time.frameId();lastNow=time.nowNanos();
         int saved=canvas.getSaveCount();canvas.save();
         try{
+            NodeId activeEntrance=null;int entranceSaved=-1;
             for(var id:frame.paintOrder()){
+                if(groupEntrances){
+                    var root=entranceRoot(frame,id);
+                    if(!Objects.equals(root,activeEntrance)){
+                        if(entranceSaved>=0){canvas.restoreToCount(entranceSaved);entranceSaved=-1;}
+                        activeEntrance=root;
+                        if(root!=null&&frame.opacity(root)<1){entranceSaved=canvas.getSaveCount();canvas.saveLayerAlpha(null,Math.round(frame.opacity(root)*255));}
+                    }
+                    var decoration=decorations.get(id);if(decoration!=null){int decorationSaved=canvas.getSaveCount();canvas.save();try{decoration.accept(canvas);}finally{canvas.restoreToCount(decorationSaved);}}
+                }
                 var c=byId(id);if(c==null||c.suspended())continue;
-                if(advance)c.advance(time.deltaSeconds(),motionEnabled);
+                if(advance||!motionEnabled)c.advance(time,motionEnabled);
                 var clip=frame.box(c.id()).clip();int count=canvas.getSaveCount();canvas.save();
-                try{canvas.clipRect(io.github.humbleui.types.Rect.makeXYWH(clip.x(),clip.y(),clip.width(),clip.height()));float scale=frame.renderScale(c.id());canvas.scale(scale,scale);c.paint(canvas,frame.forPainting(c.id()),new ControlVisual(c.id().equals(focus.current()),c.hover,c.press,c.position,1));}
+                try{canvas.clipRect(io.github.humbleui.types.Rect.makeXYWH(clip.x(),clip.y(),clip.width(),clip.height()));if(!groupEntrances&&frame.opacity(c.id())<1)canvas.saveLayerAlpha(null,Math.round(frame.opacity(c.id())*255));float scale=frame.renderScale(c.id());canvas.scale(scale,scale);c.paint(canvas,frame.forPainting(c.id()),new ControlVisual(c.id().equals(focus.current()),c.hover,c.press,c.position,1));}
                 finally{canvas.restoreToCount(count);}
             }
+            if(entranceSaved>=0)canvas.restoreToCount(entranceSaved);
             if(scroll!=null&&scroll.scrollbarVisible()&&scroll.thumb(frame).height()>0){var r=scroll.thumb(frame);try(var p=new io.github.humbleui.skija.Paint().setColor(0x88989ba5)){canvas.drawRRect(io.github.humbleui.types.RRect.makeXYWH(r.x(),r.y(),r.width(),r.height(),r.width()/2),p);}}
             if(composite!=null){
                 var state=composite;
@@ -224,7 +247,7 @@ public final class UiSession implements AutoCloseable {
             var box=f.box(id);var clip=box.clip();
             if(clip.x()<0||clip.y()<0||clip.right()>viewport.width()+.01||clip.bottom()>viewport.height()+.01)throw new IllegalArgumentException("Clip outside viewport: "+id);
         }
-        var root=f.box(c.id()).border();
+        var root=f.unanimatedBorder(c.id());
         if((scroll==null||!scroll.contains(f,c.id()))&&(root.bottom()>viewport.height()+.01||root.right()>viewport.width()+.01||root.x()<0||root.y()<0))throw new IllegalArgumentException("Control does not fit viewport: "+c.id());
     }
     void cancelControl(Control c,CancelReason reason){

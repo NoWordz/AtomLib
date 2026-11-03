@@ -55,7 +55,7 @@ tasks.register('hiddenGlTest', Test) {
     description = 'Real Skija/OpenGL round trips in a hidden GLFW window; never starts Minecraft.'
     testClassesDirs = sourceSets.hiddenGlTest.output.classesDirs
     classpath = sourceSets.hiddenGlTest.runtimeClasspath
-    useJUnitPlatform()
+    useJUnitPlatform { excludeTags 'broken-shader' }
     maxParallelForks = 1
     systemProperty 'junit.jupiter.execution.parallel.enabled', 'false'
     def evidenceRoot = providers.gradleProperty('atomlibRenderEvidence').map { rootProject.file(it).absolutePath }
@@ -63,4 +63,25 @@ tasks.register('hiddenGlTest', Test) {
     systemProperty 'atomlib.backdropEvidence', evidenceRoot
     systemProperty 'atomlib.itemIconEvidence', new File(evidenceRoot, 'item-icons').absolutePath
     testLogging { events 'passed', 'failed', 'skipped'; exceptionFormat 'full' }
+}
+
+def brokenShaderResources = tasks.register('brokenShaderResources') {
+    def output = layout.buildDirectory.dir('test-resources/broken-shader')
+    outputs.dir(output)
+    doLast {
+        def shader = new File(output.get().asFile, 'assets/atomlib/shaders/backdrop/composite.frag')
+        shader.parentFile.mkdirs()
+        shader.setText('#version 330 core\nthis is deliberately invalid GLSL\n', 'UTF-8')
+    }
+}
+tasks.register('hiddenGlBrokenShaderTest', Test) {
+    group = 'verification'
+    description = 'Exercise shader compilation failure and the solid panel fallback in a hidden GL context.'
+    dependsOn brokenShaderResources, tasks.named('hiddenGlTestClasses')
+    testClassesDirs = sourceSets.hiddenGlTest.output.classesDirs
+    classpath = files(brokenShaderResources) + sourceSets.hiddenGlTest.runtimeClasspath
+    useJUnitPlatform { includeTags 'broken-shader' }
+    maxParallelForks = 1
+    systemProperty 'junit.jupiter.execution.parallel.enabled', 'false'
+    testLogging { events 'passed', 'failed', 'skipped'; exceptionFormat = 'full' }
 }

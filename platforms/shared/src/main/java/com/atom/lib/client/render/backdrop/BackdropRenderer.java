@@ -27,7 +27,12 @@ public final class BackdropRenderer implements AutoCloseable {
         }catch(BackdropPrograms.Unavailable unavailable){return new BackdropSnapshot(this,generation,region,unavailable.getMessage());}
     }
     public BackdropOutcome draw(BackdropSnapshot input,FramebufferTarget destination,Rect output,BackdropStyle style){
+        return draw(input,destination,output,style,1);
+    }
+    /** Optional maximum encoded-RGB luminance, preserving hue. One disables the limit. */
+    public BackdropOutcome draw(BackdropSnapshot input,FramebufferTarget destination,Rect output,BackdropStyle style,float maxLuminance){
         check();Objects.requireNonNull(input);Objects.requireNonNull(destination);Objects.requireNonNull(output);Objects.requireNonNull(style);
+        requireLuminance(maxLuminance);
         if(input.owner!=this||input.generation!=generation)throw new IllegalStateException("Expired or foreign backdrop snapshot");
         if(!input.available())return skipped(input.diagnostic);
         if(output.width()==0||output.height()==0)return skipped("Empty output region");
@@ -45,13 +50,15 @@ public final class BackdropRenderer implements AutoCloseable {
                 programs.use(programs.composite,texture);int p=programs.composite;
                 glUniform2f(glGetUniformLocation(p,"origin"),(output.x()-input.region.x())/buffers.width,(input.region.bottom()-output.bottom())/buffers.height);
                 glUniform2f(glGetUniformLocation(p,"span"),output.width()/buffers.width,output.height()/buffers.height);
-                glUniform2f(glGetUniformLocation(p,"outputSize"),output.width(),output.height());glUniform1f(glGetUniformLocation(p,"cornerRadius"),style.cornerRadius());glUniform1f(glGetUniformLocation(p,"opacity"),style.opacity());glDrawArrays(GL_TRIANGLES,0,3);
+                glUniform2f(glGetUniformLocation(p,"outputSize"),output.width(),output.height());glUniform1f(glGetUniformLocation(p,"cornerRadius"),style.cornerRadius());glUniform1f(glGetUniformLocation(p,"opacity"),style.opacity());glUniform1f(glGetUniformLocation(p,"maxLuminance"),maxLuminance);glDrawArrays(GL_TRIANGLES,0,3);
             }finally{glDrawBuffers(prior);}
             lastDestination=destination;lastDrawGeneration=generation;return new BackdropOutcome(BackdropOutcome.Status.DRAWN,"");
         }catch(BackdropPrograms.Unavailable unavailable){return skipped(unavailable.getMessage());}
     }
     /** Convenience path computes sampling padding; the low-level capture argument is already padded. */
-    public BackdropOutcome render(FramebufferTarget source,FramebufferTarget destination,Rect output,BackdropStyle style,long frameId){check();Objects.requireNonNull(source);Objects.requireNonNull(style);double pad=Math.ceil((double)style.blurRadius()*2+2);float x=(float)Math.max(0,output.x()-pad),y=(float)Math.max(0,output.y()-pad),right=(float)Math.min(source.width(),output.right()+pad),bottom=(float)Math.min(source.height(),output.bottom()+pad);var padded=new Rect(x,y,Math.max(0,right-x),Math.max(0,bottom-y));return draw(capture(source,padded,frameId),destination,output,style);}
+    public BackdropOutcome render(FramebufferTarget source,FramebufferTarget destination,Rect output,BackdropStyle style,long frameId){return render(source,destination,output,style,frameId,1);}
+    public BackdropOutcome render(FramebufferTarget source,FramebufferTarget destination,Rect output,BackdropStyle style,long frameId,float maxLuminance){check();Objects.requireNonNull(source);Objects.requireNonNull(style);requireLuminance(maxLuminance);double pad=Math.ceil((double)style.blurRadius()*2+2);float x=(float)Math.max(0,output.x()-pad),y=(float)Math.max(0,output.y()-pad),right=(float)Math.min(source.width(),output.right()+pad),bottom=(float)Math.min(source.height(),output.bottom()+pad);var padded=new Rect(x,y,Math.max(0,right-x),Math.max(0,bottom-y));return draw(capture(source,padded,frameId),destination,output,style,maxLuminance);}
+    private static void requireLuminance(float value){if(!Float.isFinite(value)||value<0||value>1)throw new IllegalArgumentException("Invalid maximum luminance");}
     private static BackdropOutcome skipped(String diagnostic){return new BackdropOutcome(BackdropOutcome.Status.SKIPPED,diagnostic);}
     private static boolean same(FramebufferTarget a,FramebufferTarget b){return a.identity()==b.identity()&&a.framebuffer()==b.framebuffer()&&a.colorTexture()==b.colorTexture()&&a.width()==b.width()&&a.height()==b.height();}
     private static String validate(FramebufferTarget target){

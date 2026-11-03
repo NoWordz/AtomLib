@@ -16,6 +16,12 @@ GUI 单位入口向外圆整物理区域并计算采样 padding。显式 `drawBa
 
 共享层可 `new BackdropRenderer()`，使用 `capture(source, paddedRegion, frameId)` 和 `draw(snapshot, destination, outputRegion, style)`。低层 capture 区域已经包含 padding；便捷 `render` 自动外扩并 clamp 到源边缘。物理输出使用整数像素区域，必须位于捕获和目标范围内。零 blurRadius 是未模糊 RGB 拷贝，opacity 零不改变颜色。
 
+`BackdropRenderer.draw` / `render` 及三端 `MinecraftRenderBridge.drawBackdrop` 新增最后一个 `float maxLuminance` 参数的重载，范围 0–1；旧重载等价于 1。限制针对**合成前、编码 RGB 的加权亮度**（权重 0.2126 / 0.7152 / 0.0722），超过上限时按同一比例缩放三个通道；它不是线性光的物理亮度，也不保证与半透明目标混合后的最终亮度上限。宿主显式选择数值及源、目标；未为所有背景或用户视觉选择通用默认阈值。
+
+新增 GPU 读回覆盖亮／暗、彩色四轮模糊、源 alpha、目标 alpha、区域外和第三 FBO；`hiddenGlBrokenShaderTest` 使用独立的无效 shader 资源检验编译失败返回 `SKIPPED`、目标不变，并由 `SettingsShell` 绘制不透明实底。此测试不更改正式 shader 资源。`SkiaDraw.drawBlurredBackground` 现在分别关闭画笔和该次创建的 `ImageFilter` 句柄；真实引用计数、重复绘制像素及句柄统计见对应测试。
+
+`SkiaDraw.releaseShadowFilters()` 在渲染线程上解除共享画笔的滤镜引用并关闭缓存持有的全部阴影滤镜；可重复调用，随后绘制会重新创建滤镜。缓存是进程内共享的，不属于某个 `ControlContext` 或屏幕，只有协调方确认所有宿主暂停使用时才调用；单个宿主关闭不能自动清空其他宿主正在使用的共享缓存。该入口不关闭静态共享 Paint，GPU 长时资源和应用退出顺序仍需真实环境验收。
+
 - v1 支持非多采样、完整 FBO 的 RGBA8 二维 color attachment 0。对象、纹理名、尺寸由 `FramebufferTarget` 提供。格式/尺寸不符和不完整目标返回诊断 `SKIPPED`，不写目标；不承诺 HDR、MSAA、任意纹理类型或第三方缓存布局。
 - 原创 GLSL 为四个对角邻点等权凸平均，四轮 ping-pong，只读 RGB。合成用圆角 SDF 生成覆盖度，圆角外 discard；明确禁写目标 alpha。源 alpha 不参与权重与目标 alpha 保留是两个分别测试的合同。
 - 服务绑定创建线程和 GLFW context。snapshot 是借用；下一次 capture、resize capture、invalidate/reload 或 close 使旧 token 失效。跨实例/过期 token、错误线程/context、Skija pass 内调用、非单调 frameId 和越界输出明确抛错。目标 generation 改变后须重新 capture。

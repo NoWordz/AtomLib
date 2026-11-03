@@ -1,10 +1,36 @@
 # 可选控件与设置页面材料（本地候选）
 
+## 可中断开关与页面入场（本地实施中）
+
+**组合边界：**`SettingsShell.paint` 把入场组的卡片和控件放在共同图层，仅应用一次透明度；透明与不透明背景、多组和失败后的输入快照有离屏用例。先调用旧 `SettingsGroup.paint`、再调用旧 `UiSession.paint` 的两次独立绘制不会自动形成组图层；该路径的历史探针展示了透明度叠加，当前 `GroupEntranceOpacityReviewTest` 则验证共同合成路径。用户自组屏幕时，新增 `UiSession.paint(..., decorations)` 重载可在展示帧对应节点提供装饰绘制，但装饰自身不得再次应用该入口透明度。
+
+`AtomDefault.skin()` 和 `skin(palette)` 的开关使用实例局部弹簧：位置可过冲并在目标反转时保留速度，颜色仍使用 `ControlVisual.position()` 的 0–1 进度。旧 `AtomChatControlSkin` 构造器和未声明弹簧的自定义皮肤保留旧的时长插值；新皮肤可通过 `ControlSkin.toggleSpring()` 提供 `ControlSpring`，并可重载带 `knobPosition` 的 `paintToggle` 消费单独的位置通道。首次显示直接使用当前模型，停摆超过皮肤的 `staleAfterSeconds` 则到达当前目标；现有 AtomDefault 参数为 stiffness 100、阻尼比 0.5、停摆 0.5 秒，属候选参数，手感待用户验收。禁用动效时同帧到达目标；指针、键盘和业务提交仍遵循原控件合同。
+
+宿主在切页时立即切换业务内容，再以明确的帧时间和**当时可见的页面根或互不嵌套的行根**启动入场。例如：
+
+```java
+var entrance = new PageEntrance(0.2, 0.05, 8);
+// 导航发生时先更新业务页面，再传入当时可见的行 ID。
+entrance.start(time, visibleRowIds);
+// 每帧传入新的 time；同一帧多次采样不会重复推进。
+var poses = entrance.sample(time, motionEnabled);
+var state = shell.layout(session, viewport, style, title, clock, tabs, groups, footer, poses);
+shell.paint(canvas, state, session, time, motionEnabled);
+```
+
+示例参数是可调整的离屏候选，不表示视觉已经验收。`PageEntrance` 以同一个进度驱动每个根的位移和透明度，初次快照以外的滚入行不加入旧入场；再次 `start` 立即替换旧目标。同一实例的帧号和纳秒时间须单调不减；更换时钟或会话时创建新的实例。关闭动效会结束本次入场，不在重新开启后补播。`PresentationFrame.create` 的重载和 `ScrollViewport.present` 的重载也可供非 SettingsShell 宿主使用；父子根同时入场会报错。位移后的绘制、裁剪、命中和焦点采用同一 `PresentationFrame`；动画期间不禁止输入，即使透明度为零。对自己直接绘制的内容，宿主还应使用 `frame.opacity(id)`；UiSession 和 SettingsGroup 已应用各自的透明度。整页滚动时滚轮/滚动条区域跟随页面变换，裁剪仍受视口限制。
+
+以上是库级离屏行为，未运行 Minecraft；真实游戏中的滚动、焦点与动画手感仍需验收。
+
+设置组整体淡入须通过 `SettingsShell.paint` 的共同合成路径。若宿主单独调用 `SettingsGroup.paint` 和 `UiSession.paint`，这两次绘制会分别应用透明度，不会自动将卡片与控件合并为同一个半透明图层；自绘宿主须自行负责共同合成。
+
 ## 短窗口修复（2026-11-01）
 
 最新修复候选位于 `build/interaction-fixes-candidate/maven`，上一轮候选保留。`SettingsShell` 在确认窗自然尺寸超过视口时，只对窗体做等比适配；遮罩仍覆盖完整视口。绘制、命中和裁剪使用同一 PresentationFrame，普通尺寸保持原布局。直接组合 `session.modalNode` 的宿主仍负责为其提供足够空间；本修复没有增加通用模态滚动系统。
 
 PresentationFrame 保留缩放前的量测几何供绘制使用，避免把显示坐标反算回逻辑坐标时，40u 文字槽变成 39.999996u 并触发重新换行。详见[修复记录](evidence/interaction-fixes/report.md)。
+
+再次对已有滚动视口的 `PresentationFrame` 调用 `scaled()` 时，滚动范围、内容高度和偏移与绘制/命中几何一起缩放；`forPainting()` 变换回画笔坐标，合成帧保留对应滚动快照。离屏测试覆盖二次缩放后的绘制像素、点击、滚轮以及成功绘制后发布；这不替代 Minecraft guiScale 实测。
 
 ## 完整调整页增量（2026-11-01）
 

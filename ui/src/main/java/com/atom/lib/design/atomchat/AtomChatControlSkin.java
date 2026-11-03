@@ -13,10 +13,17 @@ import java.util.*;
 /** AC materials with instance-local style. All role geometry is Yoga-produced. */
 public final class AtomChatControlSkin implements ControlSkin {
     private AtomChatControlStyle style;
-    public AtomChatControlSkin(AtomChatControlStyle style){updateStyle(style);}
+    private final boolean themedModalSurface;
+    private final boolean elasticToggle;
+    private static final ControlSpring TOGGLE_SPRING=new ControlSpring(100,.5f,.001f,.01f,.5);
+    public AtomChatControlSkin(AtomChatControlStyle style){this(style,false);}
+    /** Opt in to a modal surface derived from this skin's panel colour. */
+    public AtomChatControlSkin(AtomChatControlStyle style,boolean themedModalSurface){this(style,themedModalSurface,false);}
+    public AtomChatControlSkin(AtomChatControlStyle style,boolean themedModalSurface,boolean elasticToggle){this.themedModalSurface=themedModalSurface;this.elasticToggle=elasticToggle;updateStyle(style);}
     public void updateStyle(AtomChatControlStyle style){this.style=Objects.requireNonNull(style);}
     public AtomChatControlStyle style(){return style;}
     public ControlMotion motion(){return new ControlMotion(.09,.14,.11);}
+    public Optional<ControlSpring> toggleSpring(){return elasticToggle?Optional.of(TOGGLE_SPRING):Optional.empty();}
     public LayoutNode actionNode(NodeId id,ActionModel m,LayoutStyle outer,TextService text,float iconSize){
         var original=actionNode(id,m,outer,text);var label=original.children().get(0);
         label=new LayoutNode(label.id(),label.style().flex(1,1,Length.points(0)),label.children(),label.measure(),label.measureRevision());
@@ -58,11 +65,12 @@ public final class AtomChatControlSkin implements ControlSkin {
     public void paintSlider(Canvas c,PresentationFrame f,NodeId id,SliderModel m,float value,String label,ControlVisual v,TextService text,ControlPresentation p){if(p==ControlPresentation.CARD)paintSlider(c,f,id,m,value,label,v,text);else SettingsRows.slider(c,f,id,m,value,label,v,text,style);}
     public LayoutNode toggleNode(NodeId id,ToggleModel m,LayoutStyle outer,TextService text,ControlPresentation p){return p==ControlPresentation.CARD?toggleNode(id,m,outer,text):SettingsRows.toggle(id,m,outer,text,style);}
     public void paintToggle(Canvas c,PresentationFrame f,NodeId id,ToggleModel m,ControlVisual v,TextService text,ControlPresentation p){if(p==ControlPresentation.CARD)paintToggle(c,f,id,m,v,text);else SettingsRows.toggle(c,f,id,m,v,text,style);}
+    public void paintToggle(Canvas c,PresentationFrame f,NodeId id,ToggleModel m,ControlVisual v,TextService text,ControlPresentation p,float knobPosition){if(p==ControlPresentation.CARD)paintToggleKnob(c,f,id,m,v,text,knobPosition);else SettingsRows.toggle(c,f,id,m,v,text,style,knobPosition);}
     public LayoutNode modalTitle(NodeId id,String title,TextService text){
         return label(id,title,AtomChatFonts.HEADING,UiTokens.FONT_TITLE,style.textColor(),text);
     }
     public void paintModalSurface(Canvas c,PresentationFrame f,NodeId id,String title,TextService text){
-        var r=f.box(id).border();int fill=0xfa10141e;
+        var r=f.box(id).border();int fill=modalFill();
         SkiaDraw.drawChromeShadow(c,r.x(),r.y(),r.width(),r.height(),radius(16));
         SkiaDraw.drawRoundedRect(c,r.x(),r.y(),r.width(),r.height(),radius(16),fill);
         SkiaDraw.drawEdgeHighlight(c,r.x(),r.y(),r.width(),r.height(),radius(16),UiTokens.s(1),UiTokens.hairline(fill));
@@ -73,6 +81,7 @@ public final class AtomChatControlSkin implements ControlSkin {
         float padding=UiTokens.LIST_PAD_X;
         return LayoutStyle.column().size(Length.points(Math.max(0,Math.min(UiTokens.s(370),viewport.width()-padding*2))),Length.auto()).flex(0,0,Length.auto());
     }
+    private int modalFill(){return themedModalSurface ? 0xfa000000|(style.panelBackgroundColor()&0xffffff) : 0xfa10141e;}
     private float radius(float token){return UiTokens.s(token)*UiTokens.radiusFactor(style.cornerRadius());}
     private NodeId slot(NodeId id,String role){return ControlSlots.slot(id,role);}
     private LayoutNode label(NodeId id,String value,FontId font,float size,int color,TextService text){
@@ -120,6 +129,9 @@ public final class AtomChatControlSkin implements ControlSkin {
             label(slot(id,"body"),model.description(),AtomChatFonts.BODY,UiTokens.SETTINGS_TILE_SUB,style.textSecondaryColor(),text),toggle),null,0);
     }
     public void paintToggle(Canvas c,PresentationFrame f,NodeId id,ToggleModel model,ControlVisual v,TextService text){
+        paintToggleKnob(c,f,id,model,v,text,v.position());
+    }
+    private void paintToggleKnob(Canvas c,PresentationFrame f,NodeId id,ToggleModel model,ControlVisual v,TextService text,float knobPosition){
         card(c,f,id,v);float opacity=model.enabled()?1:.45f;
         text(c,f,slot(id,"title"),model.label(),AtomChatFonts.HEADING,UiTokens.SETTINGS_TILE_TITLE,alpha(style.textColor(),opacity),text);
         text(c,f,slot(id,"body"),model.description(),AtomChatFonts.BODY,UiTokens.SETTINGS_TILE_SUB,alpha(style.textSecondaryColor(),opacity),text);
@@ -128,7 +140,7 @@ public final class AtomChatControlSkin implements ControlSkin {
         int fill=mix(rest,style.accentColor(),v.position());
         SkiaDraw.drawRoundedRect(c,r.x(),r.y(),r.width(),r.height(),Math.min(r.height()/2,radius(11)),alpha(fill,opacity));
         SkiaDraw.drawEdgeHighlight(c,r.x(),r.y(),r.width(),r.height(),Math.min(r.height()/2,radius(11)),UiTokens.s(1),alpha(UiTokens.rim(base),opacity));
-        float x=r.x()+inset+(r.width()-side-2*inset)*v.position();
+        float x=r.x()+inset+(r.width()-side-2*inset)*knobPosition;
         SkiaDraw.drawRoundedRect(c,x,r.y()+inset,side,side,Math.min(side/2,radius(9)),alpha(0xfff5f5f5,opacity));
         if(v.press()>0)SkiaDraw.drawRoundedRect(c,x,r.y()+inset,side,side,Math.min(side/2,radius(9)),alpha(UiTokens.hairline(0xfff5f5f5),v.press()*opacity));
     }
@@ -151,7 +163,7 @@ public final class AtomChatControlSkin implements ControlSkin {
             label(slot(id,"body"),model.message(),AtomChatFonts.BODY,UiTokens.SETTINGS_TILE_SUB,style.textSecondaryColor(),text),actions),null,0);
     }
     public void paintDialog(Canvas c,PresentationFrame f,NodeId id,ConfirmationModel model,NodeId focused,ControlVisual v,TextService text){
-        var r=f.box(id).border();int fill=0xfa10141e;
+        var r=f.box(id).border();int fill=modalFill();
         SkiaDraw.drawChromeShadow(c,r.x(),r.y(),r.width(),r.height(),radius(16));
         SkiaDraw.drawRoundedRect(c,r.x(),r.y(),r.width(),r.height(),radius(16),fill);
         SkiaDraw.drawEdgeHighlight(c,r.x(),r.y(),r.width(),r.height(),radius(16),UiTokens.s(1),UiTokens.hairline(fill));

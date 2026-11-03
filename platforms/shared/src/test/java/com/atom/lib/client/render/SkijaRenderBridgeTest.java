@@ -3,6 +3,7 @@ package com.atom.lib.client.render;
 
 import com.atom.lib.AtomLibRuntime;
 import com.atom.lib.RuntimeHandle;
+import com.atom.lib.image.ImageDownsampler;
 import io.github.humbleui.skija.BackendTexture;
 import io.github.humbleui.skija.ColorAlphaType;
 import io.github.humbleui.skija.ColorType;
@@ -18,6 +19,19 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.lwjgl.opengl.GL33C.*;
 
 final class SkijaRenderBridgeTest extends HiddenGlFixture {
+    @Test void gpuSnapshotBypassesCpuDownsamplingAndRemainsDrawable() {
+        var source=framebuffer(64,64);var target=framebuffer(16,16);
+        try(var runtime=AtomLibRuntime.open("gpu-image-fallback");var bridge=new SkijaRenderBridge(runtime);var cache=new ImageDownsampler(4096,4,2)) {
+            bridge.draw(source,c->c.clear(0xff12a4e6));
+            try(var image=bridge.captureFrame(source)) {
+                assertNull(image.peekPixels(),"GPU fixture must not expose CPU pixels");
+                assertSame(image,cache.select(image,8,8,false));assertEquals(0,cache.size());
+                bridge.draw(target,c->c.drawImageRect(image,Rect.makeXYWH(0,0,16,16)));
+                assertArrayEquals(new int[]{18,164,230,255},pixel(target,8,8));assertFalse(image.isClosed());
+            }
+        }
+        assertEquals(GL_NO_ERROR,glGetError());
+    }
     @Test void borrowedFrameSharesOneContextAndExpiresAfterCallbackWithoutTransferringOwnership() {
         FramebufferTarget target=framebuffer(16,16);
         try(RuntimeHandle runtime=AtomLibRuntime.open("gl-borrow");SkijaRenderBridge bridge=new SkijaRenderBridge(runtime)) {

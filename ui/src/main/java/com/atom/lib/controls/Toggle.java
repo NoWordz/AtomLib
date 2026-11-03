@@ -3,6 +3,8 @@ import com.atom.lib.controls.internal.ControlSlots;
 import com.atom.lib.input.*;
 import com.atom.lib.layout.*;
 import io.github.humbleui.skija.Canvas;
+import com.atom.lib.motion.FrameTime;
+import com.atom.lib.motion.SpringAnim;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -11,6 +13,11 @@ public final class Toggle extends Control {
     private final Consumer<Boolean> change;
     private boolean pointer;
     private KeyEvent.Key activation;
+    private SpringAnim knobSpring;
+    private ControlSpring knobParameters;
+    private long knobFrame;
+    private long knobLastSeen;
+    private boolean knobSeen;
     public Toggle(NodeId id,ControlContext context,ToggleModel model,Consumer<Boolean> onChange){
         super(id,context);this.model=Objects.requireNonNull(model);this.change=Objects.requireNonNull(onChange);position=model.checked()?1:0;
     }
@@ -35,5 +42,22 @@ public final class Toggle extends Control {
         cancel(CancelReason.FOCUS_LOST);change.accept(!model.checked());return true;
     }
     float positionTarget(){return model.checked()?1:0;}
-    void paint(Canvas c,PresentationFrame f,ControlVisual v){context.skin().paintToggle(c,f,id(),model,v,context.text(),presentation());}
+    @Override void advance(FrameTime frame,boolean motion){
+        var parameters=context.skin().toggleSpring().orElse(null);
+        double elapsed=knobSeen?Math.max(frame.deltaSeconds(),((double)frame.nowNanos()-knobLastSeen)/1_000_000_000d):frame.deltaSeconds();
+        if(parameters!=null&&(!knobSeen||elapsed>parameters.staleAfterSeconds()))position=positionTarget();
+        super.advance(frame,motion);
+        knobLastSeen=frame.nowNanos();knobSeen=true;
+        if(parameters==null){knobSpring=null;knobParameters=null;return;}
+        if(!parameters.equals(knobParameters)){
+            boolean first=knobSpring==null;
+            float initial=first?positionTarget():knobSpring.value();
+            knobSpring=new SpringAnim(parameters.stiffness(),parameters.dampingRatio(),parameters.settlePosition(),parameters.settleVelocity());
+            knobSpring.snapTo(initial);knobParameters=parameters;
+        }
+        knobSpring.setTarget(positionTarget());
+        if(elapsed>parameters.staleAfterSeconds())knobSpring.snapTo(positionTarget());
+        else knobSpring.update(new FrameTime(++knobFrame,frame.nowNanos(),frame.deltaSeconds()),motion);
+    }
+    void paint(Canvas c,PresentationFrame f,ControlVisual v){context.skin().paintToggle(c,f,id(),model,v,context.text(),presentation(),knobSpring==null?v.position():knobSpring.value());}
 }

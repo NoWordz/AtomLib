@@ -19,6 +19,10 @@ public final class SettingsShell implements AutoCloseable {
     /** Call before updating models so any rollback is included in this frame's measurements. */
     public void prepare(UiSession session,Viewport viewport,SettingsPageStyle style){session.prepare(viewport);session.prepareCoordinates(style.uiScale()*style.contentScale());session.scrollViewport(scroll);}
     public Frame layout(UiSession session,Viewport viewport,SettingsPageStyle style,String title,String clock,SegmentedChoice navigation,List<SettingsGroup> groups,List<ActionButton> footer){
+        return layout(session,viewport,style,title,clock,navigation,groups,footer,Map.of());
+    }
+    /** Entrance roots are page-content groups or rows, not header/navigation nodes. */
+    public Frame layout(UiSession session,Viewport viewport,SettingsPageStyle style,String title,String clock,SegmentedChoice navigation,List<SettingsGroup> groups,List<ActionButton> footer,Map<NodeId,EntrancePose> entrance){
         prepare(session,viewport,style);
         float marginX=viewport.width()>=160?40:0,marginY=viewport.height()>=160?20:0;
         float width=Math.max(1,Math.min(style.width()*style.uiScale(),viewport.width()-marginX*2)),height=Math.max(1,Math.min(860*style.uiScale(),viewport.height()-marginY-(marginY>0?40:0)));
@@ -37,7 +41,7 @@ public final class SettingsShell implements AutoCloseable {
         if(!footer.isEmpty()){children.add(LayoutNode.leaf("shell/footer-gap",LayoutStyle.column().size(Length.auto(),Length.points(UiTokens.s(92))).flex(0,0,Length.auto()),null,0));for(var button:footer)children.add(button.node(LayoutStyle.column()));}
         var bt=new LayoutTree(new LayoutNode(new NodeId("shell/content"),LayoutStyle.column().size(Length.points(contentBounds.width()/contentScale),Length.auto()).spacing(0,UiTokens.s(10)).behavior(false,false,true,true),children,null,0));
         var bv=new Viewport(contentBounds.width()/contentScale,Math.max(1,viewport.height()/contentScale),viewport.pixelsPerUnit()*contentScale);
-        var bf=scroll.present(bt,bodyLayout.layoutIntrinsicHeight(bt,bv),viewport,contentBounds,contentScale);
+        var bf=scroll.present(bt,bodyLayout.layoutIntrinsicHeight(bt,bv),viewport,contentBounds,contentScale,entrance);
         var layers=new ArrayList<PresentationFrame>();layers.add(hf);layers.add(bf);
         var modal=session.modalFrame(viewport);
         if(modal!=null)layers.add(modal);
@@ -55,8 +59,14 @@ public final class SettingsShell implements AutoCloseable {
             var title=context.text().layout(new com.atom.lib.text.TextRequest(state.title(),AtomChatFonts.HEADING,UiTokens.FONT_TITLE,s.controls().textColor()),new Constraints(Constraints.Axis.atMost(h.width()),Constraints.Axis.undefined()));context.text().draw(canvas,title,h.x()+(h.width()-title.size().width())/2,h.y()+(h.height()-title.size().height())/2);
             SettingsRows.label(canvas,base,new NodeId("shell/clock"),state.clock(),AtomChatFonts.BODY,UiTokens.s(16),s.controls().textColor(),context.text());
         }finally{canvas.restoreToCount(saved);}
-        for(var group:state.groups())group.paint(canvas,f,s.controls());
-        session.paint(canvas,f,state.viewport(),time,motion);
+        var decorations=new HashMap<NodeId,java.util.function.Consumer<Canvas>>();
+        boolean grouped=state.groups().stream().map(g->new NodeId(g.id().value()+"/card")).anyMatch(id->f.paintOrder().contains(id)&&f.hasEntrance(id));
+        for(var group:state.groups()){
+            var card=new NodeId(group.id().value()+"/card");
+            if(grouped&&f.paintOrder().contains(card))decorations.put(card,c->{if(f.hasEntrance(card))group.paintInsideEntrance(c,f,s.controls());else group.paint(c,f,s.controls());});
+            else group.paint(canvas,f,s.controls());
+        }
+        session.paint(canvas,f,state.viewport(),time,motion,decorations);
     }
     @Override public void close(){headerLayout.close();bodyLayout.close();}
 }

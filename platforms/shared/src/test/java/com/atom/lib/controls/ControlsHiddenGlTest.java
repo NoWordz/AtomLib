@@ -15,6 +15,25 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Real bridge, framebuffer, three controls and input round trips; no Minecraft launch. */
 public final class ControlsHiddenGlTest extends HiddenGlFixture {
+    @Test void gpuBlurCanCloseItsFilterAndShadowCacheCanBeReleasedAndReused(){
+        var target=framebuffer(64,64);
+        try(var runtime=AtomLibRuntime.open("blur-lifecycle-gl");var bridge=new SkijaRenderBridge(runtime);var source=io.github.humbleui.skija.Surface.makeRasterN32Premul(64,64)){
+            source.getCanvas().clear(0xff40a0e0);
+            try(var snapshot=source.makeImageSnapshot()){
+                boolean prior=io.github.humbleui.skija.impl.Stats.enabled;io.github.humbleui.skija.impl.Stats.enabled=true;
+                try{
+                    int before=io.github.humbleui.skija.impl.Stats.allocated.getOrDefault("ImageFilter",0);
+                    bridge.draw(target,c->{SkiaDraw.drawBlurredBackground(c,snapshot,0,0,64,64,0,2);SkiaDraw.drawRoundedShadow(c,8,8,16,16,3,2,0xff000000);});
+                    assertEquals(before,io.github.humbleui.skija.impl.Stats.allocated.getOrDefault("ImageFilter",0));
+                    assertFalse(snapshot.isClosed());
+                    assertArrayEquals(new int[]{64,160,224,255},pixel(target,50,50));
+                    SkiaDraw.releaseShadowFilters();SkiaDraw.releaseShadowFilters();
+                    bridge.draw(target,c->SkiaDraw.drawBlurredBackground(c,snapshot,0,0,64,64,0,2));
+                    assertArrayEquals(new int[]{64,160,224,255},pixel(target,50,50));
+                }finally{io.github.humbleui.skija.impl.Stats.enabled=prior;}
+            }
+        }
+    }
     @Test void threeControlsPaintAndCompleteModalWithoutOwningHostFramebuffer(){
         var target=framebuffer(480,860);int[] changes={0},confirmed={0};
         try(var runtime=AtomLibRuntime.open("controls-gl");var fonts=new FontRegistry(runtime);var text=new TextService(fonts,TextBreakPolicy.CJK_UI);var engine=new YogaLayoutEngine();var modalEngine=new YogaLayoutEngine();var bridge=new SkijaRenderBridge(runtime)){

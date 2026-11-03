@@ -6,3 +6,11 @@ dependencies {
     def arch = System.getProperty('os.arch') in ['aarch64', 'arm64'] ? 'arm64' : 'x64'
     testRuntimeOnly "io.github.humbleui:skija-${os}-${arch}:${rootProject.dependencyVersions.skija}"
 }
+
+tasks.register('imageDownsamplerBenchmark', JavaExec) {
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.atom.lib.runtime.ImageDownsamplerBenchmark'
+    args providers.gradleProperty('benchmarkOutput').getOrElse(layout.buildDirectory.file('image-downsampler.csv').get().asFile.absolutePath),
+         providers.gradleProperty('benchmarkSamples').getOrElse('10')
+}

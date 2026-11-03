@@ -58,3 +58,13 @@ dependencies {
 }
 sourceSets.main.java.srcDir(generateYogaDirty)
 tasks.named('compileJava') { dependsOn generateYogaDirty }
+
+// Synthetic raster workload, deliberately separate from normal test and game tasks.
+tasks.register('syntheticListBenchmark', JavaExec) {
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.atom.lib.bench.GenericListBenchmark'
+    args providers.gradleProperty('benchmarkOutput').getOrElse(layout.buildDirectory.file('synthetic-list.csv').get().asFile.absolutePath),
+         providers.gradleProperty('benchmarkWarmup').getOrElse('2'),
+         providers.gradleProperty('benchmarkSamples').getOrElse('3')
+}

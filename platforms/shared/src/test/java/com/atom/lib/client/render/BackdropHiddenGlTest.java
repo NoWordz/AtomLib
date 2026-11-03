@@ -13,6 +13,36 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import static org.lwjgl.glfw.GLFW.*;
 class BackdropHiddenGlTest extends HiddenGlFixture {
+    @Test void minecraftBridgeExposesTheLuminanceLimitForBothTargetModes() throws Exception {
+        Class<?> bridge=Class.forName("com.atom.lib.client.render.MinecraftRenderBridge",false,getClass().getClassLoader());
+        assertDoesNotThrow(()->bridge.getMethod("drawBackdrop",Rect.class,float.class,BackdropStyle.class,long.class,float.class));
+        assertDoesNotThrow(()->bridge.getMethod("drawBackdrop",FramebufferTarget.class,FramebufferTarget.class,Rect.class,BackdropStyle.class,long.class,float.class));
+    }
+    @Test void luminanceLimitPreservesDarkPixelsAlphaAndUnrelatedTargets() throws Exception {
+        var source=framebuffer(64,64);var destination=framebuffer(64,64);var unrelated=framebuffer(64,64);
+        var rect=new Rect(8,8,48,48);var style=new BackdropStyle(0,0,1,0);
+        var method=assertDoesNotThrow(()->BackdropRenderer.class.getMethod("render",FramebufferTarget.class,FramebufferTarget.class,Rect.class,BackdropStyle.class,long.class,float.class));
+        try(var renderer=new BackdropRenderer()){
+            fill(destination,0,0,1,.25f);fill(unrelated,0,1,0,.5f);var unrelatedBefore=pixel(unrelated,32,32);fill(source,1,1,1,0);
+            assertTrue(((BackdropOutcome)method.invoke(renderer,source,destination,rect,style,1L,.5f)).drawn());
+            var bright=pixel(destination,32,32);
+            assertEquals(128,bright[0],1);assertEquals(128,bright[1],1);assertEquals(128,bright[2],1);assertEquals(64,bright[3]);
+            assertArrayEquals(new int[]{0,0,255,64},pixel(destination,0,0));
+            assertArrayEquals(unrelatedBefore,pixel(unrelated,32,32));
+            fill(destination,0,0,1,.25f);fill(source,1,1,1,1);
+            assertTrue(((BackdropOutcome)method.invoke(renderer,source,destination,rect,style,2L,.5f)).drawn());
+            assertArrayEquals(bright,pixel(destination,32,32),"Source alpha must not affect the result");
+            fill(source,.1f,.1f,.1f,1);fill(destination,0,0,1,.25f);
+            assertTrue(((BackdropOutcome)method.invoke(renderer,source,destination,rect,style,3L,.5f)).drawn());
+            var dark=pixel(destination,32,32);assertEquals(26,dark[0],1);assertEquals(26,dark[1],1);assertEquals(26,dark[2],1);assertEquals(64,dark[3]);
+            fill(source,1,.2f,.1f,1);fill(destination,0,0,1,.25f);
+            assertTrue(renderer.render(source,destination,rect,new BackdropStyle(8,0,1,0),4,.25f).drawn());
+            var tinted=pixel(destination,32,32);assertEquals(176,tinted[0],3);assertEquals(35,tinted[1],3);assertEquals(18,tinted[2],3);assertEquals(64,tinted[3]);
+            assertThrows(IllegalArgumentException.class,()->renderer.render(source,destination,rect,style,5,Float.NaN));
+            assertThrows(IllegalArgumentException.class,()->renderer.render(source,destination,rect,style,5,-.1f));
+            assertThrows(IllegalArgumentException.class,()->renderer.render(source,destination,rect,style,5,1.1f));
+        }
+    }
     void fill(FramebufferTarget t,float r,float g,float b,float a){glBindFramebuffer(GL_FRAMEBUFFER,t.framebuffer());glDisable(GL_SCISSOR_TEST);glColorMask(true,true,true,true);glClearColor(r,g,b,a);glClear(GL_COLOR_BUFFER_BIT);}
     ByteBuffer read(FramebufferTarget t){glBindFramebuffer(GL_READ_FRAMEBUFFER,t.framebuffer());glBindBuffer(GL_PIXEL_PACK_BUFFER,0);glPixelStorei(GL_PACK_ALIGNMENT,1);glPixelStorei(GL_PACK_ROW_LENGTH,0);glPixelStorei(GL_PACK_SKIP_PIXELS,0);glPixelStorei(GL_PACK_SKIP_ROWS,0);var bytes=BufferUtils.createByteBuffer(t.width()*t.height()*4);glReadPixels(0,0,t.width(),t.height(),GL_RGBA,GL_UNSIGNED_BYTE,bytes);assertEquals(GL_NO_ERROR,glGetError());return bytes;}
     void upload(FramebufferTarget t,boolean opaque,boolean sentinel){var bytes=BufferUtils.createByteBuffer(t.width()*t.height()*4);for(int y=0;y<t.height();y++)for(int x=0;x<t.width();x++){boolean light=((x/8+y/8)%2)==0;bytes.put((byte)(sentinel?12:light?255:0)).put((byte)(sentinel?30:light?200:40)).put((byte)(sentinel?70:light?0:255)).put((byte)(sentinel?(x*3+y*5)%256:opaque?255:0));}bytes.flip();glActiveTexture(GL_TEXTURE0);glBindBuffer(GL_PIXEL_UNPACK_BUFFER,0);glPixelStorei(GL_UNPACK_ALIGNMENT,1);glBindTexture(GL_TEXTURE_2D,t.colorTexture());glTexSubImage2D(GL_TEXTURE_2D,0,0,0,t.width(),t.height(),GL_RGBA,GL_UNSIGNED_BYTE,bytes);}

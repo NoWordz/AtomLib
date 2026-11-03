@@ -1,5 +1,7 @@
 # AtomLib 来源门（T0）
 
+> 2026-11-03 图片预处理：`ImageDownsampler` 根据用户批准方案里的生命周期与预算合同独立编写，使用已锁定的 Skija 图片、画布和采样 API；未复制 AtomChat `ImageQuality` 的表达或阈值，也未复制 Dango/UiStagger。输入、处理和限制见[离屏记录](evidence/atomdefault-image-20261103/report.md)。这是来源记录，不声称人员隔离的 clean-room。
+
 > 2026-11-01 完整外观候选：按用户批准的 appearance-replication-and-backdrop 方案，新增设置行、组卡片、设置壳、通用激活/choice/disclosure、单垂直滚动和 Raw GL 模糊服务。三份 `platforms/shared/src/main/resources/assets/atomlib/shaders/backdrop/` GLSL 为本实施者依据四邻点凸平均、圆角 SDF 和显式 RGB/alpha 合同新写，Apache-2.0。未读取 Tuui，未复制/翻译/拼接 I 类旧 AC renderer/GLSL 或整页；只读主代理参照规格/图片及现有准入 token/材料。不是人员隔离 clean-room。新登记另见 `assets/original-backdrop.json`；不改下文 T0 历史判断。字体源字节和第三方声明保留。
 
 > 2026-11-01 本地控件候选补充：用户批准按新[方案](superpowers/plans/2026-11-01-minimal-controls-and-fonts.md)独立实现 controls 状态机、UiSession、真实字重与中文禁则。新增实现依据明确输入／布局合同，未读取或复制 Tuui；未把排除的旧 helper 带入样例。AC 皮肤调用现存已准入 UiTokens／UiCards／SkiaDraw／AppIcons（含现有 warning path），保留这些文件与现有 MIT／第三方声明；新自有代码按 Apache-2.0。没有新增字体或改字体源字节。下文“组件已删除”对应公开 beta3；候选新增范围仅限 [controls](controls.md)。

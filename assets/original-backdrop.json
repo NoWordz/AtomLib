@@ -3,7 +3,7 @@
   "date": "2026-11-01",
   "author": "AtomLib implementation agent under user authorization",
   "license": "Apache-2.0",
-  "basis": "Explicit framebuffer/lifecycle/state contract; four diagonal neighbors with equal convex weights; rounded rectangle signed distance",
+  "basis": "Explicit framebuffer/lifecycle/state contract; four diagonal neighbors with equal convex weights; rounded rectangle signed distance; optional weighted encoded-RGB luminance limit with proportional channel scaling",
   "files": [
     "platforms/shared/src/main/resources/assets/atomlib/shaders/backdrop/fullscreen.vert",
     "platforms/shared/src/main/resources/assets/atomlib/shaders/backdrop/kawase.frag",

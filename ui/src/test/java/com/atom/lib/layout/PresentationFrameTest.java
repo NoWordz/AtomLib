@@ -19,4 +19,22 @@ class PresentationFrameTest {
             assertNull(frame.topAt(Set.of(child.id()),20,0));
         }
     }
+    @Test void scalingPresentedScrollFrameScalesPublishedBoundsOffsetAndExtent() {
+        var child=LayoutNode.leaf("row",LayoutStyle.column().size(Length.points(80),Length.points(240)).flex(0,0,Length.auto()),null,0);
+        var root=new LayoutNode(new NodeId("scroll-root"),LayoutStyle.column().size(Length.points(100),Length.auto()).behavior(false,false,true,true),List.of(child),null,0);
+        var tree=new LayoutTree(root);var viewport=new Viewport(200,200,1);var scroll=new ScrollViewport();
+        try(var engine=new YogaLayoutEngine()) {
+            var natural=engine.layoutIntrinsicHeight(tree,viewport);
+            var initial=scroll.present(tree,natural,viewport,new Rect(10,20,100,80),1);scroll.publish(initial);assertTrue(scroll.scrollBy(20));
+            var scaled=scroll.present(tree,natural,viewport,new Rect(10,20,100,80),1).scaled(2);
+            assertTrue(scroll.contains(scaled,child.id()),"scaled frame retains its scroll membership");
+            scroll.publish(scaled);
+            assertEquals(new Rect(20,40,200,160),scroll.bounds());assertEquals(480,scroll.extent(),.001);assertEquals(40,scroll.offset(),.001);
+            assertEquals(child.id(),scaled.topAt(Set.of(child.id()),30,50));
+            scroll.publish(scaled.forPainting(child.id()));
+            assertEquals(new Rect(10,20,100,80),scroll.bounds());assertEquals(240,scroll.extent(),.001);assertEquals(20,scroll.offset(),.001);
+            scroll.publish(PresentationFrame.compose(List.of(scaled)));
+            assertEquals(new Rect(20,40,200,160),scroll.bounds());assertTrue(scroll.contains(child.id()));
+        }
+    }
 }

@@ -20,9 +20,14 @@ public final class ScrollViewport {
     public boolean scrollBy(float delta){if(!Float.isFinite(delta))throw new IllegalArgumentException("Nonfinite scroll");float next=Math.max(0,Math.min(Math.max(0,extent-bounds.height()),offset+delta));boolean changed=next!=offset;offset=next;return changed;}
     public boolean ensureVisible(Rect row){if(row.y()<bounds.y())return scrollBy(row.y()-bounds.y());if(row.bottom()>bounds.bottom())return scrollBy(row.bottom()-bounds.bottom());return false;}
     public PresentationFrame present(LayoutTree tree,LayoutSnapshot natural,Viewport screen,Rect bounds,float scale){
-        Objects.requireNonNull(bounds);float extent=natural.box(tree.root().id()).border().height()*scale;float offset=Math.max(0,Math.min(this.offset,Math.max(0,extent-bounds.height())));var state=new State(bounds,extent,offset,Set.copyOf(natural.paintOrder()));
+        return present(tree,natural,screen,bounds,scale,Map.of());
+    }
+    public PresentationFrame present(LayoutTree tree,LayoutSnapshot natural,Viewport screen,Rect bounds,float scale,Map<NodeId,EntrancePose> entrance){
+        Objects.requireNonNull(bounds);var rootPose=entrance.get(tree.root().id());
+        var displayedBounds=rootPose==null?bounds:bounds.translate(rootPose.x()*scale,rootPose.y()*scale).intersect(screen.bounds());
+        float extent=natural.box(tree.root().id()).border().height()*scale;float offset=Math.max(0,Math.min(this.offset,Math.max(0,extent-displayedBounds.height())));var state=new State(displayedBounds,extent,offset,Set.copyOf(natural.paintOrder()));
         var limited=PresentationFrame.constrainRootHeight(natural,tree.root().id(),bounds.height()/scale);
-        var frame=PresentationFrame.create(tree,limited,new Viewport(screen.width()/scale,screen.height()/scale,screen.pixelsPerUnit()*scale),Map.of(tree.root().id(),new PresentationFrame.Offset(0,offset/scale)),new PresentationFrame.Offset(bounds.x()/scale,bounds.y()/scale));
+        var frame=PresentationFrame.create(tree,limited,new Viewport(screen.width()/scale,screen.height()/scale,screen.pixelsPerUnit()*scale),Map.of(tree.root().id(),new PresentationFrame.Offset(0,offset/scale)),new PresentationFrame.Offset(bounds.x()/scale,bounds.y()/scale),entrance);
         return frame.scaled(scale).withScroll(this,state);
     }
     public Rect thumb(){return thumb(bounds,extent,offset);}

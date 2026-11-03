@@ -3,7 +3,12 @@ import com.atom.lib.layout.*;
 import com.atom.lib.geometry.Viewport;
 import com.atom.lib.text.TextService;
 import io.github.humbleui.skija.Canvas;
+import java.util.Optional;
 public interface ControlSkin {
+    /** Empty retains the original duration-based toggle movement. */
+    default Optional<ControlSpring> toggleSpring(){return Optional.empty();}
+    /** The optional knob position can overshoot; the visual's colour weights remain bounded. */
+    default void paintToggle(Canvas c,PresentationFrame f,NodeId id,ToggleModel m,ControlVisual v,TextService text,ControlPresentation p,float knobPosition){paintToggle(c,f,id,m,v,text,p);}
     default LayoutNode actionNode(NodeId id,ActionModel model,LayoutStyle outer,TextService text,float iconSize){throw new UnsupportedOperationException("This skin does not support image slots");}
     default void paintAction(Canvas canvas,PresentationFrame frame,NodeId id,ActionModel model,ControlVisual visual,TextService text,ControlIcon icon,float iconSize){throw new UnsupportedOperationException("This skin does not support image slots");}
     default LayoutNode actionNode(NodeId id,ActionModel m,LayoutStyle outer,TextService text){throw new UnsupportedOperationException("This skin does not support action controls");}

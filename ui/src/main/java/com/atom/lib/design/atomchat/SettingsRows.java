@@ -50,10 +50,13 @@ final class SettingsRows {
         float inner=half-UiTokens.s(1.5f);SkiaDraw.drawRoundedRect(c,x-inner,y-inner,inner*2,inner*2,inner,alpha(0xffffffff,opacity));
     }
     static void toggle(Canvas c,PresentationFrame f,NodeId id,ToggleModel m,ControlVisual v,TextService text,AtomChatControlStyle s){
+        toggle(c,f,id,m,v,text,s,v.position());
+    }
+    static void toggle(Canvas c,PresentationFrame f,NodeId id,ToggleModel m,ControlVisual v,TextService text,AtomChatControlStyle s,float knobPosition){
         feedback(c,f,id,v,s);float opacity=m.enabled()?1:.45f;
         label(c,f,slot(id,"title"),m.label(),AtomChatFonts.BODY,UiTokens.SETTINGS_TILE_TITLE,alpha(s.textColor(),opacity),text);
         label(c,f,slot(id,"body"),m.description(),AtomChatFonts.BODY,UiTokens.SETTINGS_TILE_SUB,alpha(s.textSecondaryColor(),opacity),text);
         var r=f.box(slot(id,"switch")).content();SkiaDraw.drawRoundedRect(c,r.x(),r.y(),r.width(),r.height(),r.height()/2,alpha(m.checked()?s.accentColor():0xff37383e,opacity));
-        float size=UiTokens.SWITCH_KNOB,inset=UiTokens.SWITCH_INSET,x=r.x()+inset+(r.width()-size-2*inset)*v.position();SkiaDraw.drawRoundedRect(c,x,r.y()+inset,size,size,size/2,alpha(0xffffffff,opacity));
+        float size=UiTokens.SWITCH_KNOB,inset=UiTokens.SWITCH_INSET,x=r.x()+inset+(r.width()-size-2*inset)*knobPosition;SkiaDraw.drawRoundedRect(c,x,r.y()+inset,size,size,size/2,alpha(0xffffffff,opacity));
     }
 }

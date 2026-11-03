@@ -6,6 +6,7 @@ uniform vec2 span;
 uniform vec2 outputSize;
 uniform float cornerRadius;
 uniform float opacity;
+uniform float maxLuminance;
 in vec2 coordinate;
 out vec4 result;
 void main() {
@@ -14,5 +15,8 @@ void main() {
     float distanceToEdge = length(max(q, vec2(0.0))) + min(max(q.x, q.y), 0.0) - radius;
     if (distanceToEdge > 0.0) discard;
     float coverage = 1.0 - smoothstep(-0.75, 0.0, distanceToEdge);
-    result = vec4(texture(sourceImage, origin + coordinate * span).rgb, opacity * coverage);
+    vec3 rgb = texture(sourceImage, origin + coordinate * span).rgb;
+    float luminance = dot(rgb, vec3(0.2126, 0.7152, 0.0722));
+    if (luminance > maxLuminance) rgb *= maxLuminance / luminance;
+    result = vec4(rgb, opacity * coverage);
 }

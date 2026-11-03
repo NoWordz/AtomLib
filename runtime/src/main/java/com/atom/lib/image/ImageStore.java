@@ -68,6 +68,31 @@ public final class ImageStore implements AutoCloseable {
             canvas.drawImageRect(image, destination);
         } finally { canvas.restoreToCount(saved); }
     }
+    /** Opt-in preprocessing: pixelsPerUnit includes the host's complete canvas scale. */
+    public synchronized void draw(String id, Canvas canvas, Rect bounds, ImageFit fit, float radius,
+                                  ImageDownsampler downsampler, float pixelsPerUnit, SamplingMode sampling, boolean pixelArt) {
+        requireOpen(); Objects.requireNonNull(canvas); Objects.requireNonNull(bounds); Objects.requireNonNull(fit);
+        Objects.requireNonNull(downsampler); Objects.requireNonNull(sampling);
+        if (!Float.isFinite(radius) || radius < 0 || !Float.isFinite(pixelsPerUnit) || pixelsPerUnit <= 0)
+            throw new IllegalArgumentException("Invalid radius or pixel density");
+        Image image=entries.get(id);
+        if(image==null)throw new IllegalArgumentException("Unknown image " + id);
+        if(bounds.width()==0||bounds.height()==0)return;
+        float iw=image.getWidth(),ih=image.getHeight();
+        float scale=fit==ImageFit.CONTAIN?Math.min(bounds.width()/iw,bounds.height()/ih):Math.max(bounds.width()/iw,bounds.height()/ih);
+        float width=iw*scale,height=ih*scale;
+        double pixelWidth=Math.ceil((double)width*pixelsPerUnit),pixelHeight=Math.ceil((double)height*pixelsPerUnit);
+        int targetWidth=(int)Math.max(1,Math.min(Integer.MAX_VALUE,pixelWidth));
+        int targetHeight=(int)Math.max(1,Math.min(Integer.MAX_VALUE,pixelHeight));
+        Image selected=downsampler.select(image,targetWidth,targetHeight,pixelArt);
+        var source=io.github.humbleui.types.Rect.makeXYWH(0,0,selected.getWidth(),selected.getHeight());
+        var destination=io.github.humbleui.types.Rect.makeXYWH(bounds.x()+(bounds.width()-width)/2,bounds.y()+(bounds.height()-height)/2,width,height);
+        int saved=canvas.getSaveCount();canvas.save();
+        try (var paint=new Paint()) {
+            canvas.clipRRect(RRect.makeXYWH(bounds.x(),bounds.y(),bounds.width(),bounds.height(),radius));
+            canvas.drawImageRect(selected,source,destination,sampling,paint,false);
+        } finally {canvas.restoreToCount(saved);}
+    }
     public synchronized void reload() { requireOpen(); entries.clear(); scope.reload(); }
     @Override public synchronized void close() { entries.clear(); scope.close(); }
     private boolean stale(long ticket) { return runtime.isClosed() || scope.isClosed() || ticket != scope.generation(); }

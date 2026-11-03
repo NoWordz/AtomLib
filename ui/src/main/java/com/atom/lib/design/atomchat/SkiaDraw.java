@@ -28,8 +28,8 @@ public final class SkiaDraw {
      * Blur-radius -> MaskFilter cache. drawRoundedShadow used to allocate a
      * fresh native MaskFilter on every call (and leave it to the GC); radii
      * only vary with the ui scale, so a tiny cache keeps the draw path
-     * allocation-free. Cleared wholesale when a new scale shows up — the
-     * handful of orphans go the same GC route the old code took every frame.
+     * allocation-free. On eviction the paint releases its retained reference
+     * before the cache closes its own filter handles.
      * Render-thread only, like the rest of the draw path.
      */
     private static final java.util.Map<Float, MaskFilter> BLUR_FILTERS = new java.util.HashMap<>();
@@ -48,11 +48,18 @@ public final class SkiaDraw {
      */
     private static final Paint SHARED_PAINT = new Paint().setAntiAlias(true);
 
+    /** Render-thread only; call when all users of the shared shadow cache have stopped drawing. */
+    public static void releaseShadowFilters() {
+        SHADOW_PAINT.setMaskFilter(null);
+        BLUR_FILTERS.values().forEach(MaskFilter::close);
+        BLUR_FILTERS.clear();
+    }
+
     public static void drawRoundedShadow(Canvas canvas, float x, float y, float width, float height, float radius, float blur, int color) {
         MaskFilter filter = BLUR_FILTERS.get(blur);
         if (filter == null) {
             if (BLUR_FILTERS.size() >= 16) {
-                BLUR_FILTERS.clear();
+                releaseShadowFilters();
             }
             filter = MaskFilter.makeBlur(FilterBlurMode.NORMAL, blur);
             BLUR_FILTERS.put(blur, filter);
@@ -186,8 +193,8 @@ public final class SkiaDraw {
             clip(canvas, x, y, width, height, radius);
             Rect src = Rect.makeXYWH(0, 0, snapshot.getWidth(), snapshot.getHeight());
             Rect dst = Rect.makeXYWH(x, y, width, height);
-            try (Paint paint = new Paint().setAntiAlias(true)
-                    .setImageFilter(ImageFilter.makeBlur(blur, blur, FilterTileMode.CLAMP))) {
+            try (ImageFilter filter = ImageFilter.makeBlur(blur, blur, FilterTileMode.CLAMP);
+                 Paint paint = new Paint().setAntiAlias(true).setImageFilter(filter)) {
                 canvas.drawImageRect(snapshot, src, dst, SamplingMode.LINEAR, paint, false);
             }
         } finally {
