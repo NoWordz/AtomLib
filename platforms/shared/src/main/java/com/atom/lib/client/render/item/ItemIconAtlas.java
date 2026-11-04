@@ -31,6 +31,7 @@ public final class ItemIconAtlas implements AutoCloseable {
         var tiles=new ArrayList<Tile>();int index=0;for(var request:requests){int n=request.empty()?0:index++;tiles.add(new Tile(request.key(),n%cols*cell+2,n/cols*cell+2,request.pixelSize(),request.empty()));}
         // All previous bridge work must be submitted before GL writes storage again.
         bridge.withContext(context->{context.flushAndSubmit(false);return null;});
+        if(count==0){active=new ItemIconFrame(this,generation,null,tiles);lastFrame=frameId;return active;}
         Image imported=null;
         try(GlStateScope ignored=GlStateScope.capture()){
             if(count>0){
