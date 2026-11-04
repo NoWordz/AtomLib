@@ -1,5 +1,11 @@
 # AtomLib status
 
+## Paragraph 与 ICU4J 本地候选（2026-11-03）
+
+新增显式、需关闭的 Paragraph 文本服务及 ICU grapheme 边界，旧 TextService 与内置皮肤默认不变；自定义皮肤按钮完成离屏布局、绘制和点击用例。字体代次变化后的旧 native 对象在下一次服务或布局操作、或关闭时释放。RTL 仍拒绝；高度裁剪不自动添加省略号。
+
+根工程强制重跑 core / runtime / ui 24 / 71 / 138 项通过、无跳过；三端构建与制品检查、六个隔离 Maven 消费者及纯 Maven 三坐标探针通过，缺 ICU 负控按预期失败；Windows x64 hidden GL 三端各 47 项通过。独立审查发现的问题及验证范围见[证据报告](evidence/icu-boundaries-20261103/report.md)。真实游戏加载器、Windows ARM64、长期 native 泄漏、完整 bidi/IME 和实际性能未验证。新候选未部署、提交或发布，Wiki 源未推送。
+
 ## 当前状态（2026-11-03）
 
 - 当前源码版本 `0.3.0`，上轮提交 `eca7ed9` 和 `d9c1da1` 已推送；默认分支已由 `codex/atomlib-extraction` 重命名为 `main`。当前提交以 Git 查询为准。公开发行仍是 `0.1.0-beta` beta3，0.3.0 尚未发布，也没有公开 Maven 仓库。

@@ -52,4 +52,6 @@ atomlibEmbedded.each { d ->
 // Isolated Java 17 modules are merged into the distributable, not nested mods.
 dependencies {
     api project(':ui')
+    // The game normally supplies ICU; standalone Maven consumers need it declared.
+    runtimeOnly "com.ibm.icu:icu4j:${locked.icu4j}"
 }

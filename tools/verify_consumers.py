@@ -30,6 +30,9 @@ def verify(project, target, jar, repo=None):
             if len(found) != 1 or found[0]['version'] != version:
                 errors.append(f'{name}: missing/wrong transitive API {artifact}: {found}')
         if name == 'runtimeClasspath':
+            icu = [d for d in deps if d['group'] == 'com.ibm.icu' and d['name'] == 'icu4j' and not d.get('classifier')]
+            if len(icu) != 1 or icu[0]['version'] != config['icu']:
+                errors.append(f'{name}: missing/wrong icu4j runtime dependency: {icu}')
             for artifact, classifier in [('skija-windows-x64',None),('skija-windows-arm64',None),('lwjgl-yoga','natives-windows'),('lwjgl-yoga','natives-windows-arm64')]:
                 if not any(d['name'] == artifact and d.get('classifier') == classifier for d in deps):
                     errors.append(f'{name}: missing development native {artifact}:{classifier}')

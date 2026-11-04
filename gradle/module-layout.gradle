@@ -192,6 +192,11 @@ if (!project.hasProperty('atomlibTargetKey')) {
                             def exclusion = excludes.appendNode('exclusion')
                             exclusion.appendNode('groupId', '*'); exclusion.appendNode('artifactId', '*')
                         }
+                        def icu = deps.appendNode('dependency')
+                        icu.appendNode('groupId', 'com.ibm.icu')
+                        icu.appendNode('artifactId', 'icu4j')
+                        icu.appendNode('version', dependencyVersions.icu4j)
+                        icu.appendNode('scope', 'runtime')
                     }
                 }
             }
@@ -206,20 +211,22 @@ if (!project.hasProperty('atomlibTargetKey')) {
             def f = outputFile.get().asFile
             def data = new JsonSlurper().parse(f)
             data.variants.each { variant ->
-                variant.dependencies?.removeAll { it.group == 'com.atom.lib' || !(it.group in ['io.github.humbleui', 'org.lwjgl']) }
+                variant.dependencies?.removeAll { it.group == 'com.atom.lib' || !(it.group in ['io.github.humbleui', 'org.lwjgl', 'com.ibm.icu']) }
             }
             f.setText(JsonOutput.prettyPrint(JsonOutput.toJson(data)) + '\n', 'UTF-8')
         }
     }
     tasks.register('publishToTestRepository') { dependsOn 'publishMavenJavaPublicationToTestRepository' }
     tasks.register('verifyArtifact', Exec) {
-        dependsOn dist, 'generatePomFileForMavenJavaPublication'
+        dependsOn dist, 'generatePomFileForMavenJavaPublication', 'generateMetadataFileForMavenJavaPublication'
         workingDir atomlibRepoRoot
         commandLine((findProperty('pythonExecutable') ?: 'python').toString(), 'tools/verify_artifacts.py',
             dist.get().archiveFile.get().asFile.absolutePath, '--loader', atomlibTarget.loader,
             '--version', project.version.toString(), '--skija', dependencyVersions.skija,
             '--types', dependencyVersions.types, '--yoga', atomlibTarget.yoga,
-            '--pom', layout.buildDirectory.file('publications/mavenJava/pom-default.xml').get().asFile.absolutePath)
+            '--icu', dependencyVersions.icu4j,
+            '--pom', layout.buildDirectory.file('publications/mavenJava/pom-default.xml').get().asFile.absolutePath,
+            '--module', layout.buildDirectory.file('publications/mavenJava/module.json').get().asFile.absolutePath)
     }
     tasks.named('check') { dependsOn 'verifyArtifact' }
 }

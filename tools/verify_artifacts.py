@@ -140,6 +140,8 @@ def verify_artifact(path, *, loader, version='0.1.0-beta', skija='0.143.18', typ
                     classes[name] = here
                     if name.startswith(('com/atom/chat/', 'com/atomchat/')):
                         error(f'AC class: {here}')
+                    if name.startswith('com/ibm/icu/'):
+                        error(f'ICU must come from the host or declared dependency: {here}')
                     if name.endswith('/AtomLibMod.class') and any(s in data for s in (b'net/minecraft/client/', b'io/github/humbleui/', b'org/lwjgl/', b'AtomLibRuntime')):
                         error(f'unsafe common entrypoint signature or native initialization: {here}')
                     if name.startswith('org/lwjgl/') and not name.startswith('org/lwjgl/util/yoga/'):
@@ -248,7 +250,7 @@ def verify_artifact(path, *, loader, version='0.1.0-beta', skija='0.143.18', typ
     return errors
 
 
-def verify_pom(path, *, skija, types, yoga):
+def verify_pom(path, *, skija, types, yoga, icu='71.1'):
     errors = []
     try:
         root = ET.parse(path).getroot()
@@ -259,13 +261,32 @@ def verify_pom(path, *, skija, types, yoga):
     deps = {}
     for dep in root.findall('./dependencies/dependency'):
         key = (dep.findtext('groupId'), dep.findtext('artifactId'), dep.findtext('classifier'))
+        if key in deps:
+            errors.append(f'POM duplicate dependency: {key}')
         deps[key] = (dep.findtext('version'), dep.findtext('scope', 'compile'))
+        if key[:2] == ('com.ibm.icu', 'icu4j') and dep.findtext('optional', 'false').strip().lower() != 'false':
+            errors.append('POM ICU dependency must not be optional')
         if key[0] == 'com.atom.lib' or key[:2] == ('org.lwjgl', 'lwjgl'):
             errors.append(f'POM exposes merged module or MC LWJGL core: {key}')
     for key, version in [(('io.github.humbleui','skija-shared'),skija), (('io.github.humbleui','types'),types), (('org.lwjgl','lwjgl-yoga'),yoga)]:
         if deps.get((*key, None)) != (version, 'compile'):
             errors.append(f'POM missing compile API dependency or incorrect version: {key}: {deps.get((*key, None))}')
+    if deps.get(('com.ibm.icu', 'icu4j', None)) != (icu, 'runtime'):
+        errors.append(f'POM missing ICU runtime dependency or incorrect version: {deps.get(("com.ibm.icu", "icu4j", None))}')
     return errors
+
+
+def verify_module_metadata(path, *, icu):
+    try:
+        data = json.loads(Path(path).read_text(encoding='utf-8'))
+        runtime = [v for v in data['variants'] if v.get('name') == 'runtimeElements']
+        dependencies = [d for v in runtime for d in v.get('dependencies', [])
+                        if d.get('group') == 'com.ibm.icu' and d.get('module') == 'icu4j']
+        if len(runtime) != 1 or len(dependencies) != 1 or dependencies[0].get('version', {}).get('requires') != icu:
+            return [f'Gradle metadata missing/wrong ICU runtime dependency: {dependencies}']
+    except (OSError, ValueError, TypeError, KeyError) as exc:
+        return [f'Gradle metadata: {exc}']
+    return []
 
 
 def main():
@@ -275,13 +296,17 @@ def main():
     parser.add_argument('--version', default='0.3.0')
     parser.add_argument('--skija', default='0.143.18')
     parser.add_argument('--types', default='0.2.0')
+    parser.add_argument('--icu', default='71.1')
     parser.add_argument('--yoga', required=True)
     parser.add_argument('--pom', type=Path)
+    parser.add_argument('--module', type=Path)
     parser.add_argument('--consumer', action='store_true')
     args = parser.parse_args()
     errors = verify_artifact(args.jar, loader=args.loader, version=args.version, skija=args.skija, types=args.types, yoga=args.yoga, consumer=args.consumer)
     if args.pom:
-        errors += verify_pom(args.pom, skija=args.skija, types=args.types, yoga=args.yoga)
+        errors += verify_pom(args.pom, skija=args.skija, types=args.types, yoga=args.yoga, icu=args.icu)
+    if args.module:
+        errors += verify_module_metadata(args.module, icu=args.icu)
     if errors:
         print('\n'.join(errors), file=sys.stderr)
         return 1

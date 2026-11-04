@@ -1,0 +1,24 @@
+plugins { id 'java' }
+
+repositories {
+    exclusiveContent {
+        forRepository { maven { url = file(providers.gradleProperty('atomlibTestMavenRepo').get()).toURI() } }
+        filter { includeGroup 'com.atom.lib' }
+    }
+    mavenCentral()
+}
+
+def identity = new Properties()
+file('../../gradle.properties').withInputStream { identity.load(it) }
+dependencies {
+    implementation("com.atom.lib:atomlib-${providers.gradleProperty('atomlibTarget').get()}:${identity.atomlib_version}") {
+        // Negative control proves this consumer does not get ICU from Minecraft.
+        if (providers.gradleProperty('omitIcu').isPresent()) exclude group: 'com.ibm.icu', module: 'icu4j'
+    }
+}
+sourceSets.main.java.srcDir('../verification')
+tasks.register('probe', JavaExec) {
+    dependsOn tasks.named('classes')
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.atom.example.verification.ParagraphConsumerProbe'
+}

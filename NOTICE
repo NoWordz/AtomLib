@@ -30,6 +30,10 @@ HumbleUI types 0.2.0: Apache License 2.0.
 Full text: licenses/HumbleUI-types-0.2.0-LICENSE.txt.
 Preserve applicable upstream source-file copyright notices.
 
+ICU4J is an external runtime dependency and is not included in the AtomLib
+distribution JAR. The separately distributed ICU4J artifact contains its own
+LICENSE; the new opt-in Paragraph path uses its Unicode boundary algorithms.
+
 Included icon provenance for the four-icon allowlist (`IconPaths.java`):
 Lucide Icons and Contributors (ISC); Feather / Cole Bemis (MIT).
 Full upstream notices and licenses: licenses/Lucide-LICENSE.txt and

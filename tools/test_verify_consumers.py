@@ -4,20 +4,28 @@ import tempfile
 import unittest
 import zipfile
 from verify_consumers import verify
+from run_packaging import plain_probe_result_ok
 
 
 class ConsumerTests(unittest.TestCase):
-    def check_report(self, group):
+    def test_plain_probe_negative_requires_specific_failure(self):
+        self.assertFalse(plain_probe_result_ok(1, 'configuration failed', negative=True))
+        self.assertFalse(plain_probe_result_ok(0, 'Paragraph text requires a compatible ICU4J runtime', negative=True))
+        self.assertTrue(plain_probe_result_ok(1, 'Paragraph text requires a compatible ICU4J runtime', negative=True))
+        self.assertTrue(plain_probe_result_ok(0, 'PASS independent Paragraph consumer', negative=False))
+        self.assertFalse(plain_probe_result_ok(0, '', negative=False))
+    def check_report(self, group, icu=True):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             (root/'versions').mkdir()
-            (root/'versions/targets.json').write_text(json.dumps({'targets': {'1.21.1-fabric': {'loader': 'fabric', 'yoga': '3.3.3'}}}))
+            (root/'versions/targets.json').write_text(json.dumps({'targets': {'1.21.1-fabric': {'loader': 'fabric', 'yoga': '3.3.3', 'icu': '73.2'}}}))
             project = root/'consumer'
             (project/'build/reports').mkdir(parents=True)
             ours = {'group': group, 'name': 'atomlib-1.21.1-fabric', 'version': '0.1.0-beta'}
             api = [{'group':g,'name':n,'version':v} for g,n,v in [('io.github.humbleui','skija-shared','0.143.18'),('io.github.humbleui','types','0.2.0'),('org.lwjgl','lwjgl-yoga','3.3.3')]]
             natives = [{'group':'org.lwjgl' if n=='lwjgl-yoga' else 'io.github.humbleui','name':n,'classifier':c,'version':'3.3.3' if n=='lwjgl-yoga' else '0.143.18'} for n,c in [('skija-windows-x64',None),('skija-windows-arm64',None),('lwjgl-yoga','natives-windows'),('lwjgl-yoga','natives-windows-arm64')]]
-            report = {'declared': [{'group':'com.atom.lib','name':'atomlib-1.21.1-fabric','version':'0.1.0-beta'}], 'configurations': {'compileClasspath': [ours]+api, 'runtimeClasspath': [ours]+api+natives}}
+            icu_dep = [{'group':'com.ibm.icu','name':'icu4j','version':'73.2'}] if icu else []
+            report = {'declared': [{'group':'com.atom.lib','name':'atomlib-1.21.1-fabric','version':'0.1.0-beta'}], 'configurations': {'compileClasspath': [ours]+api, 'runtimeClasspath': [ours]+api+natives+icu_dep}}
             (project/'build/reports/maven-consumer.json').write_text(json.dumps(report))
             jar = project/'consumer.jar'
             with zipfile.ZipFile(jar,'w') as archive:
@@ -29,6 +37,10 @@ class ConsumerTests(unittest.TestCase):
 
     def test_arbitrary_similar_groups_are_rejected(self):
         self.assertTrue(self.check_report('untrusted.com.atom.lib'))
+
+    def test_missing_icu_is_rejected(self):
+        errors = self.check_report('net_fabricmc_yarn_1_21_1_1_21_1_build_3_v2.com.atom.lib', icu=False)
+        self.assertTrue(any('icu4j' in error for error in errors), errors)
 
 
 if __name__ == '__main__':

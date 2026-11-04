@@ -50,6 +50,25 @@ try (RuntimeHandle runtime = AtomLibRuntime.open("example");
 
 上例的 Path、Canvas、指针坐标均由宿主提供，不会保存为库的全局状态。资源的 try-with-resources 关闭顺序应让 TextService 先于 FontRegistry、RuntimeHandle；TextService 只持有 Java 布局缓存，宿主负责显式关闭它。FontRegistry、ImageStore、SvgStore 已登记到 handle；手动提前 close 后再关闭 handle 是幂等的。
 
+## 可选 Paragraph 文本路径（本地候选）
+
+宿主可以显式创建 `ParagraphTextService`，用同一个 `ParagraphTextLayout` 测量、绘制、命中与选区。布局持有 native 对象，必须在不用时关闭；关闭 service 也会关闭其未释放的布局。字体注册表变更使旧布局失效；该服务下一次布局或查询时清理旧代次，若没有后续操作则由关闭布局或服务释放。不要把 layout 留在未关闭的长期对象中。
+
+```java
+try (var paragraphs = new ParagraphTextService(fonts);
+     var layout = paragraphs.layout(new TextRequest("中e\u0301 text", body, 18, 0xff202020),
+         new Constraints(Constraints.Axis.atMost(200), Constraints.Axis.undefined()))) {
+    var measured = layout.size();
+    layout.draw(borrowedCanvas, 12, 12);
+    int offset = layout.hitTest(10, 5); // 相对于段落左上角，UTF-16 偏移
+    var selection = layout.selection(1, 3);
+}
+```
+
+现阶段仍沿用 `TextRequest` 对强 RTL 和方向控制符的拒绝，不宣称 bidi 或 IME 支持。Paragraph 决定实际换行和几何；ICU4J 用于按 locale ROOT 对齐 grapheme，不会替换 Paragraph 的换行算法。宽高约束会裁剪；`maxLines` 才控制省略号，高度不足不会自动插入省略号。`TextService` 构造器、默认策略和内置控件皮肤不变；使用 Paragraph 的自定义按钮皮肤离屏示例见测试 `ParagraphButtonHostTest`。生产宿主须自行管理布局更新与关闭。
+
+本地候选编译使用 ICU4J 71.1 共同 API；目标构建解析到 Forge 1.20.1 的 71.1 和 1.21.1 两端的 73.2。制品不内嵌 ICU；Maven POM 与 Gradle runtime metadata 声明 71.1，游戏依赖解析可选中其提供的版本。ICU4J 属于独立运行时依赖，其发行包包含 `LICENSE`；旧路径不要求加载 ICU，启用新路径缺少或不兼容 ICU 时会报告错误。上述构建和 JVM 验证不代表真实游戏加载器、Windows ARM64 或所有字体组合已验证。
+
 ## 字体所有权与重载
 
 - Registry 独占其创建的 Typeface。解析过程中临时 Data 使用 try-with-resources 关闭；默认 FontMgr 是 Skija 的借用单例，库不关闭它，也不把它返回给宿主。

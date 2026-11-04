@@ -75,6 +75,33 @@ def consumer(pair,maven=None):
     return run(project, pair[1], ['verifyConsumer'], 'consumer.log', maven=maven)
 
 
+def plain_probe_result_ok(returncode, output, *, negative):
+    if negative:
+        return returncode != 0 and 'Paragraph text requires a compatible ICU4J runtime' in output
+    return returncode == 0 and 'PASS independent Paragraph consumer' in output
+
+
+def plain_consumer(target, maven=None, *, negative=False):
+    """Exercise publication metadata without Minecraft supplying ICU implicitly."""
+    home=java_home(TARGETS[target]['java'])
+    java=home/'bin'/('java.exe' if os.name=='nt' else 'java')
+    project=ROOT/'examples/plain-paragraph'
+    repo=Path(maven or ROOT/'build/test-maven').resolve()
+    command=[str(java),'-Dfile.encoding=UTF-8','-classpath',str(ROOT/'gradle/wrapper/gradle-wrapper.jar'),
+             'org.gradle.wrapper.GradleWrapperMain','-p',str(project),'probe',f'-PatomlibTarget={target}',
+             f'-PatomlibTestMavenRepo={repo}','--no-daemon','--console=plain']
+    if negative: command.append('-PomitIcu')
+    env=os.environ.copy(); env['JAVA_HOME']=str(home)
+    result=subprocess.run(command,cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,encoding='utf-8',errors='replace')
+    log=project/'build'/f'plain-consumer-{target}{"-missing-icu" if negative else ""}.log'
+    log.parent.mkdir(parents=True,exist_ok=True)
+    log.write_text(json.dumps({'command':command},ensure_ascii=False)+'\n'+result.stdout+f'\nEXIT_CODE={result.returncode}\n',encoding='utf-8')
+    ok=plain_probe_result_ok(result.returncode,result.stdout,negative=negative)
+    print(f'{"PASS" if ok else "FAIL"} plain consumer {target}{" missing ICU" if negative else ""}: {log}',flush=True)
+    if not ok: print('\n'.join(result.stdout.splitlines()[-55:]),file=sys.stderr,flush=True)
+    return ok
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('stage',choices=['all','platforms','consumers','verify'])
@@ -99,6 +126,10 @@ def main():
         with ThreadPoolExecutor(max_workers=args.jobs) as pool:
             results=list(pool.map(lambda pair:consumer(pair,args.maven),work))
         if not all(results): return 1
+        # One shared Gradle project: run serially so target classpaths never race.
+        for key in keys:
+            if not plain_consumer(key,args.maven): return 1
+        if not plain_consumer(keys[0],args.maven,negative=True): return 1
     return 0
 
 

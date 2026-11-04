@@ -10,6 +10,13 @@ version = '1.0.0-local'
 base.archivesName = "${atomlibExampleId}-${atomlibTargetKey}"
 java.toolchain.languageVersion = JavaLanguageVersion.of(target.java as int)
 sourceSets.main.java.srcDir('../src/main/java')
+sourceSets {
+    paragraphProbe {
+        java.srcDir new File(repoRoot, 'examples/verification')
+        compileClasspath += sourceSets.main.runtimeClasspath
+        runtimeClasspath += sourceSets.main.runtimeClasspath
+    }
+}
 repositories {
     // Exclusive repository prevents a remote or mavenLocal copy masking errors.
     exclusiveContent {
@@ -50,7 +57,7 @@ tasks.register('writeDependencyEvidence') {
             }]
         }
         def declarationConfigurations = ['api','implementation','compileOnly','runtimeOnly','modApi','modImplementation','modCompileOnly','modRuntimeOnly','include','jarJar']
-        def declared = configurations.findAll { it.name in declarationConfigurations }.collectMany { c -> c.dependencies.findAll { it.group == 'com.atom.lib' || it.group == 'io.github.humbleui' || it.group == 'org.lwjgl' }.collect { d ->
+        def declared = configurations.findAll { it.name in declarationConfigurations }.collectMany { c -> c.dependencies.findAll { it.group == 'com.atom.lib' || it.group == 'io.github.humbleui' || it.group == 'org.lwjgl' || it.group == 'com.ibm.icu' }.collect { d ->
             [configuration:c.name, group:d.group, name:d.name, version:d.version]
         } }
         def f=report.get().asFile; f.parentFile.mkdirs()
@@ -58,9 +65,14 @@ tasks.register('writeDependencyEvidence') {
     }
 }
 tasks.register('verifyConsumer', Exec) {
-    dependsOn 'build', 'writeDependencyEvidence'
+    dependsOn 'build', 'writeDependencyEvidence', 'paragraphConsumerProbe'
     workingDir repoRoot
     commandLine((findProperty('pythonExecutable') ?: 'python').toString(), 'tools/verify_consumers.py',
         '--project', projectDir.absolutePath, '--target', atomlibTargetKey,
         '--jar', tasks.named(target.loader == 'fabric' ? 'remapJar' : 'jar').get().archiveFile.get().asFile.absolutePath)
+}
+tasks.register('paragraphConsumerProbe', JavaExec) {
+    dependsOn tasks.named('paragraphProbeClasses')
+    classpath = sourceSets.paragraphProbe.runtimeClasspath
+    mainClass = 'com.atom.example.verification.ParagraphConsumerProbe'
 }

@@ -8,7 +8,7 @@ import warnings
 import zipfile
 from pathlib import Path
 
-from verify_artifacts import verify_artifact, verify_pom
+from verify_artifacts import verify_artifact, verify_pom, verify_module_metadata
 
 
 def jar(entries):
@@ -78,6 +78,9 @@ def mutate_nested(entries, suffix, change):
 
 
 class ArtifactTests(unittest.TestCase):
+    def test_bundled_icu_class_rejected(self):
+        self.reject(fixture() + [('com/ibm/icu/text/BreakIterator.class', clazz())], 'ICU must come')
+
     def test_missing_and_corrupt_required_shader_resources(self):
         original=fixture()
         names=[name for name,_ in original if name.startswith('assets/atomlib/shaders/backdrop/')]
@@ -228,9 +231,23 @@ class ArtifactTests(unittest.TestCase):
             self.assertTrue(verify_artifact(p,loader='forge',consumer=True))
 
 
+class ModuleMetadataTests(unittest.TestCase):
+    def check(self, dependencies):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d)/'module.json'
+            path.write_text(json.dumps({'variants':[{'name':'runtimeElements','dependencies':dependencies}]}))
+            return verify_module_metadata(path, icu='71.1')
+
+    def test_icu_runtime_metadata_present(self):
+        self.assertEqual([], self.check([{'group':'com.ibm.icu','module':'icu4j','version':{'requires':'71.1'}}]))
+
+    def test_missing_icu_runtime_metadata_rejected(self):
+        self.assertTrue(self.check([]))
+
+
 class PomTests(unittest.TestCase):
     def pom(self, scope='compile', version='0.143.18', extra=''):
-        return f'<project><dependencies><dependency><groupId>io.github.humbleui</groupId><artifactId>skija-shared</artifactId><version>{version}</version><scope>{scope}</scope></dependency><dependency><groupId>io.github.humbleui</groupId><artifactId>types</artifactId><version>0.2.0</version><scope>compile</scope></dependency><dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-yoga</artifactId><version>3.3.1</version><scope>compile</scope></dependency>{extra}</dependencies></project>'
+        return f'<project><dependencies><dependency><groupId>io.github.humbleui</groupId><artifactId>skija-shared</artifactId><version>{version}</version><scope>{scope}</scope></dependency><dependency><groupId>io.github.humbleui</groupId><artifactId>types</artifactId><version>0.2.0</version><scope>compile</scope></dependency><dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-yoga</artifactId><version>3.3.1</version><scope>compile</scope></dependency><dependency><groupId>com.ibm.icu</groupId><artifactId>icu4j</artifactId><version>71.1</version><scope>runtime</scope></dependency>{extra}</dependencies></project>'
 
     def check(self, s):
         with tempfile.TemporaryDirectory() as d:
@@ -241,6 +258,13 @@ class PomTests(unittest.TestCase):
     def test_runtime_only_raw_api_is_not_consumable(self): self.assertTrue(self.check(self.pom(scope='runtime')))
     def test_missing_dependency_rejected(self): self.assertTrue(self.check('<project/>'))
     def test_wrong_pinned_version_rejected(self): self.assertTrue(self.check(self.pom(version='0.116.8')))
+    def test_missing_icu_runtime_dependency_rejected(self):
+        self.assertTrue(self.check(self.pom().replace('<groupId>com.ibm.icu</groupId>', '<groupId>other</groupId>')))
+    def test_duplicate_icu_dependency_rejected(self):
+        entry = '<dependency><groupId>com.ibm.icu</groupId><artifactId>icu4j</artifactId><version>71.1</version><scope>runtime</scope></dependency>'
+        self.assertTrue(self.check(self.pom(extra=entry)))
+    def test_optional_icu_dependency_rejected(self):
+        self.assertTrue(self.check(self.pom().replace('<artifactId>icu4j</artifactId>', '<artifactId>icu4j</artifactId><optional>true</optional>')))
 
 
 if __name__=='__main__': unittest.main(verbosity=2)
