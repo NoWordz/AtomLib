@@ -7,13 +7,18 @@ import io.github.humbleui.skija.FilterBlurMode;
 import io.github.humbleui.skija.FilterTileMode;
 import io.github.humbleui.skija.Image;
 import io.github.humbleui.skija.ImageFilter;
+import io.github.humbleui.skija.ImageInfo;
 import io.github.humbleui.skija.MaskFilter;
 import io.github.humbleui.skija.Paint;
 import io.github.humbleui.skija.PaintMode;
 import io.github.humbleui.skija.SamplingMode;
 import io.github.humbleui.skija.Shader;
+import io.github.humbleui.skija.Surface;
 import io.github.humbleui.types.RRect;
 import io.github.humbleui.types.Rect;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public final class SkiaDraw {
     private SkiaDraw() {
@@ -34,6 +39,28 @@ public final class SkiaDraw {
      */
     private static final java.util.Map<Float, MaskFilter> BLUR_FILTERS = new java.util.HashMap<>();
     private static final Paint SHADOW_PAINT = new Paint().setAntiAlias(true);
+    private static final int MAX_SHADOW_IMAGES = 48;
+    private static final int SHADOW_SUPERSAMPLE = 2;
+    private static final Map<ShadowKey, Image> SHADOW_IMAGES =
+            new LinkedHashMap<>(32, 0.75F, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<ShadowKey, Image> eldest) {
+                    if (size() <= MAX_SHADOW_IMAGES) return false;
+                    eldest.getValue().close();
+                    return true;
+                }
+            };
+    private static boolean directShadow =
+            Boolean.getBoolean("atomlib.shadow.direct");
+
+    /**
+     * A shadow is static for a given rounded rectangle, blur and tint. Cards
+     * repeat those values every frame, so rasterising the same MaskFilter blur
+     * once and blitting the cached alpha image removes the per-card GPU blur
+     * without changing card geometry or stacking order.
+     */
+    private record ShadowKey(float width, float height, float radius,
+                             float blur, int color) { }
 
     /**
      * Shared mutable paint for the rounded-rect / ring / edge / image
@@ -53,9 +80,31 @@ public final class SkiaDraw {
         SHADOW_PAINT.setMaskFilter(null);
         BLUR_FILTERS.values().forEach(MaskFilter::close);
         BLUR_FILTERS.clear();
+        SHADOW_IMAGES.values().forEach(Image::close);
+        SHADOW_IMAGES.clear();
     }
 
     public static void drawRoundedShadow(Canvas canvas, float x, float y, float width, float height, float radius, float blur, int color) {
+        if (!directShadow && width > 0.0F && height > 0.0F && blur > 0.0F) {
+            Image shadow = shadowImage(width, height, radius, blur, color);
+            if (shadow != null) {
+                float pad = shadowPad(blur);
+                int imageW = shadow.getWidth();
+                int imageH = shadow.getHeight();
+                canvas.drawImageRect(shadow,
+                        Rect.makeWH(imageW, imageH),
+                        Rect.makeXYWH(x - pad, y - pad,
+                                width + pad * 2.0F, height + pad * 2.0F),
+                        SamplingMode.LINEAR, null, false);
+                return;
+            }
+        }
+        drawRoundedShadowDirect(canvas, x, y, width, height, radius, blur, color);
+    }
+
+    private static void drawRoundedShadowDirect(Canvas canvas, float x, float y,
+                                                float width, float height, float radius,
+                                                float blur, int color) {
         MaskFilter filter = BLUR_FILTERS.get(blur);
         if (filter == null) {
             if (BLUR_FILTERS.size() >= 16) {
@@ -66,6 +115,43 @@ public final class SkiaDraw {
         }
         canvas.drawRRect(RRect.makeXYWH(x + blur * 0.5F, y + blur * 0.5F, width, height, radius),
                 SHADOW_PAINT.setColor(color).setMaskFilter(filter));
+    }
+
+    private static Image shadowImage(float width, float height, float radius,
+                                     float blur, int color) {
+        ShadowKey key = new ShadowKey(width, height, radius, blur, color);
+        Image cached = SHADOW_IMAGES.get(key);
+        if (cached != null) return cached;
+
+        float pad = shadowPad(blur);
+        int imageW = Math.max(1,
+                (int) Math.ceil((width + pad * 2.0F) * SHADOW_SUPERSAMPLE));
+        int imageH = Math.max(1,
+                (int) Math.ceil((height + pad * 2.0F) * SHADOW_SUPERSAMPLE));
+        Surface surface = null;
+        try {
+            surface = Surface.makeRaster(ImageInfo.makeN32Premul(imageW, imageH));
+            Canvas raster = surface.getCanvas();
+            raster.clear(0);
+            raster.scale(SHADOW_SUPERSAMPLE, SHADOW_SUPERSAMPLE);
+            drawRoundedShadowDirect(raster, pad, pad,
+                    width, height, radius, blur, color);
+            Image image = surface.makeImageSnapshot();
+            SHADOW_IMAGES.put(key, image);
+            return image;
+        } catch (RuntimeException failure) {
+            return null;
+        } finally {
+            if (surface != null) surface.close();
+        }
+    }
+
+    private static float shadowPad(float blur) {
+        return Math.max(1.0F, (float) Math.ceil(blur * 3.0F));
+    }
+
+    static void setDirectShadowForTest(boolean direct) {
+        directShadow = direct;
     }
 
     /**

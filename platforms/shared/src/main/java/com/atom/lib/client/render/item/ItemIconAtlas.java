@@ -26,12 +26,13 @@ public final class ItemIconAtlas implements AutoCloseable {
     public ItemIconFrame prepare(List<Entry> requests,long frameId,Pass pass){
         check();Objects.requireNonNull(pass);requests=List.copyOf(requests);if(active!=null)throw new IllegalStateException("Close the previous ItemIconFrame before preparing another");if(frameId<=lastFrame)throw new IllegalArgumentException("Item icon frame IDs must increase");
         var keys=new HashSet<String>();int size=1,count=0;for(var request:requests){if(!keys.add(request.key()))throw new IllegalArgumentException("Duplicate item icon key: "+request.key());if(!request.empty()){size=Math.max(size,request.pixelSize());count++;}}
-        int max=glGetInteger(GL_MAX_TEXTURE_SIZE);if(size>max-4)throw new IllegalArgumentException("Item icon exceeds GL_MAX_TEXTURE_SIZE");int cell=size+4,cols=Math.max(1,(int)Math.ceil(Math.sqrt(count))),rows=Math.max(1,(count+cols-1)/cols);
-        if((long)cols*cell>max||(long)rows*cell>max)throw new IllegalArgumentException("Visible item icon batch exceeds texture capacity");
+        int cell=size+4,cols=Math.max(1,(int)Math.ceil(Math.sqrt(count))),rows=Math.max(1,(count+cols-1)/cols);
         var tiles=new ArrayList<Tile>();int index=0;for(var request:requests){int n=request.empty()?0:index++;tiles.add(new Tile(request.key(),n%cols*cell+2,n/cols*cell+2,request.pixelSize(),request.empty()));}
+        if(count==0){active=new ItemIconFrame(this,generation,null,tiles);lastFrame=frameId;return active;}
+        int max=glGetInteger(GL_MAX_TEXTURE_SIZE);if(size>max-4)throw new IllegalArgumentException("Item icon exceeds GL_MAX_TEXTURE_SIZE");
+        if((long)cols*cell>max||(long)rows*cell>max)throw new IllegalArgumentException("Visible item icon batch exceeds texture capacity");
         // All previous bridge work must be submitted before GL writes storage again.
         bridge.withContext(context->{context.flushAndSubmit(false);return null;});
-        if(count==0){active=new ItemIconFrame(this,generation,null,tiles);lastFrame=frameId;return active;}
         Image imported=null;
         try(GlStateScope ignored=GlStateScope.capture()){
             if(count>0){
@@ -62,7 +63,7 @@ public final class ItemIconAtlas implements AutoCloseable {
             }finally{if(nf!=0)glDeleteFramebuffers(nf);if(nd!=0)glDeleteRenderbuffers(nd);if(nt!=0)glDeleteTextures(nt);}
         }
     }
-    void release(ItemIconFrame frame){check();if(frame!=active)throw new IllegalStateException("Item icon frame is not active");try{bridge.withContext(context->{try{context.flushAndSubmit(false);}finally{if(frame.image!=null)frame.image.close();}return null;});}finally{frame.closed=true;active=null;}}
+    void release(ItemIconFrame frame){check();if(frame!=active)throw new IllegalStateException("Item icon frame is not active");try{if(frame.image!=null)bridge.withContext(context->{try{context.flushAndSubmit(false);}finally{frame.image.close();}return null;});}finally{frame.closed=true;active=null;}}
     private void drop(){if(fbo!=0)glDeleteFramebuffers(fbo);if(depth!=0)glDeleteRenderbuffers(depth);if(texture!=0)glDeleteTextures(texture);texture=fbo=depth=width=height=0;}
     public void invalidate(){check();try{if(active!=null)release(active);}finally{try(GlStateScope ignored=GlStateScope.capture()){drop();generation++;}}}
     public void close(){if(closed)return;check();try{invalidate();}finally{closed=true;}}

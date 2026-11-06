@@ -18,6 +18,7 @@ public final class YogaLayoutEngine implements LayoutEngine {
     private long revision;
     private boolean closed;
     private boolean layoutInProgress;
+    private boolean nativeStateValid;
     private boolean intrinsicHeight;
     private Throwable callbackFailure;
 
@@ -29,7 +30,9 @@ public final class YogaLayoutEngine implements LayoutEngine {
         List<NodeId> children=List.of();
         YGMeasureFunc callback;
         void setMeasure(LayoutNode node){
-            if(measure==node.measure()&&measureRevision==node.measureRevision())return;
+            if((measure==null)==(node.measure()==null)&&measureRevision==node.measureRevision()){
+                measure=node.measure();return;
+            }
             measure=node.measure();measureRevision=node.measureRevision();
             // YGNodeSetMeasureFunc(null) does not dirty the node in Yoga itself.
             // YGNodeMarkDirty asserts a measure func, and only a whole-subtree
@@ -66,10 +69,15 @@ public final class YogaLayoutEngine implements LayoutEngine {
         if(layoutInProgress)throw new IllegalStateException("Cannot reenter an active Yoga layout");
         for(var node:tree.nodes())if(node.style().wrap()&&node.style().gap()>0)throw new IllegalArgumentException("wrap with gap is not supported by the locked Yoga adapter: "+node.id());
         layoutInProgress=true;
-        try{return layoutTransaction(tree,nextViewport,naturalHeight);}finally{layoutInProgress=false;}
+        try{return layoutTransaction(tree,nextViewport,naturalHeight);}
+        catch(RuntimeException|Error failure){nativeStateValid=false;throw failure;}
+        finally{layoutInProgress=false;}
     }
     private LayoutSnapshot layoutTransaction(LayoutTree tree,Viewport nextViewport,boolean naturalHeight){
-        if(previous!=null&&previous.root().equals(tree.root())&&nextViewport.equals(viewport)&&intrinsicHeight==naturalHeight)return snapshot;
+        if(nativeStateValid&&previous!=null&&sameLayout(previous.root(),tree.root())&&nextViewport.equals(viewport)&&intrinsicHeight==naturalHeight){
+            for(var node:tree.nodes())entries.get(node.id()).measure=node.measure();
+            previous=tree;return snapshot;
+        }
         Set<NodeId> replace=new HashSet<>();
         for(var node:tree.nodes()){
             var old=entries.get(node.id());
@@ -123,6 +131,7 @@ public final class YogaLayoutEngine implements LayoutEngine {
         callbackFailure=null;
         // A finite owner height makes Yoga stretch an auto root to the viewport.
         // Passing undefined here lets Yoga derive the popup height from its children.
+        if(!nativeStateValid)YogaDirty.markDirtyAndPropagateToDescendants(entries.get(tree.root().id()).pointer);
         YGNodeCalculateLayout(entries.get(tree.root().id()).pointer,nextViewport.width(),naturalHeight?Float.NaN:nextViewport.height(),YGDirectionLTR);
         if(callbackFailure!=null){
             markMeasureLeavesDirty();
@@ -131,9 +140,15 @@ public final class YogaLayoutEngine implements LayoutEngine {
         }
         Map<NodeId,LayoutBox> boxes=new LinkedHashMap<>();List<NodeId> order=new ArrayList<>();
         collect(tree.root(),null,null,0,0,nextViewport.bounds(),boxes,order);
-        snapshot=new ImmutableLayoutSnapshot(++revision,boxes,order);previous=tree;viewport=nextViewport;intrinsicHeight=naturalHeight;return snapshot;
+        snapshot=new ImmutableLayoutSnapshot(++revision,boxes,order);previous=tree;viewport=nextViewport;intrinsicHeight=naturalHeight;nativeStateValid=true;return snapshot;
     }
 
+    private static boolean sameLayout(LayoutNode a,LayoutNode b){
+        if(!a.id().equals(b.id())||!a.style().equals(b.style())||a.measureRevision()!=b.measureRevision()
+                ||(a.measure()==null)!=(b.measure()==null)||a.children().size()!=b.children().size())return false;
+        for(int i=0;i<a.children().size();i++)if(!sameLayout(a.children().get(i),b.children().get(i)))return false;
+        return true;
+    }
     private void collect(LayoutNode node,NodeId parent,NodeId scrollOwner,float px,float py,Rect inheritedClip,Map<NodeId,LayoutBox> boxes,List<NodeId> order){
         if(node.style().hidden())return;
         long p=entries.get(node.id()).pointer;

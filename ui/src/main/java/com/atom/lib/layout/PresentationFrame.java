@@ -9,13 +9,14 @@ public final class PresentationFrame implements LayoutSnapshot {
     private final long revision;
     private final Map<NodeId,LayoutBox> boxes;
     private final List<NodeId> order;
+    private final java.util.concurrent.ConcurrentMap<Float,PresentationFrame> paintingFrames=new java.util.concurrent.ConcurrentHashMap<>();
     private Map<NodeId,LayoutBox> paintingBoxes;
     private Map<NodeId,Float> scales=Map.of();
     private Map<NodeId,Float> opacity=Map.of();
     private Set<NodeId> entering=Set.of();
     private Map<NodeId,Offset> entranceOffsets=Map.of();
     private Map<ScrollViewport,ScrollViewport.State> scrollStates=Map.of();
-    PresentationFrame withScroll(ScrollViewport viewport,ScrollViewport.State state){scrollStates=Map.of(viewport,state);return this;}
+    PresentationFrame withScroll(ScrollViewport viewport,ScrollViewport.State state){scrollStates=Map.of(viewport,state);paintingFrames.clear();return this;}
     ScrollViewport.State scrollState(ScrollViewport viewport){return scrollStates.get(viewport);}
     private PresentationFrame(long revision,Map<NodeId,LayoutBox> boxes,List<NodeId> order){this.revision=revision;this.boxes=Map.copyOf(boxes);this.paintingBoxes=this.boxes;this.order=List.copyOf(order);}
     public static PresentationFrame create(LayoutTree tree,LayoutSnapshot snapshot,Viewport viewport,Map<NodeId,Offset> scroll,Offset translation){
@@ -41,6 +42,7 @@ public final class PresentationFrame implements LayoutSnapshot {
     @Override public long revision(){return revision;}
     @Override public LayoutBox box(NodeId id){var box=boxes.get(id);if(box==null)throw new IllegalArgumentException("Unknown node ID: "+id);return box;}
     @Override public List<NodeId> paintOrder(){return order;}
+    public boolean contains(NodeId id){return boxes.containsKey(id);}
     /** Uniform displayed transform. Hit boxes and clips use exactly the rendered coordinates. */
     public PresentationFrame scaled(float scale){
         if(!Float.isFinite(scale)||scale<=0)throw new IllegalArgumentException("Invalid display scale");
@@ -62,6 +64,7 @@ public final class PresentationFrame implements LayoutSnapshot {
     /** Used only while the painter applies the matching Canvas scale. */
     public PresentationFrame forPainting(NodeId id){
         float scale=renderScale(id);if(scale==1)return this;
+        var cached=paintingFrames.get(scale);if(cached!=null)return cached;
         var next=new LinkedHashMap<NodeId,LayoutBox>();var metadata=new HashMap<NodeId,Float>();
         for(var item:order){
             var b=box(item);
@@ -71,7 +74,8 @@ public final class PresentationFrame implements LayoutSnapshot {
             metadata.put(item,renderScale(item)/scale);
         }
         var offsets=new HashMap<NodeId,Offset>();entranceOffsets.forEach((item,o)->offsets.put(item,new Offset(o.x()/scale,o.y()/scale)));
-        var result=new PresentationFrame(revision,next,order);result.scales=Map.copyOf(metadata);result.paintingBoxes=paintingBoxes;result.opacity=opacity;result.entering=entering;result.entranceOffsets=Map.copyOf(offsets);result.scrollStates=scaleScrollStates(scrollStates,1/scale);return result;
+        var result=new PresentationFrame(revision,next,order);result.scales=Map.copyOf(metadata);result.paintingBoxes=paintingBoxes;result.opacity=opacity;result.entering=entering;result.entranceOffsets=Map.copyOf(offsets);result.scrollStates=scaleScrollStates(scrollStates,1/scale);
+        var previous=paintingFrames.putIfAbsent(scale,result);return previous==null?result:previous;
     }
     /** Layers are already positioned and clipped; later layers paint and hit above earlier layers. */
     public static PresentationFrame compose(List<PresentationFrame> layers){

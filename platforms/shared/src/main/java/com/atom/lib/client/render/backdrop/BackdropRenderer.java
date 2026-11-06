@@ -9,7 +9,7 @@ import static org.lwjgl.opengl.GL33C.*;
 /** Per-instance, explicit-target Raw GL blur; must be called after host batches flush and outside Skija. */
 public final class BackdropRenderer implements AutoCloseable {
     private final Thread thread=Thread.currentThread();private final long context=glfwGetCurrentContext();
-    private long generation,lastFrame=Long.MIN_VALUE,lastDrawGeneration;private boolean closed;
+    private long generation,lastFrame=Long.MIN_VALUE,lastDrawGeneration,validations;private boolean closed;
     private final BackdropBuffers buffers=new BackdropBuffers();private final BackdropPrograms programs=new BackdropPrograms();
     private FramebufferTarget lastDestination;
     public BackdropRenderer(){if(context==0||!GL.getCapabilities().OpenGL33)throw new IllegalStateException("OpenGL 3.3 context required");}
@@ -31,6 +31,9 @@ public final class BackdropRenderer implements AutoCloseable {
     }
     /** Optional maximum encoded-RGB luminance, preserving hue. One disables the limit. */
     public BackdropOutcome draw(BackdropSnapshot input,FramebufferTarget destination,Rect output,BackdropStyle style,float maxLuminance){
+        return draw(input,destination,output,style,maxLuminance,true);
+    }
+    private BackdropOutcome draw(BackdropSnapshot input,FramebufferTarget destination,Rect output,BackdropStyle style,float maxLuminance,boolean validateDestination){
         check();Objects.requireNonNull(input);Objects.requireNonNull(destination);Objects.requireNonNull(output);Objects.requireNonNull(style);
         requireLuminance(maxLuminance);
         if(input.owner!=this||input.generation!=generation)throw new IllegalStateException("Expired or foreign backdrop snapshot");
@@ -39,29 +42,30 @@ public final class BackdropRenderer implements AutoCloseable {
         if(!output.equals(output.intersect(new Rect(0,0,destination.width(),destination.height())))||!output.equals(output.intersect(input.region)))throw new IllegalArgumentException("Output must fit destination and captured region");
         if(lastDestination!=null&&!same(lastDestination,destination)&&lastDrawGeneration==generation)throw new IllegalStateException("Destination generation changed; recapture first");
         try(var scope=GlStateScope.capture()){
-            String invalid=validate(destination);if(invalid!=null)return skipped(invalid);programs.prepare();normalize();
+            String invalid=validateDestination?validate(destination):null;if(invalid!=null)return skipped(invalid);programs.prepare();normalize();
             int texture=buffers.textures[0];
-            if(style.blurRadius()>0){for(int pass=0;pass<4;pass++){int slot=1+pass%2;glBindFramebuffer(GL_DRAW_FRAMEBUFFER,buffers.fbos[slot]);glViewport(0,0,buffers.width,buffers.height);glColorMask(true,true,true,true);glDisable(GL_BLEND);programs.use(programs.filter,texture);float step=(style.blurRadius()/8)*(pass+.5f);glUniform2f(glGetUniformLocation(programs.filter,"displacement"),step/buffers.width,step/buffers.height);glDrawArrays(GL_TRIANGLES,0,3);texture=buffers.textures[slot];}}
+            if(style.blurRadius()>0){for(int pass=0;pass<4;pass++){int slot=1+pass%2;glBindFramebuffer(GL_DRAW_FRAMEBUFFER,buffers.fbos[slot]);glViewport(0,0,buffers.width,buffers.height);glColorMask(true,true,true,true);glDisable(GL_BLEND);programs.use(programs.filter,texture);float step=(style.blurRadius()/8)*(pass+.5f);glUniform2f(programs.displacement,step/buffers.width,step/buffers.height);glDrawArrays(GL_TRIANGLES,0,3);texture=buffers.textures[slot];}}
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER,destination.framebuffer());int count=glGetInteger(GL_MAX_DRAW_BUFFERS);int[] prior=new int[count];for(int i=0;i<count;i++)prior[i]=glGetInteger(GL_DRAW_BUFFER0+i);
             try{
                 glDrawBuffer(GL_COLOR_ATTACHMENT0);glViewport((int)output.x(),destination.height()-(int)output.bottom(),(int)output.width(),(int)output.height());
                 glEnable(GL_BLEND);glBlendEquation(GL_FUNC_ADD);glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ZERO);
                 glColorMask(true,true,true,false);
-                programs.use(programs.composite,texture);int p=programs.composite;
-                glUniform2f(glGetUniformLocation(p,"origin"),(output.x()-input.region.x())/buffers.width,(input.region.bottom()-output.bottom())/buffers.height);
-                glUniform2f(glGetUniformLocation(p,"span"),output.width()/buffers.width,output.height()/buffers.height);
-                glUniform2f(glGetUniformLocation(p,"outputSize"),output.width(),output.height());glUniform1f(glGetUniformLocation(p,"cornerRadius"),style.cornerRadius());glUniform1f(glGetUniformLocation(p,"opacity"),style.opacity());glUniform1f(glGetUniformLocation(p,"maxLuminance"),maxLuminance);glDrawArrays(GL_TRIANGLES,0,3);
+                programs.use(programs.composite,texture);
+                glUniform2f(programs.origin,(output.x()-input.region.x())/buffers.width,(input.region.bottom()-output.bottom())/buffers.height);
+                glUniform2f(programs.span,output.width()/buffers.width,output.height()/buffers.height);
+                glUniform2f(programs.outputSize,output.width(),output.height());glUniform1f(programs.cornerRadius,style.cornerRadius());glUniform1f(programs.opacity,style.opacity());glUniform1f(programs.maxLuminance,maxLuminance);glDrawArrays(GL_TRIANGLES,0,3);
             }finally{glDrawBuffers(prior);}
             lastDestination=destination;lastDrawGeneration=generation;return new BackdropOutcome(BackdropOutcome.Status.DRAWN,"");
         }catch(BackdropPrograms.Unavailable unavailable){return skipped(unavailable.getMessage());}
     }
     /** Convenience path computes sampling padding; the low-level capture argument is already padded. */
     public BackdropOutcome render(FramebufferTarget source,FramebufferTarget destination,Rect output,BackdropStyle style,long frameId){return render(source,destination,output,style,frameId,1);}
-    public BackdropOutcome render(FramebufferTarget source,FramebufferTarget destination,Rect output,BackdropStyle style,long frameId,float maxLuminance){check();Objects.requireNonNull(source);Objects.requireNonNull(style);requireLuminance(maxLuminance);double pad=Math.ceil((double)style.blurRadius()*2+2);float x=(float)Math.max(0,output.x()-pad),y=(float)Math.max(0,output.y()-pad),right=(float)Math.min(source.width(),output.right()+pad),bottom=(float)Math.min(source.height(),output.bottom()+pad);var padded=new Rect(x,y,Math.max(0,right-x),Math.max(0,bottom-y));return draw(capture(source,padded,frameId),destination,output,style,maxLuminance);}
+    public BackdropOutcome render(FramebufferTarget source,FramebufferTarget destination,Rect output,BackdropStyle style,long frameId,float maxLuminance){check();Objects.requireNonNull(source);Objects.requireNonNull(style);requireLuminance(maxLuminance);double pad=Math.ceil((double)style.blurRadius()*2+2);float x=(float)Math.max(0,output.x()-pad),y=(float)Math.max(0,output.y()-pad),right=(float)Math.min(source.width(),output.right()+pad),bottom=(float)Math.min(source.height(),output.bottom()+pad);var padded=new Rect(x,y,Math.max(0,right-x),Math.max(0,bottom-y));return draw(capture(source,padded,frameId),destination,output,style,maxLuminance,!same(source,destination));}
     private static void requireLuminance(float value){if(!Float.isFinite(value)||value<0||value>1)throw new IllegalArgumentException("Invalid maximum luminance");}
     private static BackdropOutcome skipped(String diagnostic){return new BackdropOutcome(BackdropOutcome.Status.SKIPPED,diagnostic);}
     private static boolean same(FramebufferTarget a,FramebufferTarget b){return a.identity()==b.identity()&&a.framebuffer()==b.framebuffer()&&a.colorTexture()==b.colorTexture()&&a.width()==b.width()&&a.height()==b.height();}
-    private static String validate(FramebufferTarget target){
+    private String validate(FramebufferTarget target){
+        validations++;
         glBindFramebuffer(GL_FRAMEBUFFER,target.framebuffer());if(glCheckFramebufferStatus(GL_FRAMEBUFFER)!=GL_FRAMEBUFFER_COMPLETE)return "Host framebuffer incomplete";
         if(glGetInteger(GL_SAMPLES)!=0)return "Multisample framebuffer unsupported";
         if(glGetFramebufferAttachmentParameteri(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)!=GL_TEXTURE||glGetFramebufferAttachmentParameteri(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)!=target.colorTexture())return "Framebuffer attachment identity mismatch";

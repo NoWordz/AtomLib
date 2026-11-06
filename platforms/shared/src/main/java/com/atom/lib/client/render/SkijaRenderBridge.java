@@ -5,6 +5,7 @@ import com.atom.lib.RuntimeHandle;
 import com.atom.lib.render.CustomPainter;
 import com.atom.lib.render.RenderSession;
 import io.github.humbleui.skija.BackendRenderTarget;
+import io.github.humbleui.skija.BackendState;
 import io.github.humbleui.skija.ColorSpace;
 import io.github.humbleui.skija.ColorType;
 import io.github.humbleui.skija.ContentChangeMode;
@@ -29,6 +30,36 @@ import static org.lwjgl.opengl.GL33C.*;
 public final class SkijaRenderBridge implements AutoCloseable {
     private static final Map<Long,SkijaRenderBridge> OWNERS = new HashMap<>();
     private static final ThreadLocal<Boolean> PAINTING = ThreadLocal.withInitial(() -> false);
+    /**
+     * P0-1: all 11 effective GL state bits of skija-shared 0.143.18
+     * BackendState.java (GL_RENDER_TARGET..GL_MISC, values 1..1024; GL_ALL=65535).
+     *
+     * <p>Evidence, not an assumption: a 7-bit whitelist was measured in real GL
+     * (logs/i1-evidence-7bit.log, FastStateOptimizationTest.dirtyStateEvidenceAcrossVanillaAndSkijaPasses,
+     * 6 vanilla&lt;-&gt;Skija rounds dirtying stencil func/op, GL_MULTISAMPLE,
+     * GL_DITHER/GL_FRAMEBUFFER_SRGB and depth/cull/polygon/line, with a
+     * stencil-backed non-rect clip). It produced differing_pixels=9216 (the
+     * whole 48x48 frame) and max_channel_delta=255 against resetGLAll().
+     * GL_MSAA_ENABLE / GL_STENCIL / GL_FIXED_FUNCTION / GL_MISC are therefore
+     * NOT safe to leave cached, and offscreen GL cannot prove any smaller
+     * whitelist safe. OR=2047 covers every effective bit, so this is
+     * equivalent to resetGLAll(): P0-1 has NO performance benefit. Kept as an
+     * explicit whitelist (rather than GL_ALL) so the full bit set is auditable.
+     */
+    private static final BackendState[] FAST_RESET_STATES = {
+        BackendState.GL_RENDER_TARGET, BackendState.GL_TEXTURE_BINDING,
+        BackendState.GL_VIEW, BackendState.GL_BLEND, BackendState.GL_MSAA_ENABLE,
+        BackendState.GL_VERTEX, BackendState.GL_STENCIL, BackendState.GL_PIXEL_STORE,
+        BackendState.GL_PROGRAM, BackendState.GL_FIXED_FUNCTION, BackendState.GL_MISC
+    };
+    /** Default false = legacy path. Toggle with -Datomlib.bridge.fastState=true or setFastState. */
+    private static volatile boolean fastState = Boolean.getBoolean("atomlib.bridge.fastState");
+    /** Package-private probe for the A/B tests; not part of the public API. */
+    private static volatile int lastResetFlags;
+
+    static boolean fastState() { return fastState; }
+    static void setFastState(boolean value) { fastState = value; }
+    static int lastResetFlags() { return lastResetFlags; }
     /** Guard for library Raw GL services sharing this context. */
     public static void assertOutsideSkijaPass(){if(PAINTING.get())throw new IllegalStateException("Raw GL cannot run inside a Skija pass");}
     private final RuntimeHandle runtime;
@@ -82,14 +113,28 @@ public final class SkijaRenderBridge implements AutoCloseable {
     }
 
     public void drawFrame(FramebufferTarget target,BorrowedFramePainter painter) {
+        drawFrame(target,painter,false);
+    }
+
+    // Package-private reference path for identical-draw FULL/SKIA regression and timing.
+    void drawFrame(FramebufferTarget target,BorrowedFramePainter painter,boolean fullState) {
         Objects.requireNonNull(target);Objects.requireNonNull(painter);
         requireThreadAndOpen();runtime.requireOpen();requireOutsidePass();
         requireContext();
         PAINTING.set(true);
-        try(GlStateScope ignored=GlStateScope.capture()) {
+        try(GlStateScope ignored=fullState ? GlStateScope.capture() : GlStateScope.captureSkia()) {
+            // rebuild binds a 2D attachment before Skia selects its scratch unit.
+            glActiveTexture(GL_TEXTURE0);
             normalizePixelTransfer();
             ensureContext();
-            context.resetGLAll();
+            if(fastState) {
+                int flags=0;
+                for(BackendState state:FAST_RESET_STATES) flags|=state.getValue();
+                lastResetFlags=flags;
+                context.reset(FAST_RESET_STATES);
+            } else {
+                context.resetGLAll();
+            }
             if(invalidated || !sameTarget(target,current)) rebuild(target);
             surface.notifyContentWillChange(ContentChangeMode.RETAIN);
             Throwable failure=null;
@@ -153,6 +198,9 @@ public final class SkijaRenderBridge implements AutoCloseable {
         return b!=null && a.identity()==b.identity() && a.framebuffer()==b.framebuffer() && a.colorTexture()==b.colorTexture() && a.width()==b.width() && a.height()==b.height();
     }
     private void rebuild(FramebufferTarget target) {
+        // P0-2 limits cache is consulted only on the fast path. The legacy path
+        // must not do this extra work (byte-for-byte identical to the original).
+        if(fastState) GlStateScope.invalidateLimits();
         glBindFramebuffer(GL_FRAMEBUFFER,target.framebuffer());
         if(glCheckFramebufferStatus(GL_FRAMEBUFFER)!=GL_FRAMEBUFFER_COMPLETE) throw new IllegalArgumentException("Host framebuffer is incomplete");
         if(glGetFramebufferAttachmentParameteri(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)!=GL_TEXTURE ||

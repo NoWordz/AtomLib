@@ -13,12 +13,19 @@ public final class TextService implements AutoCloseable {
     private static final Pattern GRAPHEME = Pattern.compile("\\X");
     private record Key(TextRequest request, Constraints constraints, long generation) {}
     private record Piece(String text, int start, int end, boolean newline) {}
+    private record ShapeKey(String text, FontId font, float size) {}
+    private record ShapedLine(TextLine line, boolean retained) implements AutoCloseable {
+        @Override public void close() { if(!retained) line.close(); }
+    }
     private final FontRegistry fonts;
     private final TextBreakPolicy breakPolicy;
     private final Object identity = new Object();
     private final LinkedHashMap<Key, TextLayout> cache = new LinkedHashMap<>(16, .75f, true);
+    private final LinkedHashMap<ShapeKey, TextLine> shapes = new LinkedHashMap<>(16, .75f, true);
     private final int capacity, characterBudget;
-    private int cachedCharacters;
+    private int cachedCharacters, shapedCharacters;
+    private long knownGeneration = Long.MIN_VALUE;
+    private Shaper shaper;
     private boolean closed;
 
     public TextService(FontRegistry fonts) { this(fonts, 256, 262144, TextBreakPolicy.GRAPHEME); }
@@ -39,13 +46,7 @@ public final class TextService implements AutoCloseable {
     public synchronized TextLayout layout(TextRequest request, Constraints constraints) {
         requireOpen(); Objects.requireNonNull(request); Objects.requireNonNull(constraints);
         synchronized (fonts) {
-            long generation = fonts.generation();
-            // Old generations retain no native state, but should not waste the cache budget.
-            var iterator = cache.entrySet().iterator();
-            while (iterator.hasNext()) {
-                var entry = iterator.next();
-                if (entry.getKey().generation != generation) { cachedCharacters -= entry.getKey().request.text().length(); iterator.remove(); }
-            }
+            long generation = synchronizeGeneration();
             Key key = new Key(request, constraints, generation);
             TextLayout present = cache.get(key);
             if (present != null) return present;
@@ -65,13 +66,13 @@ public final class TextService implements AutoCloseable {
         requireOpen(); Objects.requireNonNull(canvas); Objects.requireNonNull(layout);
         if (!Float.isFinite(x) || !Float.isFinite(y)) throw new IllegalArgumentException("Invalid origin");
         synchronized (fonts) {
-            if (layout.owner != identity || layout.generation != fonts.generation()) throw new IllegalStateException("Foreign or stale text layout");
+            if (layout.owner != identity || layout.generation != synchronizeGeneration()) throw new IllegalStateException("Foreign or stale text layout");
             int saved = canvas.getSaveCount(); canvas.save();
-            try (Paint paint = new Paint().setColor(layout.request().color()); Shaper shaper = Shaper.makeShapeDontWrapOrReorder()) {
+            try (Paint paint = new Paint().setColor(layout.request().color())) {
                 canvas.clipRect(io.github.humbleui.types.Rect.makeXYWH(x, y, layout.size().width(), layout.size().height()));
                 for (var line : layout.lines()) for (var run : line.runs()) {
-                    try (Font font = fonts.openFont(run.font(), layout.request().size(), ""); TextLine shaped = shaper.shapeLine(run.text(), font)) {
-                        canvas.drawTextLine(shaped, x + run.x(), y + line.baseline(), paint);
+                    try (var shaped = shapedLine(run.text(), run.font(), layout.request().size())) {
+                        canvas.drawTextLine(shaped.line(), x + run.x(), y + line.baseline(), paint);
                     }
                 }
             } finally { canvas.restoreToCount(saved); }
@@ -92,7 +93,7 @@ public final class TextService implements AutoCloseable {
         float top = 0, naturalWidth = 0;
         int cursor = 0;
         boolean truncated = false;
-        try (Shaper shaper = Shaper.makeShapeDontWrapOrReorder()) {
+        {
             while (cursor < pieces.size()) {
                 int start = cursor;
                 int paragraphEnd = start;
@@ -102,7 +103,7 @@ public final class TextService implements AutoCloseable {
                 int low = start + 1, high = paragraphEnd;
                 while (low <= high) {
                     int mid = (low + high) >>> 1;
-                    if (shape(request, pieces.subList(start, mid), "", top, shaper).width() <= limit) { end = mid; low = mid + 1; }
+                    if (shape(request, pieces.subList(start, mid), "", top).width() <= limit) { end = mid; low = mid + 1; }
                     else high = mid - 1;
                 }
                 if (start < paragraphEnd && end == start) end++;
@@ -124,12 +125,12 @@ public final class TextService implements AutoCloseable {
                 }
                 boolean consumesNewline = end == paragraphEnd && paragraphEnd < pieces.size();
                 int next = end + (consumesNewline ? 1 : 0);
-                TextLayout.Line line = shape(request, pieces.subList(start, end), "", top, shaper);
+                TextLayout.Line line = shape(request, pieces.subList(start, end), "", top);
                 if (start == end) line = emptyLine(request, pieces.get(start).start, top);
                 if (lines.size() >= request.maxLines() || top + line.height() > heightLimit) { truncated = true; break; }
                 if (lines.size() + 1 == request.maxLines() && next < pieces.size()) {
                     truncated = true;
-                    if (request.ellipsis()) line = ellipsize(request, pieces.subList(start, end), top, limit, shaper, pieces.get(start).start);
+                    if (request.ellipsis()) line = ellipsize(request, pieces.subList(start, end), top, limit, pieces.get(start).start);
                     lines.add(line); top += line.height(); naturalWidth = Math.max(naturalWidth, line.width()); cursor = next; break;
                 }
                 lines.add(line); top += line.height(); naturalWidth = Math.max(naturalWidth, line.width()); cursor = next;
@@ -138,7 +139,7 @@ public final class TextService implements AutoCloseable {
                     && !lines.get(lines.size()-1).runs().stream().anyMatch(r -> r.text().endsWith("…"))) {
                 TextLayout.Line last = lines.remove(lines.size()-1);
                 List<Piece> previous = pieces.stream().filter(p -> p.start >= last.start() && p.end <= last.end() && !p.newline).toList();
-                TextLayout.Line replacement = ellipsize(request, previous, last.top(), limit, shaper, last.start());
+                TextLayout.Line replacement = ellipsize(request, previous, last.top(), limit, last.start());
                 lines.add(replacement);
                 top = replacement.top() + replacement.height();
                 naturalWidth = 0;
@@ -155,19 +156,19 @@ public final class TextService implements AutoCloseable {
             return new TextLayout.Line(offset, offset, top, top + ascent, height, 0, List.of(), List.of(new TextLayout.Caret(offset, 0)));
         }
     }
-    private TextLayout.Line ellipsize(TextRequest request, List<Piece> pieces, float top, float limit, Shaper shaper, int offset) {
+    private TextLayout.Line ellipsize(TextRequest request, List<Piece> pieces, float top, float limit, int offset) {
         int count = pieces.size();
         TextLayout.Line line;
         do {
-            line = shape(request, pieces.subList(0, count), "…", top, shaper, offset);
+            line = shape(request, pieces.subList(0, count), "…", top, offset);
             if (line.width() <= limit || count == 0) return line;
             count--;
         } while (true);
     }
-    private TextLayout.Line shape(TextRequest request, List<Piece> pieces, String suffix, float top, Shaper shaper) {
-        return shape(request, pieces, suffix, top, shaper, 0);
+    private TextLayout.Line shape(TextRequest request, List<Piece> pieces, String suffix, float top) {
+        return shape(request, pieces, suffix, top, 0);
     }
-    private TextLayout.Line shape(TextRequest request, List<Piece> pieces, String suffix, float top, Shaper shaper, int emptyOffset) {
+    private TextLayout.Line shape(TextRequest request, List<Piece> pieces, String suffix, float top, int emptyOffset) {
         List<TextLayout.Run> runs = new ArrayList<>();
         List<TextLayout.Caret> carets = new ArrayList<>();
         int start = pieces.isEmpty() ? emptyOffset : pieces.get(0).start;
@@ -183,7 +184,8 @@ public final class TextService implements AutoCloseable {
             StringBuilder builder = new StringBuilder();
             for (int i = cursor; i < runEnd; i++) builder.append(display.get(i).text);
             String value = builder.toString();
-            try (Font font = fonts.openFont(id, request.size(), ""); TextLine line = shaper.shapeLine(value, font)) {
+            try (var shaped = shapedLine(value, id, request.size())) {
+                TextLine line = shaped.line();
                 ascent = Math.max(ascent, -line.getAscent()); descent = Math.max(descent, line.getDescent()); leading = Math.max(leading, line.getLeading());
                 runs.add(new TextLayout.Run(value, id, x, line.getWidth()));
                 int local = 0;
@@ -203,8 +205,41 @@ public final class TextService implements AutoCloseable {
         return new TextLayout.Line(start, end, top, top + ascent, Math.max(1, ascent + descent + leading), x, runs, carets);
     }
     private void requireOpen() { if (closed) throw new IllegalStateException("Text service closed"); }
+    private Shaper shaper() {
+        if(shaper==null) shaper=Shaper.makeShapeDontWrapOrReorder();
+        return shaper;
+    }
+    private long synchronizeGeneration() {
+        long generation=fonts.generation();
+        if(generation!=knownGeneration) {
+            clearShapes();cache.clear();cachedCharacters=0;knownGeneration=generation;
+        }
+        return generation;
+    }
+    private ShapedLine shapedLine(String value, FontId fontId, float size) {
+        ShapeKey key=new ShapeKey(value,fontId,size);
+        TextLine present=shapes.get(key);
+        if(present!=null) return new ShapedLine(present,true);
+        TextLine line;
+        try(Font font=fonts.openFont(fontId,size,"")) { line=shaper().shapeLine(value,font); }
+        if(value.length()>characterBudget) return new ShapedLine(line,false);
+        shapes.put(key,line);shapedCharacters+=value.length();
+        while(shapes.size()>capacity || shapedCharacters>characterBudget) {
+            var iterator=shapes.entrySet().iterator();var old=iterator.next();
+            shapedCharacters-=old.getKey().text().length();iterator.remove();old.getValue().close();
+        }
+        return new ShapedLine(line,true);
+    }
+    private void clearShapes() {
+        for(TextLine line:shapes.values()) line.close();
+        shapes.clear();shapedCharacters=0;
+    }
     private static boolean wordSpace(String s) { return !s.isEmpty() && s.codePoints().allMatch(Character::isWhitespace); }
     private static boolean forbiddenStart(String s){return !s.isEmpty()&&"。，、；：！？）】》」』〕〉”’".indexOf(s.codePointAt(0))>=0;}
     private static boolean forbiddenEnd(String s){return !s.isEmpty()&&"（【《「『〔〈“‘".indexOf(s.codePointAt(0))>=0;}
-    @Override public synchronized void close() { closed = true; cache.clear(); cachedCharacters = 0; }
+    @Override public synchronized void close() {
+        if(closed) return;
+        closed=true;cache.clear();cachedCharacters=0;
+        try { clearShapes(); } finally { if(shaper!=null) { shaper.close();shaper=null; } }
+    }
 }

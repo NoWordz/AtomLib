@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.concurrent.atomic.AtomicLong;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.opengl.GL33C.*;
 
@@ -14,6 +15,64 @@ import static org.lwjgl.opengl.GL33C.*;
  */
 public final class GlStateScope implements AutoCloseable {
     private static final ThreadLocal<Deque<GlStateScope>> SCOPES = ThreadLocal.withInitial(ArrayDeque::new);
+    /**
+     * P0-2: GL implementation limits are constant for one (context, capabilities)
+     * pair. They only decide array lengths; the actual state snapshot is still
+     * captured and restored in full, so the legacy GL contract is unchanged.
+     * Cached only on the fast path; the legacy path keeps its per-frame queries.
+     */
+    private static final AtomicLong LIMIT_QUERY_COUNT = new AtomicLong();
+    private static volatile Limits cachedLimits;
+    private record SkiaTextures(long context, GLCapabilities capabilities, int units, int[] targets, int[] bindings) {}
+    private static volatile SkiaTextures cachedSkiaTextures;
+
+    private static SkiaTextures skiaTextures(long context, GLCapabilities capabilities) {
+        SkiaTextures cached=cachedSkiaTextures;
+        if(cached!=null && cached.context==context && cached.capabilities==capabilities) return cached;
+        boolean external=false;
+        for(int i=0,n=glGetInteger(GL_NUM_EXTENSIONS);i<n;i++)
+            if("GL_OES_EGL_image_external".equals(glGetStringi(GL_EXTENSIONS,i))) external=true;
+        // Skia da51f0d60e: GrGLCaps.cpp:496-497, GrGLGpu.h:524,
+        // GrGLGpu.cpp:3015-3026,3062-3080. Includes the scratch/upload unit.
+        int[] targets=external ? new int[]{GL_TEXTURE_2D,GL_TEXTURE_RECTANGLE,0x8D65} : new int[]{GL_TEXTURE_2D,GL_TEXTURE_RECTANGLE};
+        int[] bindings=external ? new int[]{GL_TEXTURE_BINDING_2D,GL_TEXTURE_BINDING_RECTANGLE,0x8D67} : new int[]{GL_TEXTURE_BINDING_2D,GL_TEXTURE_BINDING_RECTANGLE};
+        // GrGLCaps.cpp:495-497 pins kMaxSaneSamplers to 32 in this Skia revision.
+        SkiaTextures fresh=new SkiaTextures(context,capabilities,Math.min(32,glGetInteger(GL_MAX_TEXTURE_IMAGE_UNITS)),targets,bindings);
+        cachedSkiaTextures=fresh;
+        return fresh;
+    }
+
+    private static final class Limits {
+        long context;
+        GLCapabilities capabilities;
+        int maxDrawBuffers, maxClipDistances, maxSampleMaskWords;
+        int maxUniformBufferBindings, maxCombinedTextureImageUnits;
+        boolean hasIndexedBlend, hasPipeline, hasSamplers;
+    }
+
+    /** Package-private probes for the A/B tests; not part of the public API. */
+    static long limitQueryCount() { return LIMIT_QUERY_COUNT.get(); }
+    static void invalidateLimits() { cachedLimits = null; }
+
+    private static Limits cachedLimitsFor(long context, GLCapabilities capabilities) {
+        Limits cached = cachedLimits;
+        if (cached != null && cached.context == context && cached.capabilities == capabilities) return cached;
+        Limits fresh = new Limits();
+        fresh.context = context;
+        fresh.capabilities = capabilities;
+        fresh.maxDrawBuffers = glGetInteger(GL_MAX_DRAW_BUFFERS);
+        fresh.maxClipDistances = glGetInteger(GL_MAX_CLIP_DISTANCES);
+        fresh.maxSampleMaskWords = glGetInteger(GL_MAX_SAMPLE_MASK_WORDS);
+        fresh.maxUniformBufferBindings = glGetInteger(GL_MAX_UNIFORM_BUFFER_BINDINGS);
+        fresh.maxCombinedTextureImageUnits = glGetInteger(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+        fresh.hasIndexedBlend = capabilities.OpenGL40 || capabilities.GL_ARB_draw_buffers_blend;
+        fresh.hasPipeline = capabilities.OpenGL41 || capabilities.GL_ARB_separate_shader_objects;
+        fresh.hasSamplers = capabilities.OpenGL33 || capabilities.GL_ARB_sampler_objects;
+        LIMIT_QUERY_COUNT.addAndGet(5);
+        cachedLimits = fresh;
+        return fresh;
+    }
+
     private static final int[] ENABLES = {
         GL_BLEND, GL_CULL_FACE, GL_DEPTH_TEST, GL_SCISSOR_TEST, GL_STENCIL_TEST,
         GL_DITHER, GL_MULTISAMPLE, GL_FRAMEBUFFER_SRGB, GL_RASTERIZER_DISCARD,
@@ -53,6 +112,7 @@ public final class GlStateScope implements AutoCloseable {
     private final boolean[] enables, clipDistances, drawBlendEnabled;
     private final int[][] drawColorMasks, drawBlendFunctions;
     private final int[][] textures;
+    private final int[] textureTargets;
     private final int[] samplers;
     private final boolean hasSamplers, hasPipeline, hasIndexedBlend;
     private final int pipeline;
@@ -62,20 +122,29 @@ public final class GlStateScope implements AutoCloseable {
     private final int depthFunc, cullFace, frontFace, polygonMode, clearStencil, primitiveRestart;
     private final float polygonOffsetFactor, polygonOffsetUnits, lineWidth, sampleCoverage;
     private final double clearDepth;
+    /** Null on the legacy path: then every helper below performs the original glGet call. */
+    private final Limits limits;
     private boolean closed;
 
-    private GlStateScope() {
+    private int maxDrawBuffers() { return limits != null ? limits.maxDrawBuffers : glGetInteger(GL_MAX_DRAW_BUFFERS); }
+    private int maxClipDistances() { return limits != null ? limits.maxClipDistances : glGetInteger(GL_MAX_CLIP_DISTANCES); }
+    private int maxSampleMaskWords() { return limits != null ? limits.maxSampleMaskWords : glGetInteger(GL_MAX_SAMPLE_MASK_WORDS); }
+    private int maxUniformBufferBindings() { return limits != null ? limits.maxUniformBufferBindings : glGetInteger(GL_MAX_UNIFORM_BUFFER_BINDINGS); }
+    private int maxCombinedTextureImageUnits() { return limits != null ? limits.maxCombinedTextureImageUnits : glGetInteger(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS); }
+
+    private GlStateScope(boolean skia) {
         if (context == 0 || !capabilities.OpenGL32) throw new IllegalStateException("A current OpenGL 3.2+ context is required");
+        limits = SkijaRenderBridge.fastState() ? cachedLimitsFor(context, capabilities) : null;
         drawFbo=glGetInteger(GL_DRAW_FRAMEBUFFER_BINDING);readFbo=glGetInteger(GL_READ_FRAMEBUFFER_BINDING);
         readBuffer=glGetInteger(GL_READ_BUFFER);renderbuffer=glGetInteger(GL_RENDERBUFFER_BINDING);
-        drawBuffers=new int[drawFbo == 0 ? 1 : glGetInteger(GL_MAX_DRAW_BUFFERS)];
+        drawBuffers=new int[drawFbo == 0 ? 1 : maxDrawBuffers()];
         for(int i=0;i<drawBuffers.length;i++) drawBuffers[i]=glGetInteger(GL_DRAW_BUFFER0+i);
         viewport=ints(GL_VIEWPORT,4);scissor=ints(GL_SCISSOR_BOX,4);colorMask=ints(GL_COLOR_WRITEMASK,4);
         blend=new int[]{glGetInteger(GL_BLEND_SRC_RGB),glGetInteger(GL_BLEND_DST_RGB),glGetInteger(GL_BLEND_SRC_ALPHA),glGetInteger(GL_BLEND_DST_ALPHA),glGetInteger(GL_BLEND_EQUATION_RGB),glGetInteger(GL_BLEND_EQUATION_ALPHA)};
         blendColor=floats(org.lwjgl.opengl.ARBImaging.GL_BLEND_COLOR,4);clearColor=floats(GL_COLOR_CLEAR_VALUE,4);
-        int drawCount=glGetInteger(GL_MAX_DRAW_BUFFERS);
+        int drawCount=maxDrawBuffers();
         drawBlendEnabled=new boolean[drawCount];drawColorMasks=new int[drawCount][4];
-        hasIndexedBlend=capabilities.OpenGL40 || capabilities.GL_ARB_draw_buffers_blend;
+        hasIndexedBlend=limits != null ? limits.hasIndexedBlend : (capabilities.OpenGL40 || capabilities.GL_ARB_draw_buffers_blend);
         drawBlendFunctions=hasIndexedBlend ? new int[drawCount][6] : null;
         int[] blendNames={GL_BLEND_SRC_RGB,GL_BLEND_DST_RGB,GL_BLEND_SRC_ALPHA,GL_BLEND_DST_ALPHA,GL_BLEND_EQUATION_RGB,GL_BLEND_EQUATION_ALPHA};
         for(int i=0;i<drawCount;i++) {
@@ -89,33 +158,58 @@ public final class GlStateScope implements AutoCloseable {
         clearStencil=glGetInteger(GL_STENCIL_CLEAR_VALUE);primitiveRestart=glGetInteger(GL_PRIMITIVE_RESTART_INDEX);
         stencilFront=stencil(false);stencilBack=stencil(true);
         enables=new boolean[ENABLES.length];for(int i=0;i<ENABLES.length;i++) enables[i]=glIsEnabled(ENABLES[i]);
-        clipDistances=new boolean[glGetInteger(GL_MAX_CLIP_DISTANCES)];for(int i=0;i<clipDistances.length;i++) clipDistances[i]=glIsEnabled(GL_CLIP_DISTANCE0+i);
+        clipDistances=new boolean[maxClipDistances()];for(int i=0;i<clipDistances.length;i++) clipDistances[i]=glIsEnabled(GL_CLIP_DISTANCE0+i);
         sampleCoverage=glGetFloat(GL_SAMPLE_COVERAGE_VALUE);sampleInvert=glGetBoolean(GL_SAMPLE_COVERAGE_INVERT);
-        sampleMasks=new int[glGetInteger(GL_MAX_SAMPLE_MASK_WORDS)];for(int i=0;i<sampleMasks.length;i++) sampleMasks[i]=glGetIntegeri(GL_SAMPLE_MASK_VALUE,i);
+        sampleMasks=new int[maxSampleMaskWords()];for(int i=0;i<sampleMasks.length;i++) sampleMasks[i]=glGetIntegeri(GL_SAMPLE_MASK_VALUE,i);
         program=glGetInteger(GL_CURRENT_PROGRAM);vao=glGetInteger(GL_VERTEX_ARRAY_BINDING);elementBuffer=glGetInteger(GL_ELEMENT_ARRAY_BUFFER_BINDING);
-        hasPipeline=capabilities.OpenGL41 || capabilities.GL_ARB_separate_shader_objects;
+        hasPipeline=limits != null ? limits.hasPipeline : (capabilities.OpenGL41 || capabilities.GL_ARB_separate_shader_objects);
         pipeline=hasPipeline ? glGetInteger(org.lwjgl.opengl.GL41C.GL_PROGRAM_PIPELINE_BINDING) : 0;
         buffers=new int[BUFFER_BINDINGS.length];for(int i=0;i<buffers.length;i++) buffers[i]=glGetInteger(BUFFER_BINDINGS[i]);
         pixelStores=new int[PIXEL_STORES.length];for(int i=0;i<pixelStores.length;i++) pixelStores[i]=glGetInteger(PIXEL_STORES[i]);
-        uniformBuffers=new int[glGetInteger(GL_MAX_UNIFORM_BUFFER_BINDINGS)];uniformOffsets=new long[uniformBuffers.length];uniformSizes=new long[uniformBuffers.length];
+        uniformBuffers=new int[maxUniformBufferBindings()];uniformOffsets=new long[uniformBuffers.length];uniformSizes=new long[uniformBuffers.length];
         for(int i=0;i<uniformBuffers.length;i++) {
             uniformBuffers[i]=glGetIntegeri(GL_UNIFORM_BUFFER_BINDING,i);
             uniformOffsets[i]=glGetInteger64i(GL_UNIFORM_BUFFER_START,i);uniformSizes[i]=glGetInteger64i(GL_UNIFORM_BUFFER_SIZE,i);
         }
         activeTexture=glGetInteger(GL_ACTIVE_TEXTURE);
-        hasSamplers=capabilities.OpenGL33 || capabilities.GL_ARB_sampler_objects;
-        textures=new int[glGetInteger(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS)][TEXTURE_BINDINGS.length];samplers=new int[textures.length];
+        hasSamplers=limits != null ? limits.hasSamplers : (capabilities.OpenGL33 || capabilities.GL_ARB_sampler_objects);
+        SkiaTextures profile=skia ? skiaTextures(context,capabilities) : null;
+        textureTargets=profile!=null ? profile.targets : TEXTURE_TARGETS;
+        int[] textureBindings=profile!=null ? profile.bindings : TEXTURE_BINDINGS;
+        textures=new int[profile!=null ? profile.units : maxCombinedTextureImageUnits()][textureBindings.length];samplers=new int[textures.length];
         try {
             for(int unit=0;unit<textures.length;unit++) {
                 glActiveTexture(GL_TEXTURE0+unit);
-                for(int i=0;i<TEXTURE_BINDINGS.length;i++) textures[unit][i]=glGetInteger(TEXTURE_BINDINGS[i]);
+                for(int i=0;i<textureBindings.length;i++) textures[unit][i]=glGetInteger(textureBindings[i]);
                 if(hasSamplers) samplers[unit]=glGetIntegeri(GL_SAMPLER_BINDING,unit);
             }
         } finally { glActiveTexture(activeTexture); }
         SCOPES.get().push(this);
     }
 
-    public static GlStateScope capture() { return new GlStateScope(); }
+    public static GlStateScope capture() {
+        return capture(false);
+    }
+
+    /** Only for the bridge's Skia-only drawing path; arbitrary host GL uses capture(). */
+    static GlStateScope captureSkia() { return capture(true); }
+
+    private static GlStateScope capture(boolean skia) {
+        if(!GlScopeDiagnostics.enabled()) return new GlStateScope(skia);
+        GlScopeDiagnostics event=new GlScopeDiagnostics();
+        event.depth=SCOPES.get().size();
+        event.startedAtNanos=System.nanoTime();
+        try {
+            GlStateScope scope=new GlStateScope(skia);
+            event.textureUnits=scope.textures.length;
+            event.textureTargets=scope.textureTargets.length;
+            event.success=true;
+            return scope;
+        } finally {
+            event.captureNanos=System.nanoTime()-event.startedAtNanos;
+            event.commit();
+        }
+    }
 
     private static int[] ints(int name,int size) { int[] a=new int[size];glGetIntegerv(name,a);return a; }
     private static float[] floats(int name,int size) { float[] a=new float[size];glGetFloatv(name,a);return a; }
@@ -174,7 +268,7 @@ public final class GlStateScope implements AutoCloseable {
         for(int i=0;i<pixelStores.length;i++) glPixelStorei(PIXEL_STORES[i],pixelStores[i]);
         for(int unit=0;unit<textures.length;unit++) {
             glActiveTexture(GL_TEXTURE0+unit);
-            for(int i=0;i<TEXTURE_TARGETS.length;i++) glBindTexture(TEXTURE_TARGETS[i],textures[unit][i]);
+            for(int i=0;i<textureTargets.length;i++) glBindTexture(textureTargets[i],textures[unit][i]);
             if(hasSamplers) glBindSampler(unit,samplers[unit]);
         }
         glActiveTexture(activeTexture);

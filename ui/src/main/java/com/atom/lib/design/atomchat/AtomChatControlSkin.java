@@ -16,13 +16,14 @@ public final class AtomChatControlSkin implements ControlSkin {
     private final boolean themedModalSurface;
     private final boolean elasticToggle;
     private static final ControlSpring TOGGLE_SPRING=new ControlSpring(100,.5f,.001f,.01f,.5);
+    private static final ControlMotion MOTION=new ControlMotion(.09,.14,.11);
     public AtomChatControlSkin(AtomChatControlStyle style){this(style,false);}
     /** Opt in to a modal surface derived from this skin's panel colour. */
     public AtomChatControlSkin(AtomChatControlStyle style,boolean themedModalSurface){this(style,themedModalSurface,false);}
     public AtomChatControlSkin(AtomChatControlStyle style,boolean themedModalSurface,boolean elasticToggle){this.themedModalSurface=themedModalSurface;this.elasticToggle=elasticToggle;updateStyle(style);}
     public void updateStyle(AtomChatControlStyle style){this.style=Objects.requireNonNull(style);}
     public AtomChatControlStyle style(){return style;}
-    public ControlMotion motion(){return new ControlMotion(.09,.14,.11);}
+    public ControlMotion motion(){return MOTION;}
     public Optional<ControlSpring> toggleSpring(){return elasticToggle?Optional.of(TOGGLE_SPRING):Optional.empty();}
     public LayoutNode actionNode(NodeId id,ActionModel m,LayoutStyle outer,TextService text,float iconSize){
         var original=actionNode(id,m,outer,text);var label=original.children().get(0);

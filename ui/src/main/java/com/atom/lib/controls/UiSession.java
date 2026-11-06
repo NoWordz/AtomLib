@@ -10,6 +10,7 @@ import java.util.*;
 /** Page-local input/focus coordinator. Borrows all rendering and text services. */
 public final class UiSession implements AutoCloseable {
     private List<Control> controls=List.of();
+    private Map<NodeId,Control> controlsById=Map.of();
     private final Map<Control,ControlTarget> targets=new IdentityHashMap<>();
     private final FocusState focus=new FocusState();
     private final InputDispatcher dispatcher=new InputDispatcher(this::topAt);
@@ -67,11 +68,13 @@ public final class UiSession implements AutoCloseable {
         }
         if(modal!=null)for(var id:modal.dialog.slots())if(ids.contains(id))throw new IllegalArgumentException("Control ID collides with modal: "+id);
         if(composite!=null)for(var id:compositeLayoutIds(composite.dialog))if(ids.contains(id))throw new IllegalArgumentException("Control ID collides with modal: "+id);
+        var index=new HashMap<NodeId,Control>();for(var c:copy)index.put(c.id(),c);
+        var retained=new HashSet<>(copy);
         replacingControls=true;
         Throwable failure=null;
         try{
-            var old=controls;controls=copy;
-            for(var c:old)if(!copy.contains(c)){
+            var old=controls;controls=copy;controlsById=Map.copyOf(index);
+            for(var c:old)if(!retained.contains(c)){
                 try{cancelControl(c,CancelReason.REMOVED);}
                 catch(RuntimeException|Error e){if(failure==null)failure=e;else if(e!=failure)failure.addSuppressed(e);}
                 finally{c.owner=null;targets.remove(c);}
@@ -97,7 +100,7 @@ public final class UiSession implements AutoCloseable {
     }
     private boolean visible(Control c){return visible(c,displayed,displayedInstances);}
     private boolean visible(Control c,PresentationFrame frame,Set<Control> instances){
-        if(c.suspended()||frame==null||!instances.contains(c)||!frame.paintOrder().contains(c.id()))return false;
+        if(c.suspended()||frame==null||!instances.contains(c)||!frame.contains(c.id()))return false;
         var box=frame.box(c.id());var shown=box.hit().intersect(box.clip());return shown.width()>0&&shown.height()>0;
     }
     private NodeId topAt(float x,float y){
@@ -108,7 +111,7 @@ public final class UiSession implements AutoCloseable {
         }
         if(displayed==null)return null;var ids=new HashSet<NodeId>();for(var c:controls)if(c.available()&&visible(c))ids.add(c.id());return displayed.topAt(ids,x,y);
     }
-    private Control byId(NodeId id){if(id==null)return null;return controls.stream().filter(c->c.id().equals(id)).findFirst().orElse(null);}
+    private Control byId(NodeId id){return id==null?null:controlsById.get(id);}
     private void refreshFocus(){
         if(modal!=null)return;
         var previous=focus.current();
@@ -172,7 +175,7 @@ public final class UiSession implements AutoCloseable {
     }
     private void paintInternal(Canvas canvas,PresentationFrame frame,Viewport viewport,FrameTime time,boolean motionEnabled,Map<NodeId,java.util.function.Consumer<Canvas>> decorations,boolean groupEntrances){
         requireOpen();Objects.requireNonNull(canvas);Objects.requireNonNull(frame);Objects.requireNonNull(viewport);Objects.requireNonNull(time);
-        if(!frame.paintOrder().containsAll(decorations.keySet()))throw new IllegalArgumentException("Decoration missing from presentation frame");
+        if(!decorations.keySet().stream().allMatch(frame::contains))throw new IllegalArgumentException("Decoration missing from presentation frame");
         if(time.frameId()<lastFrame||time.nowNanos()<lastNow)throw new IllegalArgumentException("Nonmonotonic frame time");
         for(var c:controls)validate(c,frame,viewport);
         if(modal!=null)validate(modal.dialog,frame,viewport);
@@ -204,7 +207,7 @@ public final class UiSession implements AutoCloseable {
             if(scroll!=null&&scroll.scrollbarVisible()&&scroll.thumb(frame).height()>0){var r=scroll.thumb(frame);try(var p=new io.github.humbleui.skija.Paint().setColor(0x88989ba5)){canvas.drawRRect(io.github.humbleui.types.RRect.makeXYWH(r.x(),r.y(),r.width(),r.height(),r.width()/2),p);}}
             if(composite!=null){
                 var state=composite;
-                if(!frame.paintOrder().contains(state.dialog.id))throw new IllegalArgumentException("Visible composable modal missing from frame");
+                if(!frame.contains(state.dialog.id))throw new IllegalArgumentException("Visible composable modal missing from frame");
                 if(advance){float target=state.closing?0:1;state.opacity=Control.approach(state.opacity,target,time.deltaSeconds(),state.dialog.context.skin().motion().modal(),motionEnabled);}
                 int count=canvas.getSaveCount();canvas.saveLayerAlpha(io.github.humbleui.types.Rect.makeXYWH(0,0,viewport.width(),viewport.height()),Math.round(255*state.opacity));
                 try{
@@ -214,7 +217,7 @@ public final class UiSession implements AutoCloseable {
                 }finally{canvas.restoreToCount(count);}
             }
             if(modal!=null){
-                if(!frame.paintOrder().contains(modal.dialog.id()))throw new IllegalArgumentException("Visible modal missing from frame");
+                if(!frame.contains(modal.dialog.id()))throw new IllegalArgumentException("Visible modal missing from frame");
                 if(advance){
                     var timing=modal.dialog.context.skin().motion();modal.advance(time.deltaSeconds(),timing.modal(),motionEnabled);
                     var action=modalTargets.get(modal.focus.current());
@@ -242,7 +245,7 @@ public final class UiSession implements AutoCloseable {
         refreshTargets();refreshFocus();
     }
     private void validate(Control c,PresentationFrame f,Viewport viewport){
-        if(!f.paintOrder().contains(c.id()))return; // hidden controls have no active roles
+        if(!f.contains(c.id()))return; // hidden controls have no active roles
         for(var id:c.slots()){
             var box=f.box(id);var clip=box.clip();
             if(clip.x()<0||clip.y()<0||clip.right()>viewport.width()+.01||clip.bottom()>viewport.height()+.01)throw new IllegalArgumentException("Clip outside viewport: "+id);
@@ -272,7 +275,7 @@ public final class UiSession implements AutoCloseable {
     private void requireOpen(){if(closed)throw new IllegalStateException("UI session closed");}
     @Override public void close(){
         if(closed)return;
-        try{cancel(CancelReason.CLOSED);}finally{if(composite!=null)finishComposite();if(legacyModalLayout!=null)legacyModalLayout.close();closed=true;displayed=null;if(modal!=null){modal.dialog.owner=null;modal=null;}modalTargets.clear();for(var c:controls)c.owner=null;controls=List.of();targets.clear();dispatcher.setTargets(Map.of());buttonsDown.clear();keysDown.clear();swallowedKeys.clear();swallowedButtons.clear();}
+        try{cancel(CancelReason.CLOSED);}finally{if(composite!=null)finishComposite();if(legacyModalLayout!=null)legacyModalLayout.close();closed=true;displayed=null;if(modal!=null){modal.dialog.owner=null;modal=null;}modalTargets.clear();for(var c:controls)c.owner=null;controls=List.of();controlsById=Map.of();targets.clear();dispatcher.setTargets(Map.of());buttonsDown.clear();keysDown.clear();swallowedKeys.clear();swallowedButtons.clear();}
     }
     private NodeId slot(Control c,String role){return ControlSlots.slot(c.id(),role);}
     public void open(ConfirmationDialog dialog,java.util.function.Consumer<ConfirmationResult> onResult){
@@ -287,7 +290,7 @@ public final class UiSession implements AutoCloseable {
         modalTargets.clear();
         for(String role:List.of("overlay","cancel","confirm")){
             var id=slot(dialog,role);
-            modalTargets.put(id,new ActionTarget(()->modal==state&&state.shown&&state.phase!=ModalState.Phase.CLOSING&&displayed!=null&&displayed.paintOrder().contains(id),
+            modalTargets.put(id,new ActionTarget(()->modal==state&&state.shown&&state.phase!=ModalState.Phase.CLOSING&&displayed!=null&&displayed.contains(id),
                 e->modalHit(state,id,e.x(),e.y()),
                 ()->resolve(role.equals("confirm")?ConfirmationResult.CONFIRMED:ConfirmationResult.CANCELLED)));
         }
@@ -350,7 +353,7 @@ public final class UiSession implements AutoCloseable {
         return PresentationFrame.compose(List.of(background,PresentationFrame.create(new LayoutTree(dialog),snapshot,logical,Map.of(),offset).scaled(fit)));
     }
     private boolean modalHit(ModalState state,NodeId id,float x,float y){
-        if(displayed==null||!displayed.paintOrder().contains(id))return false;
+        if(displayed==null||!displayed.contains(id))return false;
         var box=displayed.box(id);
         if(!box.hit().contains(x,y)||!box.clip().contains(x,y))return false;
         if(id.equals(slot(state.dialog,"overlay"))){

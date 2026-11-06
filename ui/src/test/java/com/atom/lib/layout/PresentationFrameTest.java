@@ -7,6 +7,20 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PresentationFrameTest {
+    @Test void controlsAtOneScaleSharePaintingGeometryWithoutSharingAcrossFrames() {
+        var first=LayoutNode.leaf("first",LayoutStyle.column().size(Length.points(40),Length.points(20)),null,0);
+        var second=LayoutNode.leaf("second",LayoutStyle.column().size(Length.points(60),Length.points(30)),null,0);
+        var tree=new LayoutTree(new LayoutNode(new NodeId("root"),LayoutStyle.column(),List.of(first,second),null,0));
+        var viewport=new Viewport(200,200,1);
+        try(var engine=new YogaLayoutEngine()) {
+            var frame=PresentationFrame.create(tree,engine.layout(tree,viewport),viewport,Map.of(),new PresentationFrame.Offset(0,0)).scaled(1.5f);
+            var painting=frame.forPainting(first.id());
+            assertSame(painting,frame.forPainting(second.id()),"one geometry map per scale, not per control");
+            assertEquals(40,painting.box(first.id()).border().width(),.001);
+            assertEquals(60,painting.box(second.id()).border().width(),.001);
+            assertNotSame(painting,frame.scaled(2).forPainting(first.id()),"a new displayed transform owns new geometry");
+        }
+    }
     @Test void scrollingMovesDrawingAndHitTogetherWhileKeepingViewportClipStationary() {
         var child=LayoutNode.leaf("button",LayoutStyle.column().size(Length.points(80),Length.points(200)).flex(0,0,Length.auto()),null,0);
         var root=new LayoutNode(new NodeId("scroll"),LayoutStyle.column().behavior(false,false,true,true),List.of(child),null,0);

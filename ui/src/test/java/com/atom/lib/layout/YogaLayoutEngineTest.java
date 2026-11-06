@@ -7,6 +7,36 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class YogaLayoutEngineTest {
+    @Test void failedStructuralOrMeasureModeChangeCannotReuseSuccessfulSnapshotAgainstChangedNativeTree() {
+        for(boolean sameId:new boolean[]{false,true})try(var engine=new YogaLayoutEngine()) {
+            var style=LayoutStyle.column();
+            var original=LayoutNode.leaf("a",style.size(Length.points(40),Length.points(20)),null,0);
+            var good=new LayoutTree(node("root",style,original));
+            engine.layout(good,new Viewport(100,100,1));
+            var broken=LayoutNode.leaf(sameId?"a":"b",style,c->{throw new IllegalStateException("measure");},0);
+            assertThrows(IllegalStateException.class,()->engine.layout(new LayoutTree(node("root",style,broken)),new Viewport(100,100,1)));
+            assertEquals(20,engine.layout(good,new Viewport(100,100,1)).box(original.id()).border().height());
+            assertEquals(20,engine.layout(good,new Viewport(150,100,2)).box(original.id()).border().height());
+        }
+    }
+    @Test void freshEquivalentMeasureKeepsLayoutAndUsesLatestCallbackWhenConstraintsChange() {
+        int[] firstCalls={0},latestCalls={0};
+        LeafMeasure first=c->{firstCalls[0]++;return new MeasuredSize(c.width().constrain(40),30,15);};
+        LeafMeasure latest=c->{latestCalls[0]++;return new MeasuredSize(c.width().constrain(40),30,15);};
+        var style=LayoutStyle.column();
+        var a=new LayoutTree(node("root",style,LayoutNode.leaf("text",style,first,7)));
+        var b=new LayoutTree(node("root",style,LayoutNode.leaf("text",style,latest,7)));
+        try(var engine=new YogaLayoutEngine()) {
+            var original=engine.layout(a,new Viewport(100,100,1));
+            int calls=firstCalls[0];
+            assertSame(original,engine.layout(b,new Viewport(100,100,1)));
+            assertEquals(calls,firstCalls[0]);assertEquals(0,latestCalls[0]);
+            engine.layout(b,new Viewport(150,100,1));
+            assertTrue(latestCalls[0]>0,"new constraints must use the latest measure callback");
+            var changed=new LayoutTree(node("root",style,LayoutNode.leaf("text",style,c->new MeasuredSize(c.width().constrain(40),45,15),8)));
+            assertEquals(45,engine.layout(changed,new Viewport(150,100,1)).box(new NodeId("text")).border().height());
+        }
+    }
     static LayoutNode node(String id,LayoutStyle style,LayoutNode... children){return new LayoutNode(new NodeId(id),style,List.of(children),null,0);}
     static final LayoutStyle ROW=LayoutStyle.row().spacing(10,8);
     @Test void singleGeometryUpdatesOnResizeAndStableFramesAvoidMeasurement() {

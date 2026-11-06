@@ -19,7 +19,7 @@ public final class MinecraftItemIcons implements AutoCloseable {
         RenderSystem.assertOnRenderThread();SkijaRenderBridge.assertOutsideSkijaPass();requests=List.copyOf(requests);
         var stacks=new LinkedHashMap<String,ItemStack>();var entries=new ArrayList<ItemIconAtlas.Entry>();
         for(var request:requests){var stack=request.stack();if(stacks.putIfAbsent(request.key(),stack)!=null)throw new IllegalArgumentException("Duplicate item icon key: "+request.key());entries.add(new ItemIconAtlas.Entry(request.key(),request.pixelSize(),stack.isEmpty()));}
-        VanillaItemPass.flushHost();
+        if(entries.stream().anyMatch(entry->!entry.empty()))VanillaItemPass.flushHost();
         return atlas.prepare(entries,frameId,(tiles,width,height)->{
             try(var pass=new VanillaItemPass(width,height)){for(var tile:tiles)if(!tile.empty())try{pass.draw(stacks.get(tile.key()),tile.x(),tile.y(),tile.size());}catch(RuntimeException|Error e){throw new IllegalStateException("Native item icon failed [1.20.1-forge] key="+tile.key(),e);}}
         });
