@@ -8,7 +8,7 @@
 
 AtomLib is a client-side UI library for Minecraft mods. It combines [Skija](https://github.com/HumbleUI/Skija) drawing with [Yoga](https://www.yogalayout.dev/) layout, then provides the Minecraft render bridge, text services and optional controls needed by a host mod. The host still owns its screens, data and behavior. [AtomChat](https://github.com/NoWordz/AtomChat-Mod) is one consumer.
 
-The repository currently contains a **0.3.0 development candidate**. The latest public release is [0.1.0-beta beta3](https://github.com/NoWordz/AtomLib/releases/tag/v0.1.0-beta-beta3); it does not include every feature described here. There is no public Maven repository yet.
+The repository currently contains the **v0.4.0 release**. Releases are published on the [GitHub releases page](https://github.com/NoWordz/AtomLib/releases). There is no public Maven repository yet.
 
 ## Features
 
