@@ -5,4 +5,4 @@ region=128x128
 warmup=8 per mode
 samples=16 per mode per round
 order=no_filter then four_filter_passes
-close_ns=[2315800, 2410900, 2258700]
+close_ns=[2322700, 2192000, 2353800]

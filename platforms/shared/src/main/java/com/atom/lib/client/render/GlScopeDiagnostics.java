@@ -23,6 +23,9 @@ final class GlScopeDiagnostics extends Event {
     int depth;
     int textureUnits;
     int textureTargets;
+    /** Native GL entry count of this snapshot; proves the boundary actually shrank. */
+    int nativeCalls;
+    boolean slim;
     boolean success;
 
     static boolean enabled() { return TYPE.isEnabled(); }

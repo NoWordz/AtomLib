@@ -1,1 +1,1 @@
-{"renderer":"NVIDIA GeForce RTX 5060 Laptop GPU/PCIe/SSE2","version":"3.3.0 NVIDIA 617.42","size":[512,320],"region":[40,30,400,240],"passes":4,"cpuSubmitNanos":8415500,"gpuNanos":45728,"gpuQueryAvailableAfterReadback":true,"displayImagesForceOpaqueForViewing":true,"gameBenchmark":false}
+{"renderer":"NVIDIA GeForce RTX 5060 Laptop GPU/PCIe/SSE2","version":"3.3.0 NVIDIA 617.42","size":[512,320],"region":[40,30,400,240],"passes":4,"cpuSubmitNanos":8967700,"gpuNanos":45440,"gpuQueryAvailableAfterReadback":true,"displayImagesForceOpaqueForViewing":true,"gameBenchmark":false}
